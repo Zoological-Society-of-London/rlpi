@@ -1,0 +1,666 @@
+#install.packages("mgcv")
+#install.packages("doParallel")
+#install.packages("tools")
+#install.packages("reshape")
+
+#require(mgcv)
+#require(doParallel)
+#registerDoParallel()
+#require(tools)
+#require(reshape)
+#require(ggplot2)
+#library(plyr)
+
+#curr_d <- getwd()
+
+#this.dir <- dirname(parent.frame(2)$ofile)
+#setwd(this.dir)
+
+# Code for each of these now stored in each file
+#source("CalcSDev.R")
+#source("ProcessFile.R")
+#source("bootstrap_lpi.R")
+#source("CalcLPI.R")
+#source("debug_print.R")
+#source("calculate_index.R")
+#source("plot_lpi.R")
+#source("ggplot_lpi.R")
+#source("ggplot_multi_lpi.R")
+#source("summarise_lpi.R")
+#source("calc_leverage_lpi.R")
+
+# ** OPTIONS ***
+# Options are now in here...
+#source("lpi_options.R")
+
+# Get back to where we were
+#setwd(curr_d)
+
+#' Main function for generating indices from an input file
+#'
+#' Before March 2009
+#' --------
+#' Version 9 R Amin Incorporated filtering of Lambda values outside a defined range
+#' Incorporated adding 1) 1 \% mean of non zero values, 2) min value of non zero
+#' values to all the values if there is a zero value in the time series Incorporated
+#' time series of >= 2 are processed
+#' --------
+#' March 2009 - Ben has messed with the flags, so that more are up at the top (e.g.
+#' Bootstrap size).  Functionality of the CI_FLAG improved, introduced a PLOT_MAX value
+#' for the plotting, added commands for the zero replace flag.
+#' --------
+#' Version 12 (August 2010 - Stef changed some of the output file names: MethodFlag
+#' -> PopProcessedChain, new_results -> 01_Results, so that file is always at the top
+#' and therefore easy to find. Also changed code to output the Species lambda and
+#' DTemp files as txt (NOTE: currently only works for one input text file). -1 in the
+#' lambda file is now NA. Also, additional output file (Lambda.txt) created,
+#' combining SpeciesName and SpeciesLambda and automatically inserting years
+#' according to REF_YEAR.
+#' --------
+#' Version 13 - Stef has integrated minmax code at the end of
+#' the LPI code
+#' --------
+#' Version 13 - update SD fixed lambda file error Version 13 update - SD
+#' deleted ylim from graph and added automatic savePlot function
+#' --------
+#' Version 14 - July-October 2013, Robin Freeman
+#'
+#' Reformatted code to improve readabilitiy
+#' Added comments throughout
+#' Reorganised some sections into new functions (ProcessFile, Bootstrap_lpi) to improve
+#' readability and to enable paralisation
+#' Split functions into separate files
+#'
+#' Version 15 - Sept 2015 - Robin Freeman
+#'  - Various updates, added associated plotting code (ggplot_lpi.R)
+#'  - moved some parameters to the function call (# bootstraps)
+#'  - Moved CalcLPI parameters into the function call and to the LPIMain function allowing them to be controlled
+#'    from the function call
+#'
+#' - Created lpi_options.R to store overall options
+#' - Reorganised to now run with a parameter --- LPIMain(infile)
+#'
+#' # Calculate an index using the population file specified in GlobalInFile.txt, calculating confidence intervals using 100 bootstraps
+#' lpi_global <- LPIMain("GlobalInfile.txt", CI_FLAG=1, title="Global LPI", BOOT_STRAP_SIZE=100)
+#' # Plot this global LPI
+#' ggplot_lpi(lpi_global)
+#' # Calculate an index using the population file specified in TropicalInfile.txt, calculating confidence intervals using 100 bootstraps
+#' lpi_tropical <- LPIMain("TropicalInfile.txt", CI_FLAG=1, title="Tropical LPI", BOOT_STRAP_SIZE=100)
+#' # Plot this tropical LPI
+#' ggplot_lpi(lpi_tropical)
+#' # Plot them together
+#' ggplot_lpi_multi(list(lpi_global, lpi_tropical), names=c("global", "tropical"))
+#'
+#' @param infile Input file specifying the population files that should be included in the index
+#'
+#' @param force_recalculation Whether the population annual differences should be recalucated (they are cached for a given file). Default=0
+#' @param use_weightings Whether to use the first level of weightings ('Weightings') in the infile. Default=0
+#' @param use_weightings_B Whether to use the first level of weightings ('WeightingsB') in the infile. Default=0
+#' @param title The title. Default=""
+#' @param CI_FLAG Flag to indicate whether or not to calculate confidence intervals (bootstrapping the index). Default=1
+#' @param LEV_FLAG Flag to indicate wether or not to calculate species level leverage plots. Default=0
+#' @param SWITCH_PT_FLAG Flag to indicate whether or not to calculate switching points. Default=0
+#' @param BOOT_STRAP_SIZE If calculating CIs, how many bootstraps to use. Default=100
+#' @param save_plots Should plots be saved. Default=1
+#' @param plot_lpi Should plots be plotted. Default=1
+#' @param goParallel Should the code be executing in parallel, Default=FALSE
+#'
+#' @param MODEL_SELECTION_FLAG Default=0
+#' @param GAM_GLOBAL_FLAG  1 = process by GAM method, 0 = process by chain method. Default=1
+#' @param DATA_LENGTH_MIN Minimum data length to include in calculations. Default=2
+#' @param AVG_TIME_BETWEEN_PTS_MAX Maximum time between datapoint to include. Default=100
+#' @param GLOBAL_GAM_FLAG_SHORT_DATA_FLAG # set this to 1 GAM model is also to be generated for the short time series else the log linear model will be used. Default=0
+#' @param AUTO_DIAGNOSTIC_FLAG 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
+#' @param LAMBDA_MIN Minimum lambda to include in calculations. Default=1
+#' @param LAMBDA_MAX Minimum lambda to include in calculations. Default=-1
+#' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2
+#' @param OFFSET_ALL 1 = Add offset to all values, to avoid log(0). Default=0
+
+#' @return lpi - A data frame containing an LPI and CIs if calculated
+#' @export
+#'
+#'
+LPIMain <- function(infile,
+                    force_recalculation=DEFAULT_FORCE_RECALCULATION,
+                    use_weightings=DEFAULT_WEIGHTING,
+                    use_weightings_B=DEFAULT_WEIGHTING_B,
+                    title="",
+                    CI_FLAG=DEFAULT_CI_FLAG,
+                    LEV_FLAG=DEFAULT_LEV_FLAG,
+                    SWITCH_PT_FLAG=DEFAULT_SWITCH_PT_FLAG,
+                    BOOT_STRAP_SIZE=DEFAULT_BOOT_STRAP_SIZE,
+                    save_plots=DEFAULT_SAVE_PLOTS,
+                    plot_lpi=DEFAULT_PLOT_LPI,
+                    goParallel = FALSE,
+                    # CalcLPI options...
+                    MODEL_SELECTION_FLAG = DEFAULT_MODEL_SELECTION_FLAG,
+                    GAM_GLOBAL_FLAG = DEFAULT_GAM_GLOBAL_FLAG,  # 1 = process by GAM method, 0 = process by chain method
+                    DATA_LENGTH_MIN = DEFAULT_DATA_LENGTH_MIN,
+                    AVG_TIME_BETWEEN_PTS_MAX = DEFAULT_AVG_TIME_BETWEEN_PTS_MAX,
+                    GLOBAL_GAM_FLAG_SHORT_DATA_FLAG = DEFAULT_GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,  # set this if GAM model is also to be generated for the short time series else the log linear model will be used.
+                    AUTO_DIAGNOSTIC_FLAG = DEFAULT_AUTO_DIAGNOSTIC_FLAG,
+                    LAMBDA_MIN = DEFAULT_LAMBDA_MIN,
+                    LAMBDA_MAX = DEFAULT_LAMBDA_MAX,
+                    ZERO_REPLACE_FLAG = DEFAULT_ZERO_REPLACE_FLAG,  # 0 = +minimum value; 1 = +1% of mean value; 2 = +1
+                    OFFSET_ALL = DEFAULT_OFFSET_ALL # Add offset to all values, to avoid log(0)
+                    ) {
+
+    # Start timing
+    ptm <- proc.time()
+
+    # Set parallel mode
+    `%op%` <- if (goParallel) foreach::`%dopar%` else foreach::`%do%`
+    doParallel::registerDoParallel()
+
+    # RF: Create a working directory to put files in
+    dir.create('lpi_temp', showWarnings = FALSE)
+
+    # RF: Get list of input files
+    FileTable = read.table(infile, header = TRUE)
+    # RF: Get names from file
+    FileNames = FileTable$FileName
+    # Get groups from file as column vector
+    Group = FileTable[2]
+
+    GroupList = unique(Group[[1]])
+
+    #print(Group)
+
+    Weightings = FileTable[3]
+
+    # RF: Get weightings from file
+    if (use_weightings == 1) {
+      WeightingsA = FileTable[3]
+
+      # Make sure group weightings normalise
+      for (i in 1:length(GroupList)) {
+        Weightings[Group == GroupList[i]] = Weightings[Group == GroupList[i]]/sum(Weightings[Group == GroupList[i]])
+      }
+
+      #Weightings = Weightings/sum(Weightings)
+      cat(sprintf("Weightings...\n"))
+      print(Weightings)
+      cat("\n")
+    }
+
+    if (use_weightings_B == 1) {
+      # RF: Get weightings from file
+        FileWeightingsB = FileTable[4]
+        WeightingsB = unique(cbind(Group, FileWeightingsB))$WeightingB
+        #WeightingsB = WeightingsB/sum(WeightingsB)
+        cat(sprintf("WeightingsB...\n"))
+        print(WeightingsB)
+        cat("\n")
+    }
+
+
+    # Find max of group to get number of groups
+    NoGroups = length(unique(Group[[1]]))
+
+    cat("Number of groups: ", NoGroups, '\n')
+
+    # CI_FLAG and the Switchpointflag were here
+
+    # Number of files is the size of the maximum dimension of Group
+    NoFiles = max(dim(Group))
+
+    #DSize = 0
+    # Create empty matrix to store size of lambdas (number of years) for each species
+    #DSizes = matrix(0, ncol=10)
+
+    #writeLines(c(""), "progress_log_files.txt")
+
+    #DSizes <- foreach (FileNo = 1:NoFiles,.combine=cbind) %dopar% {
+    DSizes <- foreach::foreach (FileNo = 1:NoFiles,.combine=cbind) %op% {
+      #sink("progress_log_files.txt", append=TRUE)
+      # Check MD5 here to see if file already processed:
+      md5val <- tools::md5sum(toString(FileNames[FileNo]))
+      if (
+            (force_recalculation == 1) ||
+            (!file.exists(paste("lpi_temp/", md5val, "_dtemp.csv", sep = ""))) ||
+            (!file.exists(paste("lpi_temp/", md5val, "_splambda.csv", sep = "")))
+        ) {
+        #DSizes[FileNo] = ProcessFile(toString(FileNames[FileNo]), FileNo)
+        cat(sprintf("processing file: %s\n", toString(FileNames[FileNo])))
+        ProcessFile(toString(FileNames[FileNo]),
+                    REF_YEAR,
+                    MODEL_SELECTION_FLAG,
+                    GAM_GLOBAL_FLAG,
+                    DATA_LENGTH_MIN,
+                    AVG_TIME_BETWEEN_PTS_MAX,
+                    GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
+                    AUTO_DIAGNOSTIC_FLAG,
+                    LAMBDA_MIN,
+                    LAMBDA_MAX,
+                    ZERO_REPLACE_FLAG,
+                    OFFSET_ALL)
+        #cat("done processing file: ", toString(FileNames[FileNo]))
+      }
+      #sink()
+    }
+
+    # Get largest dimension size
+    #DSize = max(DSizes)
+    # *******
+    # Trying this - don't know why it wouldn't be ok, just means we're only processing lamdas that
+    # we're going to plot?
+    # *******
+    DSize = PLOT_MAX - REF_YEAR + 2
+
+    # Create an empty data frame (create matrix, then convert) to put species lambdas in
+    # Here we create a data fram with no rows, then use rbind.fill to add to it (which will
+    # create NAs for missing columns)
+    #SpeciesLambdaArrayTemp = matrix(data=NA,nrow=0,ncol=DSize)
+    # Not quite sure why this needs to be transposed as it's empty and has the right dims, but it does
+    SpeciesLambdaArray = data.frame(NULL)
+    SpeciesNamesArray = data.frame(NULL)
+
+    # Create empty (NAs) DTemp array
+    DTempArrayTemp <- matrix(data=NA,nrow=NoFiles,ncol=DSize)
+    DTempArray = data.frame(DTempArrayTemp)
+
+    DataSizeArray = matrix(0, NoFiles, 2)
+
+    fileindex = NULL
+
+    for (FileNo in 1:NoFiles) {
+
+      md5val <- tools::md5sum(toString(as.character(FileNames[FileNo])))
+      # Read SpeciesLambda and DTemp from saved files
+
+      FileName = paste("lpi_temp/", md5val, "_splambda.csv", sep = "")
+      SpeciesLambda = read.table(FileName, header = FALSE, sep = ",")
+      debug_print(sprintf("Loading previously analysed species lambda file for '%s' from MD5 hash: %s\n", as.character(FileNames[FileNo]), FileName))
+
+      species_names = read.table("lpi_temp/SpeciesName.txt")
+
+      cat(sprintf("%s, Number of species: %s\n", as.character(FileNames[FileNo]), dim(SpeciesLambda)[1]))
+
+      # Add this species data to the array of all data
+      #cat(dim(SpeciesLambdaArray), "\n")
+      SpeciesLambdaArray <- plyr::rbind.fill(SpeciesLambdaArray, SpeciesLambda)
+      SpeciesNamesArray <- plyr::rbind.fill(SpeciesNamesArray, species_names)
+      #cat(dim(SpeciesLambdaArray), "\n")
+      # Keep note of which file that data was from (to use as an index later)
+      fileindex = c(fileindex, rep(FileNo, dim(SpeciesLambda)[1]))
+      #cat(length(fileindex), "\n")
+      # DTemps are the mean annual differences in population for each group/file
+      FileName = paste("lpi_temp/", md5val, "_dtemp.csv", sep = "")
+      debug_print(sprintf("Loading previously analysed dtemp file from MD5 hash: %s\n", FileName))
+      #DTemp = read.table(FileName, header = F, sep = ",", col.names = FALSE)
+      DTemp = read.table(FileName, header = T, sep = ",")
+
+      #print(DTemp)
+      #DTemp = as.numeric(DTemp)
+      DTempArray[FileNo, 1:dim(DTemp)[2]] = t(DTemp)
+    }
+
+    #cat("DTempArray: \n")
+    #print(DTempArray)
+    #cat("\n...DTempArray: \n")
+
+
+    #write.table(DTempArray, file="dtemp_array.txt")
+    f_name = file = gsub(".txt", "_dtemp_array.txt", infile)
+    cat("Saving DTemp Array to file: ", f_name, "\n")
+    write.table(DTempArray, f_name)
+
+    dtemp_df <- data.frame(filenames=FileNames, dtemps=DTempArray)
+    colnames(dtemp_df) <- c("filename", seq(REF_YEAR, REF_YEAR + DSize - 1))
+
+    if (save_plots) {
+      # Bit of a hack to avoid R CMD CHECK NOTE
+      # Sets variable names used in ggplot2::aes to be NULL
+      variable <- value <- filename <- NULL
+
+      width=20
+      height=8
+      pdf(gsub(".txt", "_dtemp_array_plot.pdf", infile), width = width, height = height)
+      df.m <- reshape2::melt(dtemp_df, id.vars = "filename")
+      df.m$value[df.m$value == -99] = NA
+      p_line <- ggplot2::ggplot(df.m, ggplot2::aes(variable, value, group=filename, col=filename)) +
+        ggplot2::geom_line() +
+        ggplot2::theme(text = ggplot2::element_text(size=16),
+              axis.text.x = ggplot2::element_text(size=8, angle = 90, hjust = 1),
+              legend.position = "bottom") + ggplot2::guides(col = ggplot2::guide_legend(nrow=6))
+
+      print(p_line)
+      dev.off()
+    }
+
+    f_name = file = gsub(".txt", "_dtemp_array_named.csv", infile)
+    cat("Saving DTemp Array with filesnames to file: ", f_name, "\n")
+    write.csv(dtemp_df, f_name, row.names = FALSE)
+
+    t1 <- proc.time() - ptm
+    cat(sprintf("[Calculating LPI...] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+    #I = calculate_index(DTempArray, fileindex, DSize, Group, Weightings, use_weightings)
+    I = calculate_index(DTempArray, fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB)
+
+
+    #cat("I: \n")
+    #print(I)
+    #cat("\n..I: \n")
+
+    Ifinal <- I  # writes the Index 'I', to a new vector called 'Ifinal'
+    #plot(Ifinal)
+    #Year <- seq(REF_YEAR, (REF_YEAR + length(Ifinal)) - 1)
+    #plot(Year, Ifinal, xlim = c(REF_YEAR, PLOT_MAX), ylab = paste("Index (", REF_YEAR, " = 1.0)", sep=""))
+    #zeroEffectLine <- rep(1, (length(Ifinal)))
+    #lines(Year, zeroEffectLine)
+    #lines(Year, Ifinal)
+    #title("It's worked!  Please wait while your CI's are calculated")
+
+    # Find those years for which we have a valid index
+    #valid_index_years = (!is.na(Ifinal))
+    valid_index_years = ((!is.na(Ifinal)) & (Ifinal != -99))
+    cat(sprintf("Number of valid index years: %d (of possible %d)\n", sum(valid_index_years), length(valid_index_years)))
+
+    if (CI_FLAG == 1) {
+        # calculate the confidence intervals
+
+        t1 <- proc.time() - ptm
+        cat(sprintf("[Calculating CIs...] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+
+        #cat(dim(SpeciesLambdaArray))
+
+        # Create matrix for bootstrap indices
+        BootI = matrix(0, BOOT_STRAP_SIZE, DSize)
+        BootIFlag = matrix(0, 1, BOOT_STRAP_SIZE)
+
+        #writeLines(c(""), "progress_log_boot.txt")
+
+        # Converted to parallel *********
+        #BootI <- foreach (Loop = 1:BOOT_STRAP_SIZE) %foreach::dopar% {
+        BootI <- foreach::foreach (Loop = 1:BOOT_STRAP_SIZE) %op% {
+          #sink("progress_log_boot.txt", append=TRUE)
+          #bootstrap_lpi(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings)
+          bootstrap_lpi(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB)
+          #sink()
+        }
+        cat("\n")
+
+        t1 <- proc.time() - ptm
+        cat(sprintf("[CIs calculated] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+
+        # Combine list of vectors from foreach into matrix
+        BootI <- do.call(cbind, BootI)
+        # Transpose matrix as each bootstrap loop is a column and we'd like them to be rows
+        BootI <- t(BootI)
+
+        #cat("BootI", "\n")
+        #print(BootI)
+        #cat("\n")
+        #cat(dim(as.matrix(BootI)), "\n")
+        #cat(valid_index_years, "\n")
+
+
+        #cat(BootI, "\n")
+
+        ####################### I've changed this bit to extract the CIs for the LPI, cos later they get over
+        ####################### written
+        CIx = matrix(0, DSize, 2)
+        CIx[1, 1] = 1
+        CIx[1, 2] = 1
+
+        # Estimate confidence intervals using the bootstapped indicies
+        for (J in 2:DSize) {
+            # If this is a valid index year for this group
+            if (valid_index_years[J]) {
+              # Get the data
+              BootIVal = BootI[, J]
+
+              # RF: this was used in original, now bootstrap only samples from valid data
+              # Index = which(BootIFlag != 1)
+              # BootIVal = BootI[Index, J]
+
+              CIx[J, 1] = quantile(BootIVal, 0.025, names = FALSE)
+              CIx[J, 2] = quantile(BootIVal, 0.975, names = FALSE)
+            } else {
+              # If we don't have an index for this year, we shouldn't have
+              CIx[J, 1] = NA
+              CIx[J, 2] = NA
+            }
+        }
+    }
+
+
+    if (LEV_FLAG == 1) {
+      # calculate the species leverage
+
+      t1 <- proc.time() - ptm
+      cat(sprintf("[Calculating species leverages...] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+
+      leverage_results = list()
+      leverage_diff = list()
+      leverage_species = list()
+
+      overall_lambdas = calc_lambdas(Ifinal)
+
+      # Calculate LPI with species selectively removed from index
+      for (i in 1:nrow(SpeciesLambdaArray)) {
+
+        #SpeciesLambdaArray = SpeciesLambdaArray[-i, ]
+        lev_I = calc_leverage_lpi(SpeciesLambdaArray[-i, ], fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB)
+
+        leverage_results[[i]] = lev_I
+        leverage_diff[[i]] = calc_lambdas(lev_I) - overall_lambdas
+        leverage_species[[i]] = SpeciesNamesArray[i,]
+      }
+
+
+      cat("\n")
+
+      t1 <- proc.time() - ptm
+      cat(sprintf("[Species leverages calculated] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+
+      # Combine list of vectors from foreach into matrix
+      leverage_results <- do.call(cbind, leverage_results)
+      # Transpose matrix as each bootstrap loop is a column and we'd like them to be rows
+      leverage_results <- t(leverage_results)
+      # Combine list of vectors from foreach into matrix
+      leverage_diff <- do.call(cbind, leverage_diff)
+      # Transpose matrix as each bootstrap loop is a column and we'd like them to be rows
+      leverage_diff <- t(leverage_diff)
+
+      leverage_results_table <- data.frame(leverage_results)
+      colnames(leverage_results_table) <- seq(REF_YEAR, REF_YEAR + DSize - 1)
+
+      #leverage_results_table$total <- rowSums(leverage_results_table)
+
+      leverage_results_table$id <- unlist(leverage_species)
+      write.csv(leverage_results_table, file="species_leverage_lpi_results.csv")
+
+      leverage_diff_table <- data.frame(leverage_diff)
+      colnames(leverage_diff_table) <- seq(REF_YEAR, REF_YEAR + DSize - 1)
+
+      leverage_diff_table$total <- rowSums(leverage_diff_table)
+
+      leverage_diff_table$id <- unlist(leverage_species)
+      write.csv(leverage_diff_table, file="species_leverage_diff_lambdas_results.csv")
+    }
+
+    if (SWITCH_PT_FLAG == 1) {
+
+        t1 <- proc.time() - ptm
+        cat(sprintf("[Calculating Switch Points...] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+
+        sp_prog <- txtProgressBar(min=0, max=BOOT_STRAP_SIZE, char="*", style=3)
+
+        # Calculate the switching points
+        SecondDerivBoot = matrix(0, BOOT_STRAP_SIZE, DSize)
+
+        for (Loop in 1:BOOT_STRAP_SIZE) {
+
+            DTempArrayTemp <- matrix(data=NA,nrow=NoFiles,ncol=DSize)
+            DTempArray = data.frame(DTempArrayTemp)
+
+            for (FileNo in 1:NoFiles) {
+
+                # Read SpeciesLambda from saved file FileName = paste('lpi_temp/SpeciesLambda',FileNo,sep='')
+                # SpeciesLambda = read.table(FileName, header = FALSE, sep=',')
+
+                #cat('[Loop File] ', FileNo, ' Calculating Switching Points\n')
+                SpeciesLambda = SpeciesLambdaArray[fileindex == FileNo, ]
+
+                n = length(SpeciesLambda[, 1])
+                BootIndex = 1:n
+                BootSam <- sample(BootIndex, replace = T)
+                DTemp = matrix(0, 1, dim(SpeciesLambda)[2])
+
+                for (LoopI in 1:dim(SpeciesLambda)[2]) {
+                  SpeciesLambdaVal = SpeciesLambda[, LoopI]
+                  BootVal = SpeciesLambdaVal[BootSam]
+
+                  Index = which(BootVal != -1)
+                  if (length(Index) > 0) {
+                    DTemp[LoopI] = mean(BootVal[Index])
+                  } else DTemp[LoopI] = -99
+                }
+
+                if (dim(SpeciesLambda)[2] > DSize)
+                  DSize = dim(SpeciesLambda)[2]
+
+                # Save DTemp into file
+                # *** RF: Again? These bootstrapped DTemps therefore overwrite the LPI ones from previously
+                #DataFileName = paste("lpi_temp/DTemp", FileNo, sep = "")
+                #write.table(DTemp, DataFileName, sep = ",", col.names = FALSE, row.names = FALSE)
+
+                # Just save them into a temp array instead!
+
+                DTempArray[FileNo, 1:dim(t(DTemp))[1]] = t(DTemp)
+            }
+
+            I = calculate_index(DTempArray, fileindex, DSize, Group, Weightings)
+
+            # Call second derivative function and save data in an array
+            h = 1
+            d = 6
+            interval = 1
+            SecDeriv = CalcSDev(I, h, d, interval)
+            SecondDerivBoot[Loop, ] = SecDeriv
+
+            setTxtProgressBar(sp_prog, Loop)
+        }
+
+        close(sp_prog)
+
+        # Calculate 95% confidence intervals - on the second derivative
+
+        CI = matrix(0, DSize, 2)
+
+        for (J in 1:DSize) {
+            SecondDerivBootVal = SecondDerivBoot[, J]
+            Index = which(SecondDerivBootVal != -1)
+            SecondDerivBootVal = SecondDerivBoot[Index, J]
+            CI[J, 1] = quantile(SecondDerivBootVal, 0.025, names = FALSE)
+            CI[J, 2] = quantile(SecondDerivBootVal, 0.975, names = FALSE)
+        }
+
+        SwitchingPt = matrix(0, 1, DSize)
+        for (J in 1:DSize) {
+            if ((CI[J, 1] > 0) & (CI[J, 2] > 0))
+                SwitchingPt[J] = 1
+
+            if ((CI[J, 1] < 0) & (CI[J, 2] < 0))
+                SwitchingPt[J] = -1
+        }
+    }
+    # extract the CIs to a dataframe for plotting
+    CI2 <- data.frame(CIx)
+    lowerCI <- t(CI2$X1)
+    upperCI <- t(CI2$X2)
+
+    if (plot_lpi) {
+      if (CI_FLAG == 1) {
+
+
+          # Plot the index with confidence intervals
+          plot_lpi(Ifinal, REF_YEAR, PLOT_MAX, CI_FLAG, lowerCI, upperCI)
+
+      } else {
+          # Plot the index
+          plot_lpi(Ifinal, REF_YEAR, PLOT_MAX)
+      }
+
+      if (nchar(title) > 0) {
+        title <- paste("[", title, "] ", sep="")
+      }
+
+      if (CI_FLAG == 1) {
+        title(paste(title, "Calculated Index; Bootstraps = ", BOOT_STRAP_SIZE, sep=""))
+      } else {
+        title(paste(title, "Calculated Index"))
+      }
+    }
+    # write out the file
+    if (SWITCH_PT_FLAG) {
+      LPIdaplta <- cbind(Ifinal, CI2, t(SwitchingPt))
+      colnames(LPIdata) <- c("LPI_final", "CI_low", "CI_high", "SwitchPoint")
+    } else if (CI_FLAG) {
+      LPIdata <- cbind(Ifinal, CI2)
+      colnames(LPIdata) <- c("LPI_final", "CI_low", "CI_high")
+    } else {
+      # RF: Added extra condition for when CI isn't calculated
+      LPIdata <- Ifinal
+      colnames(LPIdata) <- c("LPI_final")
+    }
+    rownames(LPIdata) <- seq(REF_YEAR, REF_YEAR + DSize - 1)
+
+    f_name = file = gsub(".txt", "_Results.txt", infile)
+    cat("Saving final output to file: ", f_name, "\n")
+    write.table(LPIdata, f_name)
+
+    #cat("[Min/Max] Create min/max file\n")
+    # create minmax file
+
+    # RF: Get list of input files
+    FileTable = read.table(infile, header = TRUE)
+    # RF: Get names from file
+    FileNames = FileTable$FileName
+    # Get groups from file as column vector
+    Group = FileTable[2]
+    # Find max of group to get number of groups
+    #NoGroups = max(Group)
+    NoGroups = length(unique(Group))
+    # Number of files is the size of the maximum dimension of Group
+    NoFiles = max(dim(Group))
+
+    for (FileNo in 1:NoFiles) {
+      Dataset <- toString(FileNames[FileNo])
+      #cat(Dataset, "\n")
+      Data <- read.table(Dataset, header = TRUE)
+      colnames(Data) <- c("Binomial", "ID", "year", "popvalue")
+
+      # bit of a hack to avoid R CMD CHECK, sets variable 'year' used in ddply to be NULL
+      year <- NULL
+
+      minmax <- plyr::ddply(Data, "ID", plyr::summarise, min_year = min(year), max_year = max(year))
+      #minmax <- tapply(Data$ID, Data$year, range)
+      #my.out <- do.call("rbind", minmax)
+      f_name = file = gsub(".txt", "_Minmax.txt", Dataset)
+      cat("Saving Min/Max file to: ", f_name, "\n")
+      write.table(minmax, sep=",", eol="\n", f_name,
+                  quote = FALSE, append = FALSE, row.names = F, col.names=T)
+    }
+
+
+    # Delete all variables in memory (bit dangerous this if you're doing other things!)
+    # **Should no longer be neccessary as we're in a function!
+    #rm(list = ls(all = TRUE))
+
+    # save plot
+
+    if (save_plots) {
+      output_file <- gsub(".txt", ".pdf", infile)
+      cat("Saving Plot to PDF: ", output_file, "\n")
+      dev.copy(pdf, output_file)
+      dev.off()
+      #savePlot()
+    }
+    t1 <- proc.time() - ptm
+    cat(sprintf("[END] System: %f, User: %f, Elapsed: %f\n", t1[1], t1[2], t1[3]))
+    # Stop timing
+
+    return(LPIdata)
+}

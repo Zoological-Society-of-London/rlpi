@@ -1,0 +1,29 @@
+Package: rlpi
+Type: Package
+Title: Tools for calculating indices using the Living Planet Index method
+Version: 0.1.0
+Authors@R: c(
+  person("Robin", "Freeman", email = "robin.freeman@ioz.ac.uk", role = c("aut", "cre")),
+  person("Louise", "McRae", email = "robin.freeman@ioz.ac.uk", role = c("aut")),
+  person("Stefanie", "Deinet", role = c("aut")),
+  person("Raj", "Amin", role = c("aut")),
+  person("Ben", "Collen", role = c("aut"))
+  )
+Maintainer: Robin Freeman <robin.freeman@ioz.ac.uk>
+Description: This package brings together the functions neccessary for calculating and plotting indices using the Living Planet Index method (see www.livingplanetindex.org).
+URL: https://github.com/Zoological-Society-of-London/living_planet_index
+BugReports: https://github.com/Zoological-Society-of-London/living_planet_index/issues
+License: GPL-2
+LazyData: TRUE
+Imports:
+    ggplot2,
+    mgcv,
+    plyr,
+    reshape2,
+    tools,
+    grid,
+    gtable,
+    foreach,
+    doParallel,
+    RColorBrewer
+
