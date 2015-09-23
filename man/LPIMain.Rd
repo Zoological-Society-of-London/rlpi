@@ -2,27 +2,24 @@
 % Please edit documentation in R/LPI_v15_20150915.R
 \name{LPIMain}
 \alias{LPIMain}
-\title{Main function for generating indices from an input file}
+\title{Create an index from a number of datasets in a given input file}
 \usage{
-LPIMain(infile, force_recalculation = DEFAULT_FORCE_RECALCULATION,
-  use_weightings = DEFAULT_WEIGHTING,
-  use_weightings_B = DEFAULT_WEIGHTING_B, title = "",
-  CI_FLAG = DEFAULT_CI_FLAG, LEV_FLAG = DEFAULT_LEV_FLAG,
-  SWITCH_PT_FLAG = DEFAULT_SWITCH_PT_FLAG,
-  BOOT_STRAP_SIZE = DEFAULT_BOOT_STRAP_SIZE,
-  save_plots = DEFAULT_SAVE_PLOTS, plot_lpi = DEFAULT_PLOT_LPI,
-  goParallel = FALSE, MODEL_SELECTION_FLAG = DEFAULT_MODEL_SELECTION_FLAG,
-  GAM_GLOBAL_FLAG = DEFAULT_GAM_GLOBAL_FLAG,
-  DATA_LENGTH_MIN = DEFAULT_DATA_LENGTH_MIN,
-  AVG_TIME_BETWEEN_PTS_MAX = DEFAULT_AVG_TIME_BETWEEN_PTS_MAX,
-  GLOBAL_GAM_FLAG_SHORT_DATA_FLAG = DEFAULT_GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
-  AUTO_DIAGNOSTIC_FLAG = DEFAULT_AUTO_DIAGNOSTIC_FLAG,
-  LAMBDA_MIN = DEFAULT_LAMBDA_MIN, LAMBDA_MAX = DEFAULT_LAMBDA_MAX,
-  ZERO_REPLACE_FLAG = DEFAULT_ZERO_REPLACE_FLAG,
-  OFFSET_ALL = DEFAULT_OFFSET_ALL)
+LPIMain(infile = "Infile.txt", REF_YEAR = 1970, PLOT_MAX = 2012,
+  force_recalculation = 1, use_weightings = 0, use_weightings_B = 0,
+  title = "", CI_FLAG = 1, LEV_FLAG = 0, SWITCH_PT_FLAG = 0,
+  BOOT_STRAP_SIZE = 100, save_plots = 1, plot_lpi = 1,
+  goParallel = FALSE, MODEL_SELECTION_FLAG = 0, GAM_GLOBAL_FLAG = 1,
+  DATA_LENGTH_MIN = 2, AVG_TIME_BETWEEN_PTS_MAX = 100,
+  GLOBAL_GAM_FLAG_SHORT_DATA_FLAG = 0, AUTO_DIAGNOSTIC_FLAG = 1,
+  LAMBDA_MIN = -1, LAMBDA_MAX = 1, ZERO_REPLACE_FLAG = 2,
+  OFFSET_ALL = 0, VERBOSE = TRUE)
 }
 \arguments{
 \item{infile}{Input file specifying the population files that should be included in the index}
+
+\item{REF_YEAR}{Reference year for index (when the index == 1). Default=1970}
+
+\item{PLOT_MAX}{The final year of the index to plot. Default=2012,}
 
 \item{force_recalculation}{Whether the population annual differences should be recalucated (they are cached for a given file). Default=0}
 
@@ -65,22 +62,39 @@ LPIMain(infile, force_recalculation = DEFAULT_FORCE_RECALCULATION,
 \item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2}
 
 \item{OFFSET_ALL}{1 = Add offset to all values, to avoid log(0). Default=0}
+
+\item{VERBOSE}{Whether to print verbose information. Default=1}
 }
 \value{
 lpi - A data frame containing an LPI and CIs if calculated
 }
 \description{
-Before March 2009
---------
-Version 9 R Amin Incorporated filtering of Lambda values outside a defined range
-Incorporated adding 1) 1 \% mean of non zero values, 2) min value of non zero
-values to all the values if there is a zero value in the time series Incorporated
-time series of >= 2 are processed
---------
-March 2009 - Ben has messed with the flags, so that more are up at the top (e.g.
-Bootstrap size).  Functionality of the CI_FLAG improved, introduced a PLOT_MAX value
-for the plotting, added commands for the zero replace flag.
---------
+Create an index from a number of datasets in a given input file
+}
+\details{
+Version 15 - Sept 2015 - Robin Freeman
+ \itemize{
+\item Various updates, added associated plotting code (ggplot_lpi.R)
+ \item moved some parameters to the function call (# bootstraps)
+ \item Moved CalcLPI parameters into the function call and to the LPIMain function allowing them to be controlled from the function call
+ \item Created lpi_options.R to store overall options
+ \item Reorganised to now run with main options as parameters --- LPIMain(infile, etc.)
+ }
+
+Version 14 - July-October 2013, Robin Freeman
+\itemize{
+\item Reformatted code to improve readabilitiy
+\item Added comments throughout
+\item Reorganised some sections into new functions (ProcessFile, Bootstrap_lpi) to improve readability and to enable paralisation
+\item Split functions into separate files
+}
+
+Version 13 - update SD fixed lambda file error Version 13 update - SD
+deleted ylim from graph and added automatic savePlot function
+
+Version 13 - Stef has integrated minmax code at the end of
+the LPI code
+
 Version 12 (August 2010 - Stef changed some of the output file names: MethodFlag
 -> PopProcessedChain, new_results -> 01_Results, so that file is always at the top
 and therefore easy to find. Also changed code to output the Species lambda and
@@ -88,30 +102,15 @@ DTemp files as txt (NOTE: currently only works for one input text file). -1 in t
 lambda file is now NA. Also, additional output file (Lambda.txt) created,
 combining SpeciesName and SpeciesLambda and automatically inserting years
 according to REF_YEAR.
---------
-Version 13 - Stef has integrated minmax code at the end of
-the LPI code
---------
-Version 13 - update SD fixed lambda file error Version 13 update - SD
-deleted ylim from graph and added automatic savePlot function
---------
-Version 14 - July-October 2013, Robin Freeman
-}
-\details{
-Reformatted code to improve readabilitiy
-Added comments throughout
-Reorganised some sections into new functions (ProcessFile, Bootstrap_lpi) to improve
-readability and to enable paralisation
-Split functions into separate files
 
-Version 15 - Sept 2015 - Robin Freeman
- - Various updates, added associated plotting code (ggplot_lpi.R)
- - moved some parameters to the function call (# bootstraps)
- - Moved CalcLPI parameters into the function call and to the LPIMain function allowing them to be controlled
-   from the function call
+March 2009 - Ben has messed with the flags, so that more are up at the top (e.g.
+Bootstrap size).  Functionality of the CI_FLAG improved, introduced a PLOT_MAX value
+for the plotting, added commands for the zero replace flag.
 
-- Created lpi_options.R to store overall options
-- Reorganised to now run with a parameter --- LPIMain(infile)
+Before March 2009.... Version 9 R Amin Incorporated filtering of Lambda values outside a defined range
+Incorporated adding 1) 1 \% mean of non zero values, 2) min value of non zero
+values to all the values if there is a zero value in the time series Incorporated
+time series of >= 2 are processed
 
 # Calculate an index using the population file specified in GlobalInFile.txt, calculating confidence intervals using 100 bootstraps
 lpi_global <- LPIMain("GlobalInfile.txt", CI_FLAG=1, title="Global LPI", BOOT_STRAP_SIZE=100)

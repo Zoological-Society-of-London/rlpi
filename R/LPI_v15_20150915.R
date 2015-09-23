@@ -1,54 +1,30 @@
-#install.packages("mgcv")
-#install.packages("doParallel")
-#install.packages("tools")
-#install.packages("reshape")
-
-#require(mgcv)
-#require(doParallel)
-#registerDoParallel()
-#require(tools)
-#require(reshape)
-#require(ggplot2)
-#library(plyr)
-
-#curr_d <- getwd()
-
-#this.dir <- dirname(parent.frame(2)$ofile)
-#setwd(this.dir)
-
-# Code for each of these now stored in each file
-#source("CalcSDev.R")
-#source("ProcessFile.R")
-#source("bootstrap_lpi.R")
-#source("CalcLPI.R")
-#source("debug_print.R")
-#source("calculate_index.R")
-#source("plot_lpi.R")
-#source("ggplot_lpi.R")
-#source("ggplot_multi_lpi.R")
-#source("summarise_lpi.R")
-#source("calc_leverage_lpi.R")
-
-# ** OPTIONS ***
-# Options are now in here...
-#source("lpi_options.R")
-
-# Get back to where we were
-#setwd(curr_d)
-
-#' Main function for generating indices from an input file
+#' Create an index from a number of datasets in a given input file
 #'
-#' Before March 2009
-#' --------
-#' Version 9 R Amin Incorporated filtering of Lambda values outside a defined range
-#' Incorporated adding 1) 1 \% mean of non zero values, 2) min value of non zero
-#' values to all the values if there is a zero value in the time series Incorporated
-#' time series of >= 2 are processed
-#' --------
-#' March 2009 - Ben has messed with the flags, so that more are up at the top (e.g.
-#' Bootstrap size).  Functionality of the CI_FLAG improved, introduced a PLOT_MAX value
-#' for the plotting, added commands for the zero replace flag.
-#' --------
+#' @details
+#'
+#' Version 15 - Sept 2015 - Robin Freeman
+#'  \itemize{
+#' \item Various updates, added associated plotting code (ggplot_lpi.R)
+#'  \item moved some parameters to the function call (# bootstraps)
+#'  \item Moved CalcLPI parameters into the function call and to the LPIMain function allowing them to be controlled from the function call
+#'  \item Created lpi_options.R to store overall options
+#'  \item Reorganised to now run with main options as parameters --- LPIMain(infile, etc.)
+#'  }
+#'
+#' Version 14 - July-October 2013, Robin Freeman
+#' \itemize{
+#' \item Reformatted code to improve readabilitiy
+#' \item Added comments throughout
+#' \item Reorganised some sections into new functions (ProcessFile, Bootstrap_lpi) to improve readability and to enable paralisation
+#' \item Split functions into separate files
+#' }
+#'
+#' Version 13 - update SD fixed lambda file error Version 13 update - SD
+#' deleted ylim from graph and added automatic savePlot function
+#'
+#' Version 13 - Stef has integrated minmax code at the end of
+#' the LPI code
+#'
 #' Version 12 (August 2010 - Stef changed some of the output file names: MethodFlag
 #' -> PopProcessedChain, new_results -> 01_Results, so that file is always at the top
 #' and therefore easy to find. Also changed code to output the Species lambda and
@@ -56,29 +32,15 @@
 #' lambda file is now NA. Also, additional output file (Lambda.txt) created,
 #' combining SpeciesName and SpeciesLambda and automatically inserting years
 #' according to REF_YEAR.
-#' --------
-#' Version 13 - Stef has integrated minmax code at the end of
-#' the LPI code
-#' --------
-#' Version 13 - update SD fixed lambda file error Version 13 update - SD
-#' deleted ylim from graph and added automatic savePlot function
-#' --------
-#' Version 14 - July-October 2013, Robin Freeman
 #'
-#' Reformatted code to improve readabilitiy
-#' Added comments throughout
-#' Reorganised some sections into new functions (ProcessFile, Bootstrap_lpi) to improve
-#' readability and to enable paralisation
-#' Split functions into separate files
+#' March 2009 - Ben has messed with the flags, so that more are up at the top (e.g.
+#' Bootstrap size).  Functionality of the CI_FLAG improved, introduced a PLOT_MAX value
+#' for the plotting, added commands for the zero replace flag.
 #'
-#' Version 15 - Sept 2015 - Robin Freeman
-#'  - Various updates, added associated plotting code (ggplot_lpi.R)
-#'  - moved some parameters to the function call (# bootstraps)
-#'  - Moved CalcLPI parameters into the function call and to the LPIMain function allowing them to be controlled
-#'    from the function call
-#'
-#' - Created lpi_options.R to store overall options
-#' - Reorganised to now run with a parameter --- LPIMain(infile)
+#' Before March 2009.... Version 9 R Amin Incorporated filtering of Lambda values outside a defined range
+#' Incorporated adding 1) 1 \% mean of non zero values, 2) min value of non zero
+#' values to all the values if there is a zero value in the time series Incorporated
+#' time series of >= 2 are processed
 #'
 #' # Calculate an index using the population file specified in GlobalInFile.txt, calculating confidence intervals using 100 bootstraps
 #' lpi_global <- LPIMain("GlobalInfile.txt", CI_FLAG=1, title="Global LPI", BOOT_STRAP_SIZE=100)
@@ -92,7 +54,8 @@
 #' ggplot_lpi_multi(list(lpi_global, lpi_tropical), names=c("global", "tropical"))
 #'
 #' @param infile Input file specifying the population files that should be included in the index
-#'
+#' @param REF_YEAR Reference year for index (when the index == 1). Default=1970
+#' @param PLOT_MAX The final year of the index to plot. Default=2012,
 #' @param force_recalculation Whether the population annual differences should be recalucated (they are cached for a given file). Default=0
 #' @param use_weightings Whether to use the first level of weightings ('Weightings') in the infile. Default=0
 #' @param use_weightings_B Whether to use the first level of weightings ('WeightingsB') in the infile. Default=0
@@ -115,35 +78,37 @@
 #' @param LAMBDA_MAX Minimum lambda to include in calculations. Default=-1
 #' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2
 #' @param OFFSET_ALL 1 = Add offset to all values, to avoid log(0). Default=0
-
+#' @param VERBOSE Whether to print verbose information. Default=1
 #' @return lpi - A data frame containing an LPI and CIs if calculated
 #' @export
 #'
 #'
-LPIMain <- function(infile,
-                    force_recalculation=DEFAULT_FORCE_RECALCULATION,
-                    use_weightings=DEFAULT_WEIGHTING,
-                    use_weightings_B=DEFAULT_WEIGHTING_B,
+LPIMain <- function(infile="Infile.txt",
+                    REF_YEAR = 1970,
+                    PLOT_MAX = 2012,
+                    force_recalculation=1,
+                    use_weightings=0,
+                    use_weightings_B=0,
                     title="",
-                    CI_FLAG=DEFAULT_CI_FLAG,
-                    LEV_FLAG=DEFAULT_LEV_FLAG,
-                    SWITCH_PT_FLAG=DEFAULT_SWITCH_PT_FLAG,
-                    BOOT_STRAP_SIZE=DEFAULT_BOOT_STRAP_SIZE,
-                    save_plots=DEFAULT_SAVE_PLOTS,
-                    plot_lpi=DEFAULT_PLOT_LPI,
+                    CI_FLAG=1,
+                    LEV_FLAG=0,
+                    SWITCH_PT_FLAG=0,
+                    BOOT_STRAP_SIZE=100,
+                    save_plots=1,
+                    plot_lpi=1,
                     goParallel = FALSE,
                     # CalcLPI options...
-                    MODEL_SELECTION_FLAG = DEFAULT_MODEL_SELECTION_FLAG,
-                    GAM_GLOBAL_FLAG = DEFAULT_GAM_GLOBAL_FLAG,  # 1 = process by GAM method, 0 = process by chain method
-                    DATA_LENGTH_MIN = DEFAULT_DATA_LENGTH_MIN,
-                    AVG_TIME_BETWEEN_PTS_MAX = DEFAULT_AVG_TIME_BETWEEN_PTS_MAX,
-                    GLOBAL_GAM_FLAG_SHORT_DATA_FLAG = DEFAULT_GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,  # set this if GAM model is also to be generated for the short time series else the log linear model will be used.
-                    AUTO_DIAGNOSTIC_FLAG = DEFAULT_AUTO_DIAGNOSTIC_FLAG,
-                    LAMBDA_MIN = DEFAULT_LAMBDA_MIN,
-                    LAMBDA_MAX = DEFAULT_LAMBDA_MAX,
-                    ZERO_REPLACE_FLAG = DEFAULT_ZERO_REPLACE_FLAG,  # 0 = +minimum value; 1 = +1% of mean value; 2 = +1
-                    OFFSET_ALL = DEFAULT_OFFSET_ALL # Add offset to all values, to avoid log(0)
-                    ) {
+                    MODEL_SELECTION_FLAG = 0,
+                    GAM_GLOBAL_FLAG = 1,  # 1 = process by GAM method, 0 = process by chain method
+                    DATA_LENGTH_MIN = 2,
+                    AVG_TIME_BETWEEN_PTS_MAX = 100,
+                    GLOBAL_GAM_FLAG_SHORT_DATA_FLAG = 0,  # set this if GAM model is also to be generated for the short time series else the log linear model will be used.
+                    AUTO_DIAGNOSTIC_FLAG = 1,
+                    LAMBDA_MIN = -1,
+                    LAMBDA_MAX = 1,
+                    ZERO_REPLACE_FLAG = 2,  # 0 = +minimum value; 1 = +1% of mean value; 2 = +1
+                    OFFSET_ALL = 0, # Add offset to all values, to avoid log(0)
+                    VERBOSE = TRUE) {
 
     # Start timing
     ptm <- proc.time()
@@ -270,7 +235,7 @@ LPIMain <- function(infile,
 
       FileName = paste("lpi_temp/", md5val, "_splambda.csv", sep = "")
       SpeciesLambda = read.table(FileName, header = FALSE, sep = ",")
-      debug_print(sprintf("Loading previously analysed species lambda file for '%s' from MD5 hash: %s\n", as.character(FileNames[FileNo]), FileName))
+      debug_print(VERBOSE, sprintf("Loading previously analysed species lambda file for '%s' from MD5 hash: %s\n", as.character(FileNames[FileNo]), FileName))
 
       species_names = read.table("lpi_temp/SpeciesName.txt")
 
@@ -286,7 +251,7 @@ LPIMain <- function(infile,
       #cat(length(fileindex), "\n")
       # DTemps are the mean annual differences in population for each group/file
       FileName = paste("lpi_temp/", md5val, "_dtemp.csv", sep = "")
-      debug_print(sprintf("Loading previously analysed dtemp file from MD5 hash: %s\n", FileName))
+      debug_print(VERBOSE, sprintf("Loading previously analysed dtemp file from MD5 hash: %s\n", FileName))
       #DTemp = read.table(FileName, header = F, sep = ",", col.names = FALSE)
       DTemp = read.table(FileName, header = T, sep = ",")
 

@@ -4,9 +4,11 @@
 \alias{debug_print}
 \title{Function to print if the global variable 'DEBUG' is set}
 \usage{
-debug_print(text)
+debug_print(verbose = FALSE, text)
 }
 \arguments{
+\item{verbose}{Flag to control printing}
+
 \item{text}{Text to print}
 }
 \description{
