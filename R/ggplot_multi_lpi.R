@@ -19,6 +19,8 @@ ggplot_multi_lpi <- function(lpis, names=NULL, ylims=c(0, 2), xlims=NULL, title=
 
   # plot the data
   yrbreaks = 5
+  lpi_breaks = 0.2
+
   dfs <- data.frame(years=numeric(0), lpi=numeric(0), lwr=numeric(0), upr=numeric(0), group=character(0))
 
   if (is.null(names)) {
@@ -42,7 +44,7 @@ ggplot_multi_lpi <- function(lpis, names=NULL, ylims=c(0, 2), xlims=NULL, title=
     ggplot2::scale_fill_brewer(palette=col) +
     ggplot2::scale_color_brewer(palette=col) +
     ggplot2::ylab("Index (1970 = 1)") +
-    ggplot2::scale_y_continuous(limits = ylims, trans=trans) +
+    ggplot2::scale_y_continuous(limits = ylims, trans=trans, breaks=seq(ylims[1], ylims[2], 0.2)) +
     ggplot2::scale_x_continuous(breaks=seq(xlims[1], xlims[2], yrbreaks)) +
     ggplot2::theme(legend.position="right")
 
