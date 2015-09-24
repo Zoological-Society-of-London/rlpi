@@ -17,7 +17,9 @@ ggplot_multi_lpi_3col <- function(lpis, names, title="", col="Blues") {
   # plot the data
   yrbreaks = 5
   dfs <- data.frame(years=numeric(0), lpi=numeric(0), lwr=numeric(0), upr=numeric(0), group=character(0))
-
+  if (is.null(names)) {
+    names = LETTERS[1:length(lpis)]
+  }
   for (i in 1:length(lpis)) {
     d <- cbind(lpis[[i]], group=names[i])
     df <- data.frame(years=as.numeric(as.character(rownames(d))), lpi=d$LPI_final, lwr=d$CI_low, upr=d$CI_high, group=d$group)

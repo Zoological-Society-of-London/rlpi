@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot_multi_lpi.R
 \name{ggplot_multi_lpi}
 \alias{ggplot_multi_lpi}
-\title{Title}
+\title{ggplot_multi_lpi}
 \usage{
 ggplot_multi_lpi(lpis, names, ylims = c(0, 2), xlims = NULL, title = "",
   col = "Set2", facet = FALSE)
@@ -26,6 +26,6 @@ ggplot_multi_lpi(lpis, names, ylims = c(0, 2), xlims = NULL, title = "",
 Returns the calculated plot
 }
 \description{
-Title
+ggplot_multi_lpi
 }
 
