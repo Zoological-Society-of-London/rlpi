@@ -165,12 +165,16 @@ CalcLPI <- function(Species,
 
         if (GAMFlag == 1) {
           if (MODEL_SELECTION_FLAG == 0) {
+
             SmoothParm = round(length(PopN)/2)
             if (SmoothParm >= 3) {
+              # Added this as was having trouble refering to mgcv::s in formulae
+              s <- mgcv::`s`
               model <- mgcv::gam(PopNLog ~ s(YearPop, k = SmoothParm), fx = TRUE)
               # check if the model is ok
               if (AUTO_DIAGNOSTIC_FLAG == 1) {
                 rsd <- residuals(model)
+                s <- mgcv::`s`
                 modelres <- mgcv::gam(rsd ~ s(YearPop, k = length(PopN), bs = "cs"),
                                 gamma = 1.4)
                 if ((abs(sum(modelres$edf) - 1)) < 0.01) {
@@ -206,6 +210,7 @@ CalcLPI <- function(Species,
               SmoothParm = 3  # length(PopN) if K is set to max
               if (AUTO_DIAGNOSTIC_FLAG == 1) {
                 while ((length(PopN) >= SmoothParm) & (Flag == 0)) {
+                  s <- mgcv::`s`
                   model <- mgcv::gam(PopNLog ~ s(YearPop, k = SmoothParm), fx = TRUE)
                   rsd <- residuals(model)
                   modelres <- mgcv::gam(rsd ~ s(YearPop, k = length(PopN), bs = "cs"),
@@ -222,6 +227,7 @@ CalcLPI <- function(Species,
                 }
               } else {
                 while ((length(PopN) >= SmoothParm) & (Flag == 0)) {
+                  s <- mgcv::`s`
                   model <- mgcv::gam(PopNLog ~ s(YearPop, k = SmoothParm), fx = TRUE)
                   summary(model)
                   readline(prompt = "Press any key to continue")
@@ -247,11 +253,11 @@ CalcLPI <- function(Species,
             }
           }
         }
-
         if (Flag == 0) {
 
           if (GLOBAL_GAM_FLAG_SHORT_DATA_FLAG == 1) {
             SmoothParm = length(PopN)
+            s <- mgcv::`s`
             model <- mgcv::gam(PopNLog ~ s(YearPop, k = SmoothParm), fx = TRUE)
             PopNInt <- predict(model, data.frame(YearPop = YearPopInt))
             PopNInt = exp(PopNInt)
