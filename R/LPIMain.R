@@ -89,7 +89,7 @@
 #'
 #' # Make an LPI of Palearctic birds
 #' # Default gives 100 boostraps
-#' pa_birds_lpi <- LPIMain(“palearctic_birds_infile.txt")
+#' pa_birds_lpi <- LPIMain("palearctic_birds_infile.txt")
 #'
 #' # Nicer plot
 #' ggplot_lpi(pa_birds_lpi)
