@@ -87,6 +87,14 @@
 #' file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=".")
 #' unzip("example_data.zip")
 #'
+#' # Make an LPI of Palearctic birds
+#' # Default gives 100 boostraps
+#' pa_birds_lpi <- LPIMain(“palearctic_birds_infile.txt")
+#'
+#' # Nicer plot
+#' ggplot_lpi(pa_birds_lpi)
+#'
+#'
 #' # Terrestrial LPI with equal weighting across classes and realms
 #' # Default gives 100 boostraps (this will take a few minutes to run (on a 2014 Macbook))
 #' terr_lpi <- LPIMain("terrestrial_class_realms_infile.txt")
