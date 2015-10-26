@@ -1,4 +1,7 @@
-#' CalcLPI - Main funciton for calculating species lamdbas (interannual changes). Input data is a series
+#' CalcLPI - Main funciton for calculating species lamdbas (interannual changes).
+#'
+#' @details
+#' Input data is a series
 #' of 4-value rows: (Species, ID, Year, Popvalue). This function will model the species populations over time
 #' using either the chain method (log-linear interpolation) or Generalised Additive Modelling. See GAM_GLOBAL_FLAG
 #'

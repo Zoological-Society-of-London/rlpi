@@ -2,9 +2,7 @@
 % Please edit documentation in R/CalcLPI.R
 \name{CalcLPI}
 \alias{CalcLPI}
-\title{CalcLPI - Main funciton for calculating species lamdbas (interannual changes). Input data is a series
-of 4-value rows: (Species, ID, Year, Popvalue). This function will model the species populations over time
-using either the chain method (log-linear interpolation) or Generalised Additive Modelling. See GAM_GLOBAL_FLAG}
+\title{CalcLPI - Main funciton for calculating species lamdbas (interannual changes).}
 \usage{
 CalcLPI(Species, ID, Year, Popvalue, InitialYear, FinalYear, DatasetName,
   MODEL_SELECTION_FLAG, GAM_GLOBAL_FLAG, DATA_LENGTH_MIN,
@@ -50,7 +48,10 @@ CalcLPI(Species, ID, Year, Popvalue, InitialYear, FinalYear, DatasetName,
 Returns the species lambda array for the input species
 }
 \description{
-CalcLPI - Main funciton for calculating species lamdbas (interannual changes). Input data is a series
+CalcLPI - Main funciton for calculating species lamdbas (interannual changes).
+}
+\details{
+Input data is a series
 of 4-value rows: (Species, ID, Year, Popvalue). This function will model the species populations over time
 using either the chain method (log-linear interpolation) or Generalised Additive Modelling. See GAM_GLOBAL_FLAG
 }

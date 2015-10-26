@@ -4,8 +4,8 @@
 \alias{ggplot_multi_lpi}
 \title{ggplot_multi_lpi}
 \usage{
-ggplot_multi_lpi(lpis, names, ylims = c(0, 2), xlims = NULL, title = "",
-  col = "Set2", facet = FALSE)
+ggplot_multi_lpi(lpis, names = NULL, ylims = c(0, 2), xlims = NULL,
+  title = "", col = "Set2", facet = FALSE, trans = "identity")
 }
 \arguments{
 \item{lpis}{- The list of lpis to plot}
