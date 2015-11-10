@@ -44,9 +44,11 @@ ggplot_multi_lpi <- function(lpis, names=NULL, ylims=c(0, 2), xlims=NULL, title=
     ggplot2::scale_fill_brewer(palette=col) +
     ggplot2::scale_color_brewer(palette=col) +
     ggplot2::ylab("Index (1970 = 1)") +
-    ggplot2::scale_y_continuous(limits = ylims, trans=trans, breaks=seq(ylims[1], ylims[2], 0.2)) +
+    ggplot2::scale_y_continuous(trans=trans, breaks=seq(ylims[1], ylims[2], lpi_breaks)) +
     ggplot2::scale_x_continuous(breaks=seq(xlims[1], xlims[2], yrbreaks)) +
+    ggplot2::coord_cartesian(ylim = ylims) +
     ggplot2::theme(legend.position="right")
+
 
   if (facet) {
     g <- g + ggplot2::facet_grid( ~ group)
