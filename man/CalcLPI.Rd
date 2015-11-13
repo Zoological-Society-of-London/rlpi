@@ -2,12 +2,15 @@
 % Please edit documentation in R/CalcLPI.R
 \name{CalcLPI}
 \alias{CalcLPI}
-\title{CalcLPI - Main funciton for calculating species lamdbas (interannual changes).}
+\title{CalcLPI - Main funciton for calculating species lamdbas (interannual changes). Input data is a series
+of 4-value rows: (Species, ID, Year, Popvalue). This function will model the species populations over time
+using either the chain method (log-linear interpolation) or Generalised Additive Modelling. See GAM_GLOBAL_FLAG}
 \usage{
 CalcLPI(Species, ID, Year, Popvalue, InitialYear, FinalYear, DatasetName,
   MODEL_SELECTION_FLAG, GAM_GLOBAL_FLAG, DATA_LENGTH_MIN,
   AVG_TIME_BETWEEN_PTS_MAX, GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
-  AUTO_DIAGNOSTIC_FLAG, LAMBDA_MIN, LAMBDA_MAX, ZERO_REPLACE_FLAG, OFFSET_ALL)
+  AUTO_DIAGNOSTIC_FLAG, LAMBDA_MIN, LAMBDA_MAX, ZERO_REPLACE_FLAG, OFFSET_ALL,
+  OFFSET_NONE, OFFSET_DIFF, LINEAR_MODEL_SHORT_FLAG)
 }
 \arguments{
 \item{Species}{- Vector with name of species for each population value}
@@ -40,18 +43,21 @@ CalcLPI(Species, ID, Year, Popvalue, InitialYear, FinalYear, DatasetName,
 
 \item{LAMBDA_MAX}{Minimum lambda to include in calculations. Default=-1}
 
-\item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2}
+\item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2 Only for time-series that contain 0 values}
 
-\item{OFFSET_ALL}{1 = Add offset to all values, to avoid log(0). Default=0}
+\item{OFFSET_ALL}{1 = # Add offset to all values in all time-series, to avoid log(0). Default=0}
+
+\item{LINEAR_MODEL_SHORT_FLAG}{# if=TRUE models short time-series with linear model}
+
+\item{OFFSET_NONE=FALSE}{# Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)}
+
+\item{OFFSET_DIFF=FALSE}{# Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1}
 }
 \value{
 Returns the species lambda array for the input species
 }
 \description{
-CalcLPI - Main funciton for calculating species lamdbas (interannual changes).
-}
-\details{
-Input data is a series
+CalcLPI - Main funciton for calculating species lamdbas (interannual changes). Input data is a series
 of 4-value rows: (Species, ID, Year, Popvalue). This function will model the species populations over time
 using either the chain method (log-linear interpolation) or Generalised Additive Modelling. See GAM_GLOBAL_FLAG
 }

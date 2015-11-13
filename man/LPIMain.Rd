@@ -11,8 +11,9 @@ LPIMain(infile = "Infile.txt", REF_YEAR = 1970, PLOT_MAX = 2012,
   goParallel = FALSE, MODEL_SELECTION_FLAG = 0, GAM_GLOBAL_FLAG = 1,
   DATA_LENGTH_MIN = 2, AVG_TIME_BETWEEN_PTS_MAX = 100,
   GLOBAL_GAM_FLAG_SHORT_DATA_FLAG = 0, AUTO_DIAGNOSTIC_FLAG = 1,
-  LAMBDA_MIN = -1, LAMBDA_MAX = 1, ZERO_REPLACE_FLAG = 2,
-  OFFSET_ALL = 0, VERBOSE = TRUE)
+  LAMBDA_MIN = -1, LAMBDA_MAX = 1, ZERO_REPLACE_FLAG = 1,
+  OFFSET_ALL = 0, OFFSET_NONE = FALSE, OFFSET_DIFF = FALSE,
+  LINEAR_MODEL_SHORT_FLAG = FALSE, VERBOSE = TRUE)
 }
 \arguments{
 \item{infile}{Input file specifying the population files that should be included in the index}
@@ -59,9 +60,15 @@ LPIMain(infile = "Infile.txt", REF_YEAR = 1970, PLOT_MAX = 2012,
 
 \item{LAMBDA_MAX}{Minimum lambda to include in calculations. Default=-1}
 
-\item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2}
+\item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=1}
 
 \item{OFFSET_ALL}{1 = Add offset to all values, to avoid log(0). Default=0}
+
+\item{OFFSET_NONE}{}
+
+\item{OFFSET_DIFF}{}
+
+\item{LINEAR_MODEL_SHORT_FLAG}{}
 
 \item{VERBOSE}{Whether to print verbose information. Default=1}
 }

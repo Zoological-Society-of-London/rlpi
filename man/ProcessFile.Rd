@@ -6,7 +6,8 @@
 \usage{
 ProcessFile(DatasetName, ref_year, MODEL_SELECTION_FLAG, GAM_GLOBAL_FLAG,
   DATA_LENGTH_MIN, AVG_TIME_BETWEEN_PTS_MAX, GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
-  AUTO_DIAGNOSTIC_FLAG, LAMBDA_MIN, LAMBDA_MAX, ZERO_REPLACE_FLAG, OFFSET_ALL)
+  AUTO_DIAGNOSTIC_FLAG, LAMBDA_MIN, LAMBDA_MAX, ZERO_REPLACE_FLAG, OFFSET_ALL,
+  OFFSET_NONE, OFFSET_DIFF, LINEAR_MODEL_SHORT_FLAG)
 }
 \arguments{
 \item{DatasetName}{- The name of the dataset to process}
@@ -29,9 +30,15 @@ ProcessFile(DatasetName, ref_year, MODEL_SELECTION_FLAG, GAM_GLOBAL_FLAG,
 
 \item{LAMBDA_MAX}{Minimum lambda to include in calculations. Default=-1}
 
-\item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2}
+\item{ZERO_REPLACE_FLAG}{0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=1}
 
 \item{OFFSET_ALL}{1 = Add offset to all values, to avoid log(0). Default=0}
+
+\item{LINEAR_MODEL_SHORT_FLAG}{# if=TRUE models short time-series with linear model}
+
+\item{OFFSET_NONE=FALSE}{# Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)}
+
+\item{OFFSET_DIFF=FALSE}{# Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1}
 }
 \value{
 Return length of lamda array (number of lamda values?) - results are saved to file
