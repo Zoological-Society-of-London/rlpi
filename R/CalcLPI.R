@@ -1,7 +1,4 @@
-#' CalcLPI - Main funciton for calculating species lamdbas (interannual changes).
-#'
-#' @details
-#' Input data is a series
+#' CalcLPI - Main funciton for calculating species lamdbas (interannual changes). Input data is a series
 #' of 4-value rows: (Species, ID, Year, Popvalue). This function will model the species populations over time
 #' using either the chain method (log-linear interpolation) or Generalised Additive Modelling. See GAM_GLOBAL_FLAG
 #'
@@ -21,9 +18,11 @@
 #' @param AUTO_DIAGNOSTIC_FLAG 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
 #' @param LAMBDA_MIN Minimum lambda to include in calculations. Default=1
 #' @param LAMBDA_MAX Minimum lambda to include in calculations. Default=-1
-#' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2
-#' @param OFFSET_ALL 1 = Add offset to all values, to avoid log(0). Default=0
-#'
+#' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2 Only for time-series that contain 0 values
+#' @param OFFSET_ALL 1 = # Add offset to all values in all time-series, to avoid log(0). Default=0
+#' @param OFFSET_NONE=FALSE # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
+#' @param OFFSET_DIFF=FALSE # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
+#' @param LINEAR_MODEL_SHORT_FLAG # if=TRUE models short time-series with linear model
 #' @return Returns the species lambda array for the input species
 #' @export
 #'
@@ -34,16 +33,19 @@ CalcLPI <- function(Species,
                     InitialYear,
                     FinalYear,
                     DatasetName,
-                    MODEL_SELECTION_FLAG,
+                    MODEL_SELECTION_FLAG, # determines whether we approve the models or the code does it automatically
                     GAM_GLOBAL_FLAG,  # 1 = process by GAM method, 0 = process by chain method
                     DATA_LENGTH_MIN,
                     AVG_TIME_BETWEEN_PTS_MAX,
                     GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,  # set this if GAM model is also to be generated for the short time series else the log linear model will be used.
-                    AUTO_DIAGNOSTIC_FLAG,
+                    AUTO_DIAGNOSTIC_FLAG, # is about how the smoothing parameter is chosen
                     LAMBDA_MIN,
                     LAMBDA_MAX,
                     ZERO_REPLACE_FLAG,  # 0 = +minimum value; 1 = +1% of mean value; 2 = +1
-                    OFFSET_ALL # Add offset to all values, to avoid log(0)
+                    OFFSET_ALL,  # Add offset to all values, to avoid log(0)
+                    OFFSET_NONE, # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
+                    OFFSET_DIFF, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
+                    LINEAR_MODEL_SHORT_FLAG # if=TRUE models short time-series with linear model
 ) {
   noRecs = max(dim(Popvalue))
   sNames = unique(Species)
@@ -67,6 +69,7 @@ CalcLPI <- function(Species,
 
   prog <- txtProgressBar(min=0, max=noSpecies, char="*", style=3)
 
+# Here a file is created that includes the list of populations processed by chain
   MethodFlagLoop = 0
   for (I in 1:noSpecies) {
     #cat(".")
@@ -96,7 +99,7 @@ CalcLPI <- function(Species,
       YearPop = Year[IndexPop, 1]
       PopN = Popvalue[IndexPop, 1]
 
-      # Perform the data filtering
+      # Perform the data filtering (exclude time-series with two data points and more than 100 years between two points)
       DataTimeLength = max(YearPop) - min(YearPop)
       AvgTimeBetweenPts = DataTimeLength/length(PopN)
       # Apply data filter based on a series of criteria
@@ -105,6 +108,30 @@ CalcLPI <- function(Species,
         if (OFFSET_ALL) {
           cat(sprintf("Offsetting all time-series by 1 to avoid log(0)\n"))
           PopN <- PopN + 1
+        } else if (OFFSET_NONE){
+          # do nothing
+          PopN <- PopN
+        } else if (OFFSET_DIFF){
+          # Offset different pops differentially
+          IndexZero = which(PopN == 0)
+          # Check if this pop has 0 values
+          if (length(IndexZero) > 0) {
+            if (mean(PopN) == 0) {
+              OffsetVal = 1e-17
+            } else {
+              # If the maximum value of the population is more than to 1
+              if (max(PopN) >= 1) {
+                # Add 1
+                PopN = PopN + 1
+                
+              } else {
+                # Otherwise add 1% of the mean
+                IndexNonZero = which(PopN != 0)
+                OffsetVal = mean(PopN[IndexNonZero]) * 0.01
+                PopN = PopN + OffsetVal
+              }
+            }
+          }
         } else {
           # Replace zero values with 1 percent of average values
           IndexZero = which(PopN == 0)
@@ -169,7 +196,9 @@ CalcLPI <- function(Species,
         if (GAMFlag == 1) {
           if (MODEL_SELECTION_FLAG == 0) {
 
+            # Estimate the smoothing parameter to be half the population length
             SmoothParm = round(length(PopN)/2)
+            # If this is 3 or more (The population is therefore 6+ datapoints)
             if (SmoothParm >= 3) {
               # Added this as was having trouble refering to mgcv::s in formulae
               s <- mgcv::`s`
@@ -256,8 +285,11 @@ CalcLPI <- function(Species,
             }
           }
         }
+        # IF we get to here and the Flag is still 0, then no GAM has been made - either 
+        # the population is to short (<6) or the gam has failed the quality check
         if (Flag == 0) {
 
+          # If this is true then try to GAM the short pops too
           if (GLOBAL_GAM_FLAG_SHORT_DATA_FLAG == 1) {
             SmoothParm = length(PopN)
             s <- mgcv::`s`
@@ -267,37 +299,54 @@ CalcLPI <- function(Species,
             PopProcessedGAMCounter = PopProcessedGAMCounter + 1
             PopProcessedGAM[PopProcessedGAMCounter] = PopID[J]
           } else {
-            # Apply the default approach
-            MethodFlagLoop = MethodFlagLoop + 1
-            MethodFlag[MethodFlagLoop] = PopID[J]
-            PopNInt = matrix(-1, 1, length(YearPopInt))
-
-            for (K in 1:length(YearPopInt)) {
-              k = which(YearPop == YearPopInt[K])
-              if (length(k) > 0) {
-                PopNInt[K] = PopN[k]
+            if (LINEAR_MODEL_SHORT_FLAG == TRUE) {
+              MethodFlagLoop = MethodFlagLoop + 1
+              MethodFlag[MethodFlagLoop] = PopID[J]
+              model <- lm(PopNLog ~ YearPop)
+              r2 <- summary(model)$r.squared
+              LM_R2_THRESH = 0.0
+              if (r2 > LM_R2_THRESH) {
+                PopNInt <- predict(model, data.frame(YearPop = YearPopInt))
+                PopNInt = exp(PopNInt)
               } else {
-                # find the previous value
-                YearStart = YearPopInt[K]
-                YearStart = YearStart - 1
-                k = which(YearPop == YearStart)
-                while (length(k) == 0) {
+                PopNotProcessedCounter = PopNotProcessedCounter + 1
+                PopNotProcessed[PopNotProcessedCounter] = PopID[J]
+                cat("R squared less than", LM_R2_THRESH, "\n")
+                next
+              }
+            } else {
+              # Apply the default approach (Chain)
+              MethodFlagLoop = MethodFlagLoop + 1
+              MethodFlag[MethodFlagLoop] = PopID[J]
+              PopNInt = matrix(-1, 1, length(YearPopInt))
+  
+              for (K in 1:length(YearPopInt)) {
+                k = which(YearPop == YearPopInt[K])
+                if (length(k) > 0) {
+                  PopNInt[K] = PopN[k]
+                } else {
+                  # find the previous value
+                  YearStart = YearPopInt[K]
                   YearStart = YearStart - 1
                   k = which(YearPop == YearStart)
-                }
-                PopNStart = PopN[k]
-                # find the next value
-                YearEnd = YearPopInt[K]
-                YearEnd = YearEnd + 1
-                k = which(YearPop == YearEnd)
-                while (length(k) == 0) {
+                  while (length(k) == 0) {
+                    YearStart = YearStart - 1
+                    k = which(YearPop == YearStart)
+                  }
+                  PopNStart = PopN[k]
+                  # find the next value
+                  YearEnd = YearPopInt[K]
                   YearEnd = YearEnd + 1
                   k = which(YearPop == YearEnd)
+                  while (length(k) == 0) {
+                    YearEnd = YearEnd + 1
+                    k = which(YearPop == YearEnd)
+                  }
+                  PopNEnd = PopN[k]
+                  # Calculate the interpolated value
+                  PopNInt[K] = PopNStart * ((PopNEnd/PopNStart)^((YearPopInt[K] -
+                                                                    YearStart)/(YearEnd - YearStart)))
                 }
-                PopNEnd = PopN[k]
-                # Calculate the interpolated value
-                PopNInt[K] = PopNStart * ((PopNEnd/PopNStart)^((YearPopInt[K] -
-                                                                  YearStart)/(YearEnd - YearStart)))
               }
             }
           }
@@ -395,7 +444,11 @@ CalcLPI <- function(Species,
   PopNotProcessed1 = PopNotProcessed[1, 1:PopNotProcessedCounter]
   write.table(PopNotProcessed1, file = "lpi_temp/PopNotProcessed.txt")  # insert your desired file name here
   MethodFlag1 = MethodFlag[1, 1:MethodFlagLoop]
-  write.table(MethodFlag1, file = "lpi_temp/PopProcessedChain.txt")  # insert your desired file name here
+  if (LINEAR_MODEL_SHORT_FLAG == 1) {
+    write.table(MethodFlag1, file = "lpi_temp/PopProcessed_LM.txt")  # insert your desired file name here                  
+  } else {
+    write.table(MethodFlag1, file = "lpi_temp/PopProcessed_Chain.txt")  # insert your desired file name here
+  }
   PopProcessedGAM1 = PopProcessedGAM[1, 1:PopProcessedGAMCounter]
   write.table(PopProcessedGAM1, file = "lpi_temp/PopProcessedGAM.txt")  # insert your desired file name here
   sNamesArray1 = sNamesArray[1:sNamesCounter, 1]

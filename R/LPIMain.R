@@ -76,8 +76,11 @@
 #' @param AUTO_DIAGNOSTIC_FLAG 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
 #' @param LAMBDA_MIN Minimum lambda to include in calculations. Default=1
 #' @param LAMBDA_MAX Minimum lambda to include in calculations. Default=-1
-#' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=2
+#' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=1
 #' @param OFFSET_ALL 1 = Add offset to all values, to avoid log(0). Default=0
+#' @param OFFSET_NONE
+#' @param OFFSET_DIFF
+#' @param LINEAR_MODEL_SHORT_FLAG
 #' @param VERBOSE Whether to print verbose information. Default=1
 #' @return lpi - A data frame containing an LPI and CIs if calculated
 #' @examples
@@ -86,14 +89,6 @@
 #' # Copy zipped data to local directory
 #' file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=".")
 #' unzip("example_data.zip")
-#'
-#' # Make an LPI of Palearctic birds
-#' # Default gives 100 boostraps
-#' pa_birds_lpi <- LPIMain("palearctic_birds_infile.txt")
-#'
-#' # Nicer plot
-#' ggplot_lpi(pa_birds_lpi)
-#'
 #'
 #' # Terrestrial LPI with equal weighting across classes and realms
 #' # Default gives 100 boostraps (this will take a few minutes to run (on a 2014 Macbook))
@@ -142,8 +137,11 @@ LPIMain <- function(infile="Infile.txt",
                     AUTO_DIAGNOSTIC_FLAG = 1,
                     LAMBDA_MIN = -1,
                     LAMBDA_MAX = 1,
-                    ZERO_REPLACE_FLAG = 2,  # 0 = +minimum value; 1 = +1% of mean value; 2 = +1
+                    ZERO_REPLACE_FLAG = 1,  # 0 = +minimum value; 1 = +1% of mean value; 2 = +1
                     OFFSET_ALL = 0, # Add offset to all values, to avoid log(0)
+                    OFFSET_NONE = FALSE, # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
+                    OFFSET_DIFF = FALSE, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
+                    LINEAR_MODEL_SHORT_FLAG = FALSE, # if=TRUE models short time-series with linear model
                     VERBOSE = TRUE) {
 
     # Start timing
@@ -234,7 +232,10 @@ LPIMain <- function(infile="Infile.txt",
                     LAMBDA_MIN,
                     LAMBDA_MAX,
                     ZERO_REPLACE_FLAG,
-                    OFFSET_ALL)
+                    OFFSET_ALL,
+                    OFFSET_NONE,
+                    OFFSET_DIFF,
+                    LINEAR_MODEL_SHORT_FLAG)
         #cat("done processing file: ", toString(FileNames[FileNo]))
       }
       #sink()
