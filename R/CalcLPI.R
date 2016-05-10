@@ -45,7 +45,8 @@ CalcLPI <- function(Species,
                     OFFSET_ALL,  # Add offset to all values, to avoid log(0)
                     OFFSET_NONE, # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
                     OFFSET_DIFF, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
-                    LINEAR_MODEL_SHORT_FLAG # if=TRUE models short time-series with linear model
+                    LINEAR_MODEL_SHORT_FLAG, # if=TRUE models short time-series with linear model
+                    CAP_LAMBDAS = FALSE
 ) {
   noRecs = max(dim(Popvalue))
   sNames = unique(Species)
@@ -90,7 +91,7 @@ CalcLPI <- function(Species,
       rm(PopLambda)
 
     PopIDSize = length(PopID)
-    # Blank matrix of -1s
+    # Blank matrix of -1s - default value of poplambd
     PopLambda = matrix(-1, PopIDSize, FinalYear - InitialYear + 1)
     JIndex = 1
     # For each population of this species
@@ -409,24 +410,44 @@ CalcLPI <- function(Species,
     for (K in 1:EndYear) {
       k = which(PopLambda[, K] != -1)
       if (length(k) > 0) {
-        # Exclude Lambda values outside range
+        # Only get those lambdas that are not '-1'
         PopLambdaTemp = PopLambda[k, K]
+        # Fine which of these are less than our max
         IndexTemp = which(PopLambdaTemp < LAMBDA_MAX)
-        # Make sure lambda values below the max
+        IndexTempBad_max = which(PopLambdaTemp > LAMBDA_MAX)
+        # If we have some...
         if (length(IndexTemp) > 0) {
           # Extract them as PopLambdaTemp1
           PopLambdaTemp1 = PopLambdaTemp[IndexTemp]
+          # Get those values that are also more then our min
           IndexTemp = which(PopLambdaTemp1 > LAMBDA_MIN)
-          # And above the min
-          if (length(IndexTemp) > 0)
-            # Then set them
-            SpeciesLambda[I, K] = mean(PopLambdaTemp1[IndexTemp]) else SpeciesLambda[I, K] = NA
+          IndexTempBad_min = which(PopLambdaTemp1 < LAMBDA_MIN)
+          # If there are some...
+          if (length(IndexTemp) > 0) {
+            # Then set species lambda to be their average...
+            if (CAP_LAMBDAS) {
+              SpeciesLambda[I, K] = mean(c(PopLambdaTemp1[IndexTemp], rep(LAMBDA_MAX, length(IndexTempBad_max)), rep(LAMBDA_MIN, length(IndexTempBad_min)))) 
+            } else {
+              SpeciesLambda[I, K] = mean(PopLambdaTemp1[IndexTemp]) 
+            }
+          } else {
+            # Otherwise, if we have lambdas less than our max, but not more then min, set sp. av. to be NA
+            if (CAP_LAMBDAS) {
+              SpeciesLambda[I, K] = LAMBDA_MIN
+            } else {
+              SpeciesLambda[I, K] = NA
+            }
+          }
         } else {
-          # Otherwise, set values below the min to be NA
-          SpeciesLambda[I, K] = NA
+          # Otherwise, if we have no lambdas less than our max, set sp. av. to be NA
+          if (CAP_LAMBDAS) {
+            SpeciesLambda[I, K] = LAMBDA_MAX
+          } else {
+            SpeciesLambda[I, K] = NA
+          }
         }
       } else {
-        # And values above the max to be NA
+        # If all values are '-1' then set species lambda to be NA
         SpeciesLambda[I, K] = NA
       }
     }

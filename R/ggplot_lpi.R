@@ -7,14 +7,15 @@
 #' @param ylims - ylim of plot
 #' @param xlims - xlim of plot
 #' @param trans - The y-axis transformation, default is 'identitiy', but could be 'log'
+#' @param yrbreaks - The spacing between x-axis tick marks
+#' @param lpi_breaks - The spacing between y-axis tick marks
 #'
 #' @return Returns the calculated plot
 #' @export
 #'
-ggplot_lpi <- function(d, col="darkblue", line_col="white", title="", ylims=c(0, 2.0), xlims=NULL, trans="identity") {
-  # plot the data
-  yrbreaks = 5
-  lpi_breaks = 0.2
+ggplot_lpi <- function(d, col="darkblue", line_col="white", title="",
+                       ylims=c(0, 2.0), xlims=NULL, trans="identity",
+                       yrbreaks = 5, lpi_breaks = 0.2) {
 
   df <- data.frame(years=as.numeric(as.character(rownames(d))), lpi=d$LPI_final, lwr=d$CI_low, upr=d$CI_high)
   if (is.null(xlims)) {
@@ -33,6 +34,5 @@ ggplot_lpi <- function(d, col="darkblue", line_col="white", title="", ylims=c(0,
   g <- g + ggplot2::ylab("Index (1970 = 1)")
   g <- g + ggplot2::scale_y_continuous(trans=trans, breaks = seq(ylims[1], ylims[2], lpi_breaks))
   g <- g + ggplot2::scale_x_continuous(breaks = seq(xlims[1], xlims[2], yrbreaks))
-  g <- g + ggplot2::coord_cartesian(ylim = ylims)
   print(g)
 }
