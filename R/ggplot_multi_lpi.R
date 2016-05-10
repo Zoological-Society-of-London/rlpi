@@ -7,19 +7,22 @@
 #' @param title - the title of the plots (same for all)
 #' @param col - the RColorBrewer Set to use. Default is "Set2"
 #' @param facet - Whether or not to 'facet' the plot (or overlay)
+#' @param yrbreaks - The spacing between x-axis tick marks
+#' @param lpi_breaks - The spacing between y-axis tick marks
 #'
 #' @return Returns the calculated plot
 #' @export
 #'
-ggplot_multi_lpi <- function(lpis, names=NULL, ylims=c(0, 2), xlims=NULL, title="", col="Set2", facet=FALSE, trans="identity") {
+ggplot_multi_lpi <- function(lpis, names=NULL,
+                             ylims=c(0, 2), xlims=NULL,
+                             title="", col="Set2",
+                             facet=FALSE, trans="identity",
+                             yrbreaks = 5,
+                             lpi_breaks = 0.2) {
 
   # Bit of a hack to avoid NOTE during R CMD check
   # Sets the variables used in ggplot2::aes to NULL
   years <- lpi <- group <- lwr <- upr <- NULL
-
-  # plot the data
-  yrbreaks = 5
-  lpi_breaks = 0.2
 
   dfs <- data.frame(years=numeric(0), lpi=numeric(0), lwr=numeric(0), upr=numeric(0), group=character(0))
 
@@ -46,7 +49,6 @@ ggplot_multi_lpi <- function(lpis, names=NULL, ylims=c(0, 2), xlims=NULL, title=
     ggplot2::ylab("Index (1970 = 1)") +
     ggplot2::scale_y_continuous(trans=trans, breaks=seq(ylims[1], ylims[2], lpi_breaks)) +
     ggplot2::scale_x_continuous(breaks=seq(xlims[1], xlims[2], yrbreaks)) +
-    ggplot2::coord_cartesian(ylim = ylims) +
     ggplot2::theme(legend.position="right")
 
 
