@@ -1,0 +1,3 @@
+"FileName"	"Group"	"Weighting"
+"EuropeNatural.txt"	1	1
+
