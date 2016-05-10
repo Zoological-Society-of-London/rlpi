@@ -1,0 +1,3 @@
+"FileName"	"Group"	"Weighting"
+"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Aves.txt"	1	0.264985380116959
+
