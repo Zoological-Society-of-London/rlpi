@@ -5,7 +5,8 @@
 \title{Plots an index using ggplot (dataframe containing LPI_final, CI_low, CI_high)}
 \usage{
 ggplot_lpi(d, col = "darkblue", line_col = "white", title = "",
-  ylims = c(0, 2), xlims = NULL, trans = "identity")
+  ylims = c(0, 2), xlims = NULL, trans = "identity", yrbreaks = 5,
+  lpi_breaks = 0.2)
 }
 \arguments{
 \item{d}{- the dataframe containing colnames(LPI_final, CI_low, CI_high)}
@@ -21,6 +22,10 @@ ggplot_lpi(d, col = "darkblue", line_col = "white", title = "",
 \item{xlims}{- xlim of plot}
 
 \item{trans}{- The y-axis transformation, default is 'identitiy', but could be 'log'}
+
+\item{yrbreaks}{- The spacing between x-axis tick marks}
+
+\item{lpi_breaks}{- The spacing between y-axis tick marks}
 }
 \value{
 Returns the calculated plot

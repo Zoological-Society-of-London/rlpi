@@ -5,7 +5,8 @@
 \title{ggplot_multi_lpi}
 \usage{
 ggplot_multi_lpi(lpis, names = NULL, ylims = c(0, 2), xlims = NULL,
-  title = "", col = "Set2", facet = FALSE, trans = "identity")
+  title = "", col = "Set2", facet = FALSE, trans = "identity",
+  yrbreaks = 5, lpi_breaks = 0.2)
 }
 \arguments{
 \item{lpis}{- The list of lpis to plot}
@@ -21,6 +22,10 @@ ggplot_multi_lpi(lpis, names = NULL, ylims = c(0, 2), xlims = NULL,
 \item{col}{- the RColorBrewer Set to use. Default is "Set2"}
 
 \item{facet}{- Whether or not to 'facet' the plot (or overlay)}
+
+\item{yrbreaks}{- The spacing between x-axis tick marks}
+
+\item{lpi_breaks}{- The spacing between y-axis tick marks}
 }
 \value{
 Returns the calculated plot
