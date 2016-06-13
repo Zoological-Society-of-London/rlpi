@@ -171,14 +171,20 @@ LPIMain <- function(infile="Infile.txt",
     if (use_weightings == 1) {
       WeightingsA = FileTable[3]
 
-      # Make sure group weightings normalise
-      for (i in 1:length(GroupList)) {
-        Weightings[Group == GroupList[i]] = Weightings[Group == GroupList[i]]/sum(Weightings[Group == GroupList[i]])
-      }
-
       #Weightings = Weightings/sum(Weightings)
       cat(sprintf("Weightings...\n"))
-      print(Weightings)
+
+      # Make sure group weightings normalise
+      for (i in 1:length(GroupList)) {
+        print(paste("Group:", GroupList[i]))
+        cat("\t")
+        print(Weightings[Group == GroupList[i]])
+        cat("\t")
+        print("Normalised weights (sum to 1)")
+        Weightings[Group == GroupList[i]] = Weightings[Group == GroupList[i]]/sum(Weightings[Group == GroupList[i]])
+        cat("\t")
+        print(Weightings[Group == GroupList[i]])
+      }
       cat("\n")
     }
 
