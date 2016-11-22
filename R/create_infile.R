@@ -6,13 +6,13 @@
 #' @return Returns a data frame with (Binomial, ID, year, popvalue) columns
 #' @export
 #'
-convert_to_rows <- function(in_data) {
+convert_to_rows <- function(in_data, start_col_name="X1950", end_col_name="X2015") {
   #Binomial  ID  year  popvalue
   all_data <- data.frame(Binomial = character(0), ID = numeric(0), year = numeric(0), popvalue=numeric(0))
   # In input data, each population is a row, with a series of population sizes
 
-  pop_data_col_start <- which(colnames(in_data)=="X1950")
-  pop_data_col_end <- which(colnames(in_data) == "Managed") - 1
+  pop_data_col_start <- which(colnames(in_data)==start_col_name)
+  pop_data_col_end <- which(colnames(in_data) == end_col_name)
 
   # Get names of all years (getting rid of X at beginning)
   dimnames_years <- dimnames(in_data[1, pop_data_col_start:pop_data_col_end])[[2]]
@@ -49,10 +49,10 @@ convert_to_rows <- function(in_data) {
 #' @return Returns the name of the created infile
 #' @export
 #'
-create_infile <- function(pop_data_source, index_vector=TRUE, name="default_infile", CUT_OFF_YEAR = 1950) {
+create_infile <- function(pop_data_source, index_vector=TRUE, name="default_infile", start_col_name="X1950", end_col_name="X2015", CUT_OFF_YEAR = 1950) {
   # If no index vector is suppled, it will just use all the pop_data_source data
   pop_data <- pop_data_source[index_vector, ]
-  all_data <- convert_to_rows(pop_data)
+  all_data <- convert_to_rows(pop_data, start_col_name, end_col_name)
   non_null_all_data = all_data[!is.na(all_data$pop), ]
   clean_data = non_null_all_data[non_null_all_data$year >= CUT_OFF_YEAR, ]
   filename <- paste(name, "_pops.txt", sep="")
