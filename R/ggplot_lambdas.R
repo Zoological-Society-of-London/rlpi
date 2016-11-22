@@ -76,6 +76,5 @@ ggplot_lambdas <- function(lambda_values, col="red", line_col="blue", title="",
           legend.position=c(1,0),
           axis.text.x = element_text(size=12, angle = 90, hjust = 1),
           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank())
-  print(plot)
   return(plot)
 }

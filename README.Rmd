@@ -35,10 +35,14 @@ library(devtools)
 
 # Install from main ZSL repository online
 install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20")
+```
+
+```{r load_rlpi, eval=T}
 # Load library
 library(rlpi)
+```
 
-
+```{r rlpi_data, eval=FALSE}
 # Get example data from package
 # Copy zipped data to local directory 
 file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=getwd())
@@ -147,39 +151,47 @@ ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012), names=c("Unweighted", "Weighted
 The code also provides a means to create infiles from tabular population data. For example, the Living Planet Database can be constructed so that each row represents a population, with columns for each abundance year. NB: The **create_infile** method expects particular columns that define where the abundance data resides, it uses the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. This reflects the format used in the Living Planet Database, and in the example data provided here **XXXX**.
 
 
-```{r making_infiles, eval=FALSE}
+```{r making_infiles, eval=T}
 # Constructing infiles from a populations table...
 
-# First read the population table 
-lpi_data <- read.csv("example_pops.csv", na.strings = "NULL")
+# First read the population table (this is the Living Planet Database excluding confidential records)
+lpi_data <- read.csv("inst/extdata/example_data/LPI_LPR2016data_public.csv", na.strings = "NULL")
 
 # Create an inifle from all the data. All the population data in the 'lpi_data' table will be converted and stored in a file called 'example_data_pops.txt' and a file called 'example_data_infile.txt' will be created that references the first file (the infile name will also be stored in the returned variable 'example_infile_name')
-example_infile_name <- create_infile(lpi_data, name="example_data")
+
+# Here we select the first 100 populations by creating an index vector that's FALSE for all rows, then setting the first 100 rows to TRUE
+index_vector = rep(FALSE, nrow(lpi_data))
+index_vector[1:100] = TRUE
+
+example_infile_name <- create_infile(lpi_data, index_vector=index_vector, name="example_data")
 # An index can be created using this infile, for the period 1970 to 2014 with 100 bootstraps.
 example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+
 # Plot the resulting index
-ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0.5, 2), trans="log")
+ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0, 2))
+# Plot the resulting index with logged y-axis (note the use of a +ive ymin)
+ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0.3, 2), trans="log")
 
 # Here we limit the data to 'Strigiformes' simply by creating a boolean  (true/false) vector which is true for populations (rows) where the Order is "Strigiformes"
 Strigiformes = lpi_data$Order == "Strigiformes" 
 
 # Psssing this vector into the create_infile function will select just those populations and create an infile for them
-s_infile_name <- create_infile(lpi_data, index_vector=Strigiformes, name="example_data")
+s_infile_name <- create_infile(lpi_data, index_vector=Strigiformes, name="example_data_strig")
 # Again, create and index
 s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
 # And plot
-ggplot_lpi(s_lpi, title = "s_lpi", xlims=c(1970, 2012), ylim=c(0.5, 2), trans="log")
+ggplot_lpi(s_lpi, title = "s_lpi", xlims=c(1970, 2012))
 
 # Similarly, this will create an index just for those populations of the Order 'Passeriformes'
 Passeriformes = lpi_data$Order == "Passeriformes" 
-p_infile_name <- create_infile(lpi_data, index_vector=Passeriformes, name="example_data")
+p_infile_name <- create_infile(lpi_data, index_vector=Passeriformes, name="example_data_pass")
 p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
-ggplot_lpi(p_lpi, title = "p_lpi", xlims=c(1970, 2012), ylim=c(0.5, 2), trans="log")
+ggplot_lpi(p_lpi, title = "p_lpi", xlims=c(1970, 2012))
 ```
 
 It is also possible to plot annual lambdas which can be useful for exploring the interannual variability in the population data. Here we use one of the files that is created during the index calculation process above (usually called <NAME>_PopLambda.txt). This file contains the population level lambdas (the rate of change for each year, for each population).
 
-```{r lambda_plots, eval=FALSE}
+```{r lambda_plots, eval=T}
 
 # Read in population level lambdas (_PopLambda.txt)
 #** NOTE that na.strings is "-1" here to convert '-1's to NA values
@@ -194,7 +206,7 @@ ggplot_lambdas(pop_lambda_values, baseline=1, ylims=c(0.8, 1.2), xlims=c(1970, 2
 
 Similarly for species level lambdas (species level annual rates of change) using the <NAME>_lambda.txt file creating during the index calculations.
 
-```{r species_lambda_plots, eval=FALSE}
+```{r species_lambda_plots, eval=T}
 #
 # Species level lambdas (_lambda.txt) 
 #** NOTE that na.strings is "-1" here to convert '-1's to NA values
