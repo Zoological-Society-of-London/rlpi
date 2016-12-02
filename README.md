@@ -12,18 +12,15 @@ The **rlpi** package calculates indices using the Living Planet Index methodolog
 
 In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, before being combined to an index for the biogeograhic realm
 
-The **rlpi** package works with source data in comma seperated format where each row is composed 
+The **rlpi** package works with source data in comma separated (csv) format where each row is composed 
 of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropic bird populations, one for Afrotropical mammal populations, etc), and an 'infile' tells the package where these groups/files are and how to combine them. 
 
-When constructing an index for just a single group, you would need a single data file and a single
-infile which points to that data file (see first example below). For multiple groups, the infile would refer to all relevant datafiles and can specify weightings (to allow for weighting by taxonomic, geographical , etc).
+When constructing an index for just a single group, you need a single data file and a single
+infile which points to that data file (see first example below). For multiple groups, the infile would refer to all relevant data files and can specify weightings to allow for taxonomic, geographic or other weighting.
 
-The example given below includes an example dataset for terrestrial vertebrates
-with a complex infile with multiple weighted groups and a simple infile for Nearctic mammals
+The code below includes an example dataset for terrestrial vertebrates with a complex infile with multiple weighted groups, as well as a simple infile for Nearctic mammals.
 
-NB: At present the code combines population time-series to the species level, generating
-an average index for each species, then combines these into higher groups. If you don't wish
-to combine to the species level (to generate an index where populations are weighted equally rather then species), then the 'speciesname' column will need to be unique for each population (which can be achieved, for example, by concatenating the speciesname and popid columns)
+NB: At present the code combines population time-series to the species level, generating an average index for each species, then combines these into higher groups.
 
 ### Installing the package and examples
 
@@ -39,15 +36,8 @@ Then install the **rlpi** package from our github:
 
 ```r
 library(devtools)
-```
-
-```
-## Warning: package 'devtools' was built under R version 3.2.5
-```
-
-```r
 # Install from main ZSL repository online
-install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20")
+install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20", dependencies=TRUE)
 ```
 
 ```
@@ -62,13 +52,17 @@ install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0b
 ```
 ## '/Library/Frameworks/R.framework/Resources/bin/R' --no-site-file  \
 ##   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
-##   '/private/var/folders/w6/_grgw1n52vqgn5l480q1s_m5hs9z1z/T/RtmpKl29d3/devtools1414551501d0/Zoological-Society-of-London-rlpi-2f0ea62c8617def0a43a0f33f250f681915d1851'  \
+##   '/private/var/folders/w6/_grgw1n52vqgn5l480q1s_m5hs9z1z/T/RtmpdAtoKR/devtools4073223342f5/Zoological-Society-of-London-rlpi-8fee3aba2456018f4d6882ef28b95b7a9af6a510'  \
 ##   --library='/Library/Frameworks/R.framework/Versions/3.2/Resources/library'  \
 ##   --install-tests
 ```
 
 ```
 ## 
+```
+
+```
+## Reloading installed rlpi
 ```
 
 Then the library can be loaded as normal
@@ -92,7 +86,7 @@ unzip("example_data.zip")
 
 ## Example data
 
-Within the example data are a number of 'infiles', these files (take a look at them!) contain links to other files arranged into groups and including weightings. 
+Within the example data are a number of 'infiles'. These files (take a look at them!) contain links to other files arranged into groups and include weightings. 
 
 For example **terrestrial_class_nearctic_infile.txt** which constructs an index for a single group contains:
 
@@ -101,7 +95,7 @@ For example **terrestrial_class_nearctic_infile.txt** which constructs an index 
 "class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt"	1	0.175804093567251
 ```
 
-For now, ignore the 'group' and 'weighting' columns as this is a single group. This references a single 'population' data file (the raw data) in the **class_realms** folder which in this case contains population counts for Neartic mammals (again, have a a look), in the following format:
+For now, ignore the 'group' and 'weighting' columns as they are not used for a single group. This infile references a single 'population' data file (the raw data) in the class_realms folder which, in this case, contains population counts for Nearctic mammals (again, have a look) in the following format:
 
 first six lines of **class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt**:
 
@@ -123,43 +117,1502 @@ Using these files to contruct a Neartic index can be done as follows:
 ```r
 # Make a Neactic LPI 
 # Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
-Nearc_lpi <- LPIMain("terrestrial_class_nearctic_infile.txt", use_weightings = 1)
+Nearc_lpi <- LPIMain("terrestrial_class_nearctic_infile.txt", use_weightings = 1, PLOT_MAX=2015)
+```
 
-# That should have produced a simple plot, but we can use ggplot_lpi to produce a nicer one
+```
+## Weightings...
+## [1] "Group: 1"
+## 	[1] 0.3763665 0.2498699 0.3737637
+## 	[1] "Normalised weights (sum to 1)"
+## 	[1] 0.3763665 0.2498699 0.3737637
+## 
+## Number of groups:  1 
+## processing file: terrestrial_Nearctic_Aves_pops.txt
+## Calculating LPI for Species
+## Number of species: 377 (in 541 populations)
+## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |                                                                 |   1%
+  |                                                                       
+  |*                                                                |   1%
+  |                                                                       
+  |*                                                                |   2%
+  |                                                                       
+  |**                                                               |   2%
+  |                                                                       
+  |**                                                               |   3%
+  |                                                                       
+  |**                                                               |   4%
+  |                                                                       
+  |***                                                              |   4%
+  |                                                                       
+  |***                                                              |   5%
+  |                                                                       
+  |****                                                             |   6%
+  |                                                                       
+  |****                                                             |   7%
+  |                                                                       
+  |*****                                                            |   7%
+  |                                                                       
+  |*****                                                            |   8%
+  |                                                                       
+  |******                                                           |   8%
+  |                                                                       
+  |******                                                           |   9%
+  |                                                                       
+  |******                                                           |  10%
+  |                                                                       
+  |*******                                                          |  10%
+  |                                                                       
+  |*******                                                          |  11%
+  |                                                                       
+  |********                                                         |  12%
+  |                                                                       
+  |********                                                         |  13%
+  |                                                                       
+  |*********                                                        |  13%
+  |                                                                       
+  |*********                                                        |  14%
+  |                                                                       
+  |*********                                                        |  15%
+  |                                                                       
+  |**********                                                       |  15%
+  |                                                                       
+  |**********                                                       |  16%
+  |                                                                       
+  |***********                                                      |  16%
+  |                                                                       
+  |***********                                                      |  17%
+  |                                                                       
+  |***********                                                      |  18%
+  |                                                                       
+  |************                                                     |  18%
+  |                                                                       
+  |************                                                     |  19%
+  |                                                                       
+  |*************                                                    |  19%
+  |                                                                       
+  |*************                                                    |  20%
+  |                                                                       
+  |*************                                                    |  21%
+  |                                                                       
+  |**************                                                   |  21%
+  |                                                                       
+  |**************                                                   |  22%
+  |                                                                       
+  |***************                                                  |  23%
+  |                                                                       
+  |***************                                                  |  24%
+  |                                                                       
+  |****************                                                 |  24%
+  |                                                                       
+  |****************                                                 |  25%
+  |                                                                       
+  |*****************                                                |  25%
+  |                                                                       
+  |*****************                                                |  26%
+  |                                                                       
+  |*****************                                                |  27%
+  |                                                                       
+  |******************                                               |  27%
+  |                                                                       
+  |******************                                               |  28%
+  |                                                                       
+  |*******************                                              |  29%
+  |                                                                       
+  |*******************                                              |  30%
+  |                                                                       
+  |********************                                             |  30%
+  |                                                                       
+  |********************                                             |  31%
+  |                                                                       
+  |*********************                                            |  32%
+  |                                                                       
+  |*********************                                            |  33%
+  |                                                                       
+  |**********************                                           |  33%
+  |                                                                       
+  |**********************                                           |  34%
+  |                                                                       
+  |***********************                                          |  35%
+  |                                                                       
+  |***********************                                          |  36%
+  |                                                                       
+  |************************                                         |  36%
+  |                                                                       
+  |************************                                         |  37%
+  |                                                                       
+  |************************                                         |  38%
+  |                                                                       
+  |*************************                                        |  38%
+  |                                                                       
+  |*************************                                        |  39%
+  |                                                                       
+  |**************************                                       |  39%
+  |                                                                       
+  |**************************                                       |  40%
+  |                                                                       
+  |**************************                                       |  41%
+  |                                                                       
+  |***************************                                      |  41%
+  |                                                                       
+  |***************************                                      |  42%
+  |                                                                       
+  |****************************                                     |  42%
+  |                                                                       
+  |****************************                                     |  43%
+  |                                                                       
+  |****************************                                     |  44%
+  |                                                                       
+  |*****************************                                    |  44%
+  |                                                                       
+  |*****************************                                    |  45%
+  |                                                                       
+  |******************************                                   |  46%
+  |                                                                       
+  |******************************                                   |  47%
+  |                                                                       
+  |*******************************                                  |  47%
+  |                                                                       
+  |*******************************                                  |  48%
+  |                                                                       
+  |********************************                                 |  49%
+  |                                                                       
+  |********************************                                 |  50%
+  |                                                                       
+  |*********************************                                |  50%
+  |                                                                       
+  |*********************************                                |  51%
+  |                                                                       
+  |**********************************                               |  52%
+  |                                                                       
+  |**********************************                               |  53%
+  |                                                                       
+  |***********************************                              |  53%
+  |                                                                       
+  |***********************************                              |  54%
+  |                                                                       
+  |************************************                             |  55%
+  |                                                                       
+  |************************************                             |  56%
+  |                                                                       
+  |*************************************                            |  56%
+  |                                                                       
+  |*************************************                            |  57%
+  |                                                                       
+  |*************************************                            |  58%
+  |                                                                       
+  |**************************************                           |  58%
+  |                                                                       
+  |**************************************                           |  59%
+  |                                                                       
+  |***************************************                          |  59%
+  |                                                                       
+  |***************************************                          |  60%
+  |                                                                       
+  |***************************************                          |  61%
+  |                                                                       
+  |****************************************                         |  61%
+  |                                                                       
+  |****************************************                         |  62%
+  |                                                                       
+  |*****************************************                        |  62%
+  |                                                                       
+  |*****************************************                        |  63%
+  |                                                                       
+  |*****************************************                        |  64%
+  |                                                                       
+  |******************************************                       |  64%
+  |                                                                       
+  |******************************************                       |  65%
+  |                                                                       
+  |*******************************************                      |  66%
+  |                                                                       
+  |*******************************************                      |  67%
+  |                                                                       
+  |********************************************                     |  67%
+  |                                                                       
+  |********************************************                     |  68%
+  |                                                                       
+  |*********************************************                    |  69%
+  |                                                                       
+  |*********************************************                    |  70%
+  |                                                                       
+  |**********************************************                   |  70%
+  |                                                                       
+  |**********************************************                   |  71%
+  |                                                                       
+  |***********************************************                  |  72%
+  |                                                                       
+  |***********************************************                  |  73%
+  |                                                                       
+  |************************************************                 |  73%
+  |                                                                       
+  |************************************************                 |  74%
+  |                                                                       
+  |************************************************                 |  75%
+  |                                                                       
+  |*************************************************                |  75%
+  |                                                                       
+  |*************************************************                |  76%
+  |                                                                       
+  |**************************************************               |  76%
+  |                                                                       
+  |**************************************************               |  77%
+  |                                                                       
+  |***************************************************              |  78%
+  |                                                                       
+  |***************************************************              |  79%
+  |                                                                       
+  |****************************************************             |  79%
+  |                                                                       
+  |****************************************************             |  80%
+  |                                                                       
+  |****************************************************             |  81%
+  |                                                                       
+  |*****************************************************            |  81%
+  |                                                                       
+  |*****************************************************            |  82%
+  |                                                                       
+  |******************************************************           |  82%
+  |                                                                       
+  |******************************************************           |  83%
+  |                                                                       
+  |******************************************************           |  84%
+  |                                                                       
+  |*******************************************************          |  84%
+  |                                                                       
+  |*******************************************************          |  85%
+  |                                                                       
+  |********************************************************         |  85%
+  |                                                                       
+  |********************************************************         |  86%
+  |                                                                       
+  |********************************************************         |  87%
+  |                                                                       
+  |*********************************************************        |  87%
+  |                                                                       
+  |*********************************************************        |  88%
+  |                                                                       
+  |**********************************************************       |  89%
+  |                                                                       
+  |**********************************************************       |  90%
+  |                                                                       
+  |***********************************************************      |  90%
+  |                                                                       
+  |***********************************************************      |  91%
+  |                                                                       
+  |***********************************************************      |  92%
+  |                                                                       
+  |************************************************************     |  92%
+  |                                                                       
+  |************************************************************     |  93%
+  |                                                                       
+  |*************************************************************    |  93%
+  |                                                                       
+  |*************************************************************    |  94%
+  |                                                                       
+  |**************************************************************   |  95%
+  |                                                                       
+  |**************************************************************   |  96%
+  |                                                                       
+  |***************************************************************  |  96%
+  |                                                                       
+  |***************************************************************  |  97%
+  |                                                                       
+  |***************************************************************  |  98%
+  |                                                                       
+  |**************************************************************** |  98%
+  |                                                                       
+  |**************************************************************** |  99%
+  |                                                                       
+  |*****************************************************************|  99%
+  |                                                                       
+  |*****************************************************************| 100%
+## 
+## Saving species lambda to file: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_splambda.csv
+## Saving species lambda to file: terrestrial_Nearctic_Aves_pops_lambda.csv
+## Calculating DTemp
+## Saving DTemp to file:  lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_dtemp.csv 
+## Saving DTemp to file:  terrestrial_Nearctic_Aves_pops_dtemp.csv 
+## processing file: terrestrial_Nearctic_Mammalia_pops.txt
+## Calculating LPI for Species
+## Number of species: 92 (in 384 populations)
+## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |*                                                                |   1%
+  |                                                                       
+  |*                                                                |   2%
+  |                                                                       
+  |**                                                               |   3%
+  |                                                                       
+  |***                                                              |   4%
+  |                                                                       
+  |****                                                             |   5%
+  |                                                                       
+  |****                                                             |   7%
+  |                                                                       
+  |*****                                                            |   8%
+  |                                                                       
+  |******                                                           |   9%
+  |                                                                       
+  |******                                                           |  10%
+  |                                                                       
+  |*******                                                          |  11%
+  |                                                                       
+  |********                                                         |  12%
+  |                                                                       
+  |********                                                         |  13%
+  |                                                                       
+  |*********                                                        |  14%
+  |                                                                       
+  |**********                                                       |  15%
+  |                                                                       
+  |***********                                                      |  16%
+  |                                                                       
+  |***********                                                      |  17%
+  |                                                                       
+  |************                                                     |  18%
+  |                                                                       
+  |*************                                                    |  20%
+  |                                                                       
+  |*************                                                    |  21%
+  |                                                                       
+  |**************                                                   |  22%
+  |                                                                       
+  |***************                                                  |  23%
+  |                                                                       
+  |****************                                                 |  24%
+  |                                                                       
+  |****************                                                 |  25%
+  |                                                                       
+  |*****************                                                |  26%
+  |                                                                       
+  |******************                                               |  27%
+  |                                                                       
+  |******************                                               |  28%
+  |                                                                       
+  |*******************                                              |  29%
+  |                                                                       
+  |********************                                             |  30%
+  |                                                                       
+  |********************                                             |  32%
+  |                                                                       
+  |*********************                                            |  33%
+  |                                                                       
+  |**********************                                           |  34%
+  |                                                                       
+  |***********************                                          |  35%
+  |                                                                       
+  |***********************                                          |  36%
+  |                                                                       
+  |************************                                         |  37%
+  |                                                                       
+  |*************************                                        |  38%
+  |                                                                       
+  |*************************                                        |  39%
+  |                                                                       
+  |**************************                                       |  40%
+  |                                                                       
+  |***************************                                      |  41%
+  |                                                                       
+  |****************************                                     |  42%
+  |                                                                       
+  |****************************                                     |  43%
+  |                                                                       
+  |*****************************                                    |  45%
+  |                                                                       
+  |******************************                                   |  46%
+  |                                                                       
+  |******************************                                   |  47%
+  |                                                                       
+  |*******************************                                  |  48%
+  |                                                                       
+  |********************************                                 |  49%
+  |                                                                       
+  |********************************                                 |  50%
+  |                                                                       
+  |*********************************                                |  51%
+  |                                                                       
+  |**********************************                               |  52%
+  |                                                                       
+  |***********************************                              |  53%
+  |                                                                       
+  |***********************************                              |  54%
+  |                                                                       
+  |************************************                             |  55%
+  |                                                                       
+  |*************************************                            |  57%
+  |                                                                       
+  |*************************************                            |  58%
+  |                                                                       
+  |**************************************                           |  59%
+  |                                                                       
+  |***************************************                          |  60%
+  |                                                                       
+  |****************************************                         |  61%
+  |                                                                       
+  |****************************************                         |  62%
+  |                                                                       
+  |*****************************************                        |  63%
+  |                                                                       
+  |******************************************                       |  64%
+  |                                                                       
+  |******************************************                       |  65%
+  |                                                                       
+  |*******************************************                      |  66%
+  |                                                                       
+  |********************************************                     |  67%
+  |                                                                       
+  |*********************************************                    |  68%
+  |                                                                       
+  |*********************************************                    |  70%
+  |                                                                       
+  |**********************************************                   |  71%
+  |                                                                       
+  |***********************************************                  |  72%
+  |                                                                       
+  |***********************************************                  |  73%
+  |                                                                       
+  |************************************************                 |  74%
+  |                                                                       
+  |*************************************************                |  75%
+  |                                                                       
+  |*************************************************                |  76%
+  |                                                                       
+  |**************************************************               |  77%
+  |                                                                       
+  |***************************************************              |  78%
+  |                                                                       
+  |****************************************************             |  79%
+  |                                                                       
+  |****************************************************             |  80%
+  |                                                                       
+  |*****************************************************            |  82%
+  |                                                                       
+  |******************************************************           |  83%
+  |                                                                       
+  |******************************************************           |  84%
+  |                                                                       
+  |*******************************************************          |  85%
+  |                                                                       
+  |********************************************************         |  86%
+  |                                                                       
+  |*********************************************************        |  87%
+  |                                                                       
+  |*********************************************************        |  88%
+  |                                                                       
+  |**********************************************************       |  89%
+  |                                                                       
+  |***********************************************************      |  90%
+  |                                                                       
+  |***********************************************************      |  91%
+  |                                                                       
+  |************************************************************     |  92%
+  |                                                                       
+  |*************************************************************    |  93%
+  |                                                                       
+  |*************************************************************    |  95%
+  |                                                                       
+  |**************************************************************   |  96%
+  |                                                                       
+  |***************************************************************  |  97%
+  |                                                                       
+  |**************************************************************** |  98%
+  |                                                                       
+  |**************************************************************** |  99%
+  |                                                                       
+  |*****************************************************************| 100%
+## 
+## Saving species lambda to file: lpi_temp/7282fa95486d2024ef7a6282067e0100_splambda.csv
+## Saving species lambda to file: terrestrial_Nearctic_Mammalia_pops_lambda.csv
+## Calculating DTemp
+## Saving DTemp to file:  lpi_temp/7282fa95486d2024ef7a6282067e0100_dtemp.csv 
+## Saving DTemp to file:  terrestrial_Nearctic_Mammalia_pops_dtemp.csv 
+## processing file: terrestrial_Nearctic_Herps_pops.txt
+## Calculating LPI for Species
+## Number of species: 58 (in 102 populations)
+## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |*                                                                |   2%
+  |                                                                       
+  |**                                                               |   3%
+  |                                                                       
+  |***                                                              |   5%
+  |                                                                       
+  |****                                                             |   7%
+  |                                                                       
+  |******                                                           |   9%
+  |                                                                       
+  |*******                                                          |  10%
+  |                                                                       
+  |********                                                         |  12%
+  |                                                                       
+  |*********                                                        |  14%
+  |                                                                       
+  |**********                                                       |  16%
+  |                                                                       
+  |***********                                                      |  17%
+  |                                                                       
+  |************                                                     |  19%
+  |                                                                       
+  |*************                                                    |  21%
+  |                                                                       
+  |***************                                                  |  22%
+  |                                                                       
+  |****************                                                 |  24%
+  |                                                                       
+  |*****************                                                |  26%
+  |                                                                       
+  |******************                                               |  28%
+  |                                                                       
+  |*******************                                              |  29%
+  |                                                                       
+  |********************                                             |  31%
+  |                                                                       
+  |*********************                                            |  33%
+  |                                                                       
+  |**********************                                           |  34%
+  |                                                                       
+  |************************                                         |  36%
+  |                                                                       
+  |*************************                                        |  38%
+  |                                                                       
+  |**************************                                       |  40%
+  |                                                                       
+  |***************************                                      |  41%
+  |                                                                       
+  |****************************                                     |  43%
+  |                                                                       
+  |*****************************                                    |  45%
+  |                                                                       
+  |******************************                                   |  47%
+  |                                                                       
+  |*******************************                                  |  48%
+  |                                                                       
+  |********************************                                 |  50%
+  |                                                                       
+  |**********************************                               |  52%
+  |                                                                       
+  |***********************************                              |  53%
+  |                                                                       
+  |************************************                             |  55%
+  |                                                                       
+  |*************************************                            |  57%
+  |                                                                       
+  |**************************************                           |  59%
+  |                                                                       
+  |***************************************                          |  60%
+  |                                                                       
+  |****************************************                         |  62%
+  |                                                                       
+  |*****************************************                        |  64%
+  |                                                                       
+  |*******************************************                      |  66%
+  |                                                                       
+  |********************************************                     |  67%
+  |                                                                       
+  |*********************************************                    |  69%
+  |                                                                       
+  |**********************************************                   |  71%
+  |                                                                       
+  |***********************************************                  |  72%
+  |                                                                       
+  |************************************************                 |  74%
+  |                                                                       
+  |*************************************************                |  76%
+  |                                                                       
+  |**************************************************               |  78%
+  |                                                                       
+  |****************************************************             |  79%
+  |                                                                       
+  |*****************************************************            |  81%
+  |                                                                       
+  |******************************************************           |  83%
+  |                                                                       
+  |*******************************************************          |  84%
+  |                                                                       
+  |********************************************************         |  86%
+  |                                                                       
+  |*********************************************************        |  88%
+  |                                                                       
+  |**********************************************************       |  90%
+  |                                                                       
+  |***********************************************************      |  91%
+  |                                                                       
+  |*************************************************************    |  93%
+  |                                                                       
+  |**************************************************************   |  95%
+  |                                                                       
+  |***************************************************************  |  97%
+  |                                                                       
+  |**************************************************************** |  98%
+  |                                                                       
+  |*****************************************************************| 100%
+## 
+## Saving species lambda to file: lpi_temp/ffa9d8ac9ddc787613f91b2f3f82a834_splambda.csv
+## Saving species lambda to file: terrestrial_Nearctic_Herps_pops_lambda.csv
+## Calculating DTemp
+## Saving DTemp to file:  lpi_temp/ffa9d8ac9ddc787613f91b2f3f82a834_dtemp.csv 
+## Saving DTemp to file:  terrestrial_Nearctic_Herps_pops_dtemp.csv 
+## [debug] Loading previously analysed species lambda file for 'terrestrial_Nearctic_Aves_pops.txt' from MD5 hash: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_splambda.csv
+## terrestrial_Nearctic_Aves_pops.txt, Number of species: 377
+## [debug] Loading previously analysed dtemp file from MD5 hash: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_dtemp.csv
+## [debug] Loading previously analysed species lambda file for 'terrestrial_Nearctic_Mammalia_pops.txt' from MD5 hash: lpi_temp/7282fa95486d2024ef7a6282067e0100_splambda.csv
+## terrestrial_Nearctic_Mammalia_pops.txt, Number of species: 92
+## [debug] Loading previously analysed dtemp file from MD5 hash: lpi_temp/7282fa95486d2024ef7a6282067e0100_dtemp.csv
+## [debug] Loading previously analysed species lambda file for 'terrestrial_Nearctic_Herps_pops.txt' from MD5 hash: lpi_temp/ffa9d8ac9ddc787613f91b2f3f82a834_splambda.csv
+## terrestrial_Nearctic_Herps_pops.txt, Number of species: 58
+## [debug] Loading previously analysed dtemp file from MD5 hash: lpi_temp/ffa9d8ac9ddc787613f91b2f3f82a834_dtemp.csv
+## Saving DTemp Array to file:  terrestrial_class_nearctic_infile_dtemp_array.txt
+```
+
+```
+## Warning: Removed 9 rows containing missing values (geom_path).
+```
+
+```
+## Saving DTemp Array with filesnames to file:  terrestrial_class_nearctic_infile_dtemp_array_named.csv 
+## [Calculating LPI...] System: 41.867000, User: 0.746000, Elapsed: 47.607000
+## Group 1 is NA in year 47
+## Number of valid index years: 46 (of possible 47)
+## [Calculating CIs...] System: 42.077000, User: 0.749000, Elapsed: 47.891000
+## ....................................................................................................
+## [CIs calculated] System: 52.577000, User: 0.929000, Elapsed: 59.292000
+```
+
+![](README_files/figure-html/nearctic_lpi-1.png)
+
+```
+## Saving final output to file:  terrestrial_class_nearctic_infile_Results.txt 
+## Saving Min/Max file to:  terrestrial_Nearctic_Aves_pops_Minmax.txt 
+## Saving Min/Max file to:  terrestrial_Nearctic_Mammalia_pops_Minmax.txt 
+## Saving Min/Max file to:  terrestrial_Nearctic_Herps_pops_Minmax.txt 
+## Saving Plot to PDF:  terrestrial_class_nearctic_infile.pdf 
+## [END] System: 53.146000, User: 0.953000, Elapsed: 60.043000
+```
+
+```r
+# This produces a simple plot, but we can use ggplot_lpi to produce a nicer version
 ggplot_lpi(Nearc_lpi, ylims=c(0, 2))
 ```
+
+![](README_files/figure-html/nearctic_lpi-2.png)
 
 Similarly, infiles are provided for Nearctic mammals and birds:
 
 
 ```r
 # Make a Neactic Mammals LPI 
-# Default gives 100 boostraps (this will take a few minutes to run (on a 2014 Macbook))
-Nearc_mams_lpi <- LPIMain("terrestrial_mammals_nearctic_infile.txt")
+# Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
+Nearc_mams_lpi <- LPIMain("example_data_nm_infile.txt")
+```
 
+```
+## Number of groups:  1 
+## processing file: example_data_nm_pops.txt
+## Calculating LPI for Species
+## Number of species: 92 (in 384 populations)
+## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |*                                                                |   1%
+  |                                                                       
+  |*                                                                |   2%
+  |                                                                       
+  |**                                                               |   3%
+  |                                                                       
+  |***                                                              |   4%
+  |                                                                       
+  |****                                                             |   5%
+  |                                                                       
+  |****                                                             |   7%
+  |                                                                       
+  |*****                                                            |   8%
+  |                                                                       
+  |******                                                           |   9%
+  |                                                                       
+  |******                                                           |  10%
+  |                                                                       
+  |*******                                                          |  11%
+  |                                                                       
+  |********                                                         |  12%
+  |                                                                       
+  |********                                                         |  13%
+  |                                                                       
+  |*********                                                        |  14%
+  |                                                                       
+  |**********                                                       |  15%
+  |                                                                       
+  |***********                                                      |  16%
+  |                                                                       
+  |***********                                                      |  17%
+  |                                                                       
+  |************                                                     |  18%
+  |                                                                       
+  |*************                                                    |  20%
+  |                                                                       
+  |*************                                                    |  21%
+  |                                                                       
+  |**************                                                   |  22%
+  |                                                                       
+  |***************                                                  |  23%
+  |                                                                       
+  |****************                                                 |  24%
+  |                                                                       
+  |****************                                                 |  25%
+  |                                                                       
+  |*****************                                                |  26%
+  |                                                                       
+  |******************                                               |  27%
+  |                                                                       
+  |******************                                               |  28%
+  |                                                                       
+  |*******************                                              |  29%
+  |                                                                       
+  |********************                                             |  30%
+  |                                                                       
+  |********************                                             |  32%
+  |                                                                       
+  |*********************                                            |  33%
+  |                                                                       
+  |**********************                                           |  34%
+  |                                                                       
+  |***********************                                          |  35%
+  |                                                                       
+  |***********************                                          |  36%
+  |                                                                       
+  |************************                                         |  37%
+  |                                                                       
+  |*************************                                        |  38%
+  |                                                                       
+  |*************************                                        |  39%
+  |                                                                       
+  |**************************                                       |  40%
+  |                                                                       
+  |***************************                                      |  41%
+  |                                                                       
+  |****************************                                     |  42%
+  |                                                                       
+  |****************************                                     |  43%
+  |                                                                       
+  |*****************************                                    |  45%
+  |                                                                       
+  |******************************                                   |  46%
+  |                                                                       
+  |******************************                                   |  47%
+  |                                                                       
+  |*******************************                                  |  48%
+  |                                                                       
+  |********************************                                 |  49%
+  |                                                                       
+  |********************************                                 |  50%
+  |                                                                       
+  |*********************************                                |  51%
+  |                                                                       
+  |**********************************                               |  52%
+  |                                                                       
+  |***********************************                              |  53%
+  |                                                                       
+  |***********************************                              |  54%
+  |                                                                       
+  |************************************                             |  55%
+  |                                                                       
+  |*************************************                            |  57%
+  |                                                                       
+  |*************************************                            |  58%
+  |                                                                       
+  |**************************************                           |  59%
+  |                                                                       
+  |***************************************                          |  60%
+  |                                                                       
+  |****************************************                         |  61%
+  |                                                                       
+  |****************************************                         |  62%
+  |                                                                       
+  |*****************************************                        |  63%
+  |                                                                       
+  |******************************************                       |  64%
+  |                                                                       
+  |******************************************                       |  65%
+  |                                                                       
+  |*******************************************                      |  66%
+  |                                                                       
+  |********************************************                     |  67%
+  |                                                                       
+  |*********************************************                    |  68%
+  |                                                                       
+  |*********************************************                    |  70%
+  |                                                                       
+  |**********************************************                   |  71%
+  |                                                                       
+  |***********************************************                  |  72%
+  |                                                                       
+  |***********************************************                  |  73%
+  |                                                                       
+  |************************************************                 |  74%
+  |                                                                       
+  |*************************************************                |  75%
+  |                                                                       
+  |*************************************************                |  76%
+  |                                                                       
+  |**************************************************               |  77%
+  |                                                                       
+  |***************************************************              |  78%
+  |                                                                       
+  |****************************************************             |  79%
+  |                                                                       
+  |****************************************************             |  80%
+  |                                                                       
+  |*****************************************************            |  82%
+  |                                                                       
+  |******************************************************           |  83%
+  |                                                                       
+  |******************************************************           |  84%
+  |                                                                       
+  |*******************************************************          |  85%
+  |                                                                       
+  |********************************************************         |  86%
+  |                                                                       
+  |*********************************************************        |  87%
+  |                                                                       
+  |*********************************************************        |  88%
+  |                                                                       
+  |**********************************************************       |  89%
+  |                                                                       
+  |***********************************************************      |  90%
+  |                                                                       
+  |***********************************************************      |  91%
+  |                                                                       
+  |************************************************************     |  92%
+  |                                                                       
+  |*************************************************************    |  93%
+  |                                                                       
+  |*************************************************************    |  95%
+  |                                                                       
+  |**************************************************************   |  96%
+  |                                                                       
+  |***************************************************************  |  97%
+  |                                                                       
+  |**************************************************************** |  98%
+  |                                                                       
+  |**************************************************************** |  99%
+  |                                                                       
+  |*****************************************************************| 100%
+## 
+## Saving species lambda to file: lpi_temp/7282fa95486d2024ef7a6282067e0100_splambda.csv
+## Saving species lambda to file: example_data_nm_pops_lambda.csv
+## Calculating DTemp
+## Saving DTemp to file:  lpi_temp/7282fa95486d2024ef7a6282067e0100_dtemp.csv 
+## Saving DTemp to file:  example_data_nm_pops_dtemp.csv 
+## [debug] Loading previously analysed species lambda file for 'example_data_nm_pops.txt' from MD5 hash: lpi_temp/7282fa95486d2024ef7a6282067e0100_splambda.csv
+## example_data_nm_pops.txt, Number of species: 92
+## [debug] Loading previously analysed dtemp file from MD5 hash: lpi_temp/7282fa95486d2024ef7a6282067e0100_dtemp.csv
+## Saving DTemp Array to file:  example_data_nm_infile_dtemp_array.txt
+```
+
+```
+## Warning: Removed 1 rows containing missing values (geom_path).
+```
+
+```
+## Saving DTemp Array with filesnames to file:  example_data_nm_infile_dtemp_array_named.csv 
+## [Calculating LPI...] System: 8.752000, User: 0.193000, Elapsed: 10.976000
+## Number of valid index years: 44 (of possible 44)
+## [Calculating CIs...] System: 8.800000, User: 0.194000, Elapsed: 11.047000
+## ....................................................................................................
+## [CIs calculated] System: 12.276000, User: 0.371000, Elapsed: 16.142000
+```
+
+![](README_files/figure-html/nearctic_mams_birds-1.png)
+
+```
+## Saving final output to file:  example_data_nm_infile_Results.txt 
+## Saving Min/Max file to:  example_data_nm_pops_Minmax.txt 
+## Saving Plot to PDF:  example_data_nm_infile.pdf 
+## [END] System: 12.480000, User: 0.378000, Elapsed: 16.443000
+```
+
+```r
 # Nicer plot
 ggplot_lpi(Nearc_mams_lpi, ylims=c(0, 2))
+```
 
+![](README_files/figure-html/nearctic_mams_birds-2.png)
+
+```r
 # Make a Neactic Mammals LPI 
-# Default gives 100 boostraps (this will take a few minutes to run (on a 2014 Macbook))
-Nearc_birds_lpi <- LPIMain("terrestrial_birds_nearctic_infile.txt")
+# Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
+Nearc_birds_lpi <- LPIMain("terrestrial_Nearctic_Aves_infile.txt", PLOT_MAX=2015)
+```
 
+```
+## Number of groups:  1 
+## processing file: terrestrial_Nearctic_Aves_pops.txt
+## Calculating LPI for Species
+## Number of species: 377 (in 541 populations)
+## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |                                                                 |   1%
+  |                                                                       
+  |*                                                                |   1%
+  |                                                                       
+  |*                                                                |   2%
+  |                                                                       
+  |**                                                               |   2%
+  |                                                                       
+  |**                                                               |   3%
+  |                                                                       
+  |**                                                               |   4%
+  |                                                                       
+  |***                                                              |   4%
+  |                                                                       
+  |***                                                              |   5%
+  |                                                                       
+  |****                                                             |   6%
+  |                                                                       
+  |****                                                             |   7%
+  |                                                                       
+  |*****                                                            |   7%
+  |                                                                       
+  |*****                                                            |   8%
+  |                                                                       
+  |******                                                           |   8%
+  |                                                                       
+  |******                                                           |   9%
+  |                                                                       
+  |******                                                           |  10%
+  |                                                                       
+  |*******                                                          |  10%
+  |                                                                       
+  |*******                                                          |  11%
+  |                                                                       
+  |********                                                         |  12%
+  |                                                                       
+  |********                                                         |  13%
+  |                                                                       
+  |*********                                                        |  13%
+  |                                                                       
+  |*********                                                        |  14%
+  |                                                                       
+  |*********                                                        |  15%
+  |                                                                       
+  |**********                                                       |  15%
+  |                                                                       
+  |**********                                                       |  16%
+  |                                                                       
+  |***********                                                      |  16%
+  |                                                                       
+  |***********                                                      |  17%
+  |                                                                       
+  |***********                                                      |  18%
+  |                                                                       
+  |************                                                     |  18%
+  |                                                                       
+  |************                                                     |  19%
+  |                                                                       
+  |*************                                                    |  19%
+  |                                                                       
+  |*************                                                    |  20%
+  |                                                                       
+  |*************                                                    |  21%
+  |                                                                       
+  |**************                                                   |  21%
+  |                                                                       
+  |**************                                                   |  22%
+  |                                                                       
+  |***************                                                  |  23%
+  |                                                                       
+  |***************                                                  |  24%
+  |                                                                       
+  |****************                                                 |  24%
+  |                                                                       
+  |****************                                                 |  25%
+  |                                                                       
+  |*****************                                                |  25%
+  |                                                                       
+  |*****************                                                |  26%
+  |                                                                       
+  |*****************                                                |  27%
+  |                                                                       
+  |******************                                               |  27%
+  |                                                                       
+  |******************                                               |  28%
+  |                                                                       
+  |*******************                                              |  29%
+  |                                                                       
+  |*******************                                              |  30%
+  |                                                                       
+  |********************                                             |  30%
+  |                                                                       
+  |********************                                             |  31%
+  |                                                                       
+  |*********************                                            |  32%
+  |                                                                       
+  |*********************                                            |  33%
+  |                                                                       
+  |**********************                                           |  33%
+  |                                                                       
+  |**********************                                           |  34%
+  |                                                                       
+  |***********************                                          |  35%
+  |                                                                       
+  |***********************                                          |  36%
+  |                                                                       
+  |************************                                         |  36%
+  |                                                                       
+  |************************                                         |  37%
+  |                                                                       
+  |************************                                         |  38%
+  |                                                                       
+  |*************************                                        |  38%
+  |                                                                       
+  |*************************                                        |  39%
+  |                                                                       
+  |**************************                                       |  39%
+  |                                                                       
+  |**************************                                       |  40%
+  |                                                                       
+  |**************************                                       |  41%
+  |                                                                       
+  |***************************                                      |  41%
+  |                                                                       
+  |***************************                                      |  42%
+  |                                                                       
+  |****************************                                     |  42%
+  |                                                                       
+  |****************************                                     |  43%
+  |                                                                       
+  |****************************                                     |  44%
+  |                                                                       
+  |*****************************                                    |  44%
+  |                                                                       
+  |*****************************                                    |  45%
+  |                                                                       
+  |******************************                                   |  46%
+  |                                                                       
+  |******************************                                   |  47%
+  |                                                                       
+  |*******************************                                  |  47%
+  |                                                                       
+  |*******************************                                  |  48%
+  |                                                                       
+  |********************************                                 |  49%
+  |                                                                       
+  |********************************                                 |  50%
+  |                                                                       
+  |*********************************                                |  50%
+  |                                                                       
+  |*********************************                                |  51%
+  |                                                                       
+  |**********************************                               |  52%
+  |                                                                       
+  |**********************************                               |  53%
+  |                                                                       
+  |***********************************                              |  53%
+  |                                                                       
+  |***********************************                              |  54%
+  |                                                                       
+  |************************************                             |  55%
+  |                                                                       
+  |************************************                             |  56%
+  |                                                                       
+  |*************************************                            |  56%
+  |                                                                       
+  |*************************************                            |  57%
+  |                                                                       
+  |*************************************                            |  58%
+  |                                                                       
+  |**************************************                           |  58%
+  |                                                                       
+  |**************************************                           |  59%
+  |                                                                       
+  |***************************************                          |  59%
+  |                                                                       
+  |***************************************                          |  60%
+  |                                                                       
+  |***************************************                          |  61%
+  |                                                                       
+  |****************************************                         |  61%
+  |                                                                       
+  |****************************************                         |  62%
+  |                                                                       
+  |*****************************************                        |  62%
+  |                                                                       
+  |*****************************************                        |  63%
+  |                                                                       
+  |*****************************************                        |  64%
+  |                                                                       
+  |******************************************                       |  64%
+  |                                                                       
+  |******************************************                       |  65%
+  |                                                                       
+  |*******************************************                      |  66%
+  |                                                                       
+  |*******************************************                      |  67%
+  |                                                                       
+  |********************************************                     |  67%
+  |                                                                       
+  |********************************************                     |  68%
+  |                                                                       
+  |*********************************************                    |  69%
+  |                                                                       
+  |*********************************************                    |  70%
+  |                                                                       
+  |**********************************************                   |  70%
+  |                                                                       
+  |**********************************************                   |  71%
+  |                                                                       
+  |***********************************************                  |  72%
+  |                                                                       
+  |***********************************************                  |  73%
+  |                                                                       
+  |************************************************                 |  73%
+  |                                                                       
+  |************************************************                 |  74%
+  |                                                                       
+  |************************************************                 |  75%
+  |                                                                       
+  |*************************************************                |  75%
+  |                                                                       
+  |*************************************************                |  76%
+  |                                                                       
+  |**************************************************               |  76%
+  |                                                                       
+  |**************************************************               |  77%
+  |                                                                       
+  |***************************************************              |  78%
+  |                                                                       
+  |***************************************************              |  79%
+  |                                                                       
+  |****************************************************             |  79%
+  |                                                                       
+  |****************************************************             |  80%
+  |                                                                       
+  |****************************************************             |  81%
+  |                                                                       
+  |*****************************************************            |  81%
+  |                                                                       
+  |*****************************************************            |  82%
+  |                                                                       
+  |******************************************************           |  82%
+  |                                                                       
+  |******************************************************           |  83%
+  |                                                                       
+  |******************************************************           |  84%
+  |                                                                       
+  |*******************************************************          |  84%
+  |                                                                       
+  |*******************************************************          |  85%
+  |                                                                       
+  |********************************************************         |  85%
+  |                                                                       
+  |********************************************************         |  86%
+  |                                                                       
+  |********************************************************         |  87%
+  |                                                                       
+  |*********************************************************        |  87%
+  |                                                                       
+  |*********************************************************        |  88%
+  |                                                                       
+  |**********************************************************       |  89%
+  |                                                                       
+  |**********************************************************       |  90%
+  |                                                                       
+  |***********************************************************      |  90%
+  |                                                                       
+  |***********************************************************      |  91%
+  |                                                                       
+  |***********************************************************      |  92%
+  |                                                                       
+  |************************************************************     |  92%
+  |                                                                       
+  |************************************************************     |  93%
+  |                                                                       
+  |*************************************************************    |  93%
+  |                                                                       
+  |*************************************************************    |  94%
+  |                                                                       
+  |**************************************************************   |  95%
+  |                                                                       
+  |**************************************************************   |  96%
+  |                                                                       
+  |***************************************************************  |  96%
+  |                                                                       
+  |***************************************************************  |  97%
+  |                                                                       
+  |***************************************************************  |  98%
+  |                                                                       
+  |**************************************************************** |  98%
+  |                                                                       
+  |**************************************************************** |  99%
+  |                                                                       
+  |*****************************************************************|  99%
+  |                                                                       
+  |*****************************************************************| 100%
+## 
+## Saving species lambda to file: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_splambda.csv
+## Saving species lambda to file: terrestrial_Nearctic_Aves_pops_lambda.csv
+## Calculating DTemp
+## Saving DTemp to file:  lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_dtemp.csv 
+## Saving DTemp to file:  terrestrial_Nearctic_Aves_pops_dtemp.csv 
+## [debug] Loading previously analysed species lambda file for 'terrestrial_Nearctic_Aves_pops.txt' from MD5 hash: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_splambda.csv
+## terrestrial_Nearctic_Aves_pops.txt, Number of species: 377
+## [debug] Loading previously analysed dtemp file from MD5 hash: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_dtemp.csv
+## Saving DTemp Array to file:  terrestrial_Nearctic_Aves_infile_dtemp_array.txt
+```
+
+```
+## Warning: Removed 3 rows containing missing values (geom_path).
+```
+
+```
+## Saving DTemp Array with filesnames to file:  terrestrial_Nearctic_Aves_infile_dtemp_array_named.csv 
+## [Calculating LPI...] System: 37.506000, User: 0.886000, Elapsed: 48.742000
+## Group 1 is NA in year 46
+## Group 1 is NA in year 47
+## Number of valid index years: 45 (of possible 47)
+## [Calculating CIs...] System: 37.560000, User: 0.888000, Elapsed: 48.813000
+## ....................................................................................................
+## [CIs calculated] System: 42.173000, User: 0.984000, Elapsed: 54.034000
+```
+
+![](README_files/figure-html/nearctic_mams_birds-3.png)
+
+```
+## Saving final output to file:  terrestrial_Nearctic_Aves_infile_Results.txt 
+## Saving Min/Max file to:  terrestrial_Nearctic_Aves_pops_Minmax.txt 
+## Saving Plot to PDF:  terrestrial_Nearctic_Aves_infile.pdf 
+## [END] System: 42.586000, User: 1.004000, Elapsed: 54.618000
+```
+
+```r
 # Nicer plot
 ggplot_lpi(Nearc_birds_lpi, ylims=c(0, 2))
+```
 
+![](README_files/figure-html/nearctic_mams_birds-4.png)
+
+```r
 # We can also combine the two LPIs together in a list
 lpis <- list(Nearc_birds_lpi, Nearc_mams_lpi)
 
 # And plot them together 
 ggplot_multi_lpi(lpis, xlims=c(1970, 2012), ylims=c(0, 3))
+```
 
-# Can also plot these next to each other, and use some more meaningful titles
+```
+##    years         lpi       lwr       upr group
+## 1   1970   1.0000000 1.0000000 1.0000000     A
+## 2   1971   0.9896952 0.9864593 0.9923734     A
+## 3   1972   0.9774621 0.9717509 0.9818538     A
+## 4   1973   0.9652212 0.9582700 0.9700042     A
+## 5   1974   0.9576677 0.9492073 0.9651959     A
+## 6   1975   0.9510788 0.9422061 0.9591524     A
+## 7   1976   0.9434867 0.9330713 0.9518802     A
+## 8   1977   0.9362711 0.9233815 0.9453213     A
+## 9   1978   0.9293341 0.9173143 0.9388341     A
+## 10  1979   0.9247223 0.9124983 0.9359622     A
+## 11  1980   0.9207614 0.9081543 0.9321167     A
+## 12  1981   0.9163404 0.9038990 0.9294512     A
+## 13  1982   0.9095072 0.8956416 0.9220873     A
+## 14  1983   0.9047326 0.8905207 0.9175003     A
+## 15  1984   0.9101938 0.8954484 0.9287540     A
+## 16  1985   0.9167052 0.8987839 0.9376561     A
+## 17  1986   0.9246601 0.9045289 0.9477227     A
+## 18  1987   0.9162963 0.8928303 0.9403523     A
+## 19  1988   0.9238982 0.8942094 0.9535547     A
+## 20  1989   0.9213017 0.8934632 0.9533361     A
+## 21  1990   0.9214140 0.8930898 0.9507502     A
+## 22  1991   0.9261317 0.8970141 0.9580792     A
+## 23  1992   0.9268065 0.8984476 0.9637147     A
+## 24  1993   0.9330644 0.9023641 0.9762735     A
+## 25  1994   0.9282623 0.8984221 0.9765962     A
+## 26  1995   0.9251124 0.8939080 0.9714770     A
+## 27  1996   0.9200919 0.8868712 0.9656026     A
+## 28  1997   0.9245637 0.8909606 0.9739048     A
+## 29  1998   0.9315371 0.8985482 0.9819999     A
+## 30  1999   0.9330844 0.9006605 0.9831981     A
+## 31  2000   0.9251001 0.8879858 0.9795442     A
+## 32  2001   0.9162160 0.8804943 0.9732307     A
+## 33  2002   0.9104011 0.8726870 0.9606332     A
+## 34  2003   0.9107675 0.8719010 0.9576863     A
+## 35  2004   0.9191720 0.8772571 0.9638248     A
+## 36  2005   0.9462204 0.8962679 0.9940500     A
+## 37  2006   0.9618153 0.9108031 1.0159073     A
+## 38  2007   0.9743441 0.9245755 1.0312669     A
+## 39  2008   0.9808412 0.9301351 1.0366492     A
+## 40  2009   0.9851467 0.9319646 1.0395225     A
+## 41  2010   0.9885350 0.9353610 1.0416781     A
+## 42  2011   0.9921599 0.9411908 1.0437934     A
+## 43  2012   1.0048165 0.9410227 1.0752091     A
+## 44  2013   0.9993526 0.9228580 1.0769725     A
+## 45  2014   0.9906295 0.8886089 1.0802608     A
+## 46  2015 -99.0000000        NA        NA     A
+## 47  2016 -99.0000000        NA        NA     A
+## 48  1970   1.0000000 1.0000000 1.0000000     B
+## 49  1971   0.9713669 0.9142620 1.0476529     B
+## 50  1972   0.8933568 0.7595992 1.0563988     B
+## 51  1973   0.7780563 0.6277961 0.9908975     B
+## 52  1974   0.6318875 0.4539555 0.8322746     B
+## 53  1975   0.5565817 0.3903993 0.7534143     B
+## 54  1976   0.5314568 0.3677900 0.7128156     B
+## 55  1977   0.5596089 0.3971323 0.7481654     B
+## 56  1978   0.5256448 0.3388611 0.7357288     B
+## 57  1979   0.5971378 0.3792110 0.8602571     B
+## 58  1980   0.6836605 0.4242749 0.9984567     B
+## 59  1981   0.7207277 0.4475479 1.0593232     B
+## 60  1982   0.7297648 0.4417741 1.0993474     B
+## 61  1983   0.6921780 0.4173110 1.0144532     B
+## 62  1984   0.6536326 0.4018457 0.9979703     B
+## 63  1985   0.6250620 0.3800000 0.9817897     B
+## 64  1986   0.6469144 0.3925778 1.0092304     B
+## 65  1987   0.7100873 0.4142736 1.0916634     B
+## 66  1988   0.7186970 0.4199367 1.1237502     B
+## 67  1989   0.7936947 0.4481835 1.2290419     B
+## 68  1990   0.8471548 0.4905225 1.3443533     B
+## 69  1991   0.8934175 0.5286397 1.3906112     B
+## 70  1992   0.7947763 0.4643619 1.1843446     B
+## 71  1993   0.7806785 0.4521587 1.1661280     B
+## 72  1994   0.7694146 0.4386054 1.1871839     B
+## 73  1995   0.8014162 0.4619093 1.2421399     B
+## 74  1996   0.7971957 0.4594595 1.3103259     B
+## 75  1997   0.7780101 0.4460531 1.3466216     B
+## 76  1998   0.7648011 0.4399772 1.3320820     B
+## 77  1999   0.7273176 0.4163394 1.2368096     B
+## 78  2000   0.7705594 0.4442099 1.3862367     B
+## 79  2001   0.6580829 0.3908803 1.2240195     B
+## 80  2002   0.5673112 0.3455405 1.0870568     B
+## 81  2003   0.5806714 0.3310768 1.1178220     B
+## 82  2004   0.5427784 0.3497679 1.0654298     B
+## 83  2005   0.5689047 0.3103161 1.2211501     B
+## 84  2006   0.6127749 0.3293822 1.3400184     B
+## 85  2007   0.6816100 0.3835635 1.5118498     B
+## 86  2008   0.6916787 0.3834618 1.6494418     B
+## 87  2009   0.6877495 0.3873402 1.6001113     B
+## 88  2010   0.6415834 0.3427585 1.5240180     B
+## 89  2011   0.5689602 0.2817051 1.2487769     B
+## 90  2012   0.3749892 0.1415960 0.9935941     B
+## 91  2013   0.4343330 0.1640043 1.1508352     B
+```
+
+![](README_files/figure-html/nearctic_mams_birds-5.png)
+
+```r
+# We can also plot these next to each other, and use some more meaningful titles
 ggplot_multi_lpi(lpis, names=c("Birds", "Mammals"), xlims=c(1970, 2012), ylims=c(0, 3), facet=TRUE)
 ```
 
+```
+##    years         lpi       lwr       upr   group
+## 1   1970   1.0000000 1.0000000 1.0000000   Birds
+## 2   1971   0.9896952 0.9864593 0.9923734   Birds
+## 3   1972   0.9774621 0.9717509 0.9818538   Birds
+## 4   1973   0.9652212 0.9582700 0.9700042   Birds
+## 5   1974   0.9576677 0.9492073 0.9651959   Birds
+## 6   1975   0.9510788 0.9422061 0.9591524   Birds
+## 7   1976   0.9434867 0.9330713 0.9518802   Birds
+## 8   1977   0.9362711 0.9233815 0.9453213   Birds
+## 9   1978   0.9293341 0.9173143 0.9388341   Birds
+## 10  1979   0.9247223 0.9124983 0.9359622   Birds
+## 11  1980   0.9207614 0.9081543 0.9321167   Birds
+## 12  1981   0.9163404 0.9038990 0.9294512   Birds
+## 13  1982   0.9095072 0.8956416 0.9220873   Birds
+## 14  1983   0.9047326 0.8905207 0.9175003   Birds
+## 15  1984   0.9101938 0.8954484 0.9287540   Birds
+## 16  1985   0.9167052 0.8987839 0.9376561   Birds
+## 17  1986   0.9246601 0.9045289 0.9477227   Birds
+## 18  1987   0.9162963 0.8928303 0.9403523   Birds
+## 19  1988   0.9238982 0.8942094 0.9535547   Birds
+## 20  1989   0.9213017 0.8934632 0.9533361   Birds
+## 21  1990   0.9214140 0.8930898 0.9507502   Birds
+## 22  1991   0.9261317 0.8970141 0.9580792   Birds
+## 23  1992   0.9268065 0.8984476 0.9637147   Birds
+## 24  1993   0.9330644 0.9023641 0.9762735   Birds
+## 25  1994   0.9282623 0.8984221 0.9765962   Birds
+## 26  1995   0.9251124 0.8939080 0.9714770   Birds
+## 27  1996   0.9200919 0.8868712 0.9656026   Birds
+## 28  1997   0.9245637 0.8909606 0.9739048   Birds
+## 29  1998   0.9315371 0.8985482 0.9819999   Birds
+## 30  1999   0.9330844 0.9006605 0.9831981   Birds
+## 31  2000   0.9251001 0.8879858 0.9795442   Birds
+## 32  2001   0.9162160 0.8804943 0.9732307   Birds
+## 33  2002   0.9104011 0.8726870 0.9606332   Birds
+## 34  2003   0.9107675 0.8719010 0.9576863   Birds
+## 35  2004   0.9191720 0.8772571 0.9638248   Birds
+## 36  2005   0.9462204 0.8962679 0.9940500   Birds
+## 37  2006   0.9618153 0.9108031 1.0159073   Birds
+## 38  2007   0.9743441 0.9245755 1.0312669   Birds
+## 39  2008   0.9808412 0.9301351 1.0366492   Birds
+## 40  2009   0.9851467 0.9319646 1.0395225   Birds
+## 41  2010   0.9885350 0.9353610 1.0416781   Birds
+## 42  2011   0.9921599 0.9411908 1.0437934   Birds
+## 43  2012   1.0048165 0.9410227 1.0752091   Birds
+## 44  2013   0.9993526 0.9228580 1.0769725   Birds
+## 45  2014   0.9906295 0.8886089 1.0802608   Birds
+## 46  2015 -99.0000000        NA        NA   Birds
+## 47  2016 -99.0000000        NA        NA   Birds
+## 48  1970   1.0000000 1.0000000 1.0000000 Mammals
+## 49  1971   0.9713669 0.9142620 1.0476529 Mammals
+## 50  1972   0.8933568 0.7595992 1.0563988 Mammals
+## 51  1973   0.7780563 0.6277961 0.9908975 Mammals
+## 52  1974   0.6318875 0.4539555 0.8322746 Mammals
+## 53  1975   0.5565817 0.3903993 0.7534143 Mammals
+## 54  1976   0.5314568 0.3677900 0.7128156 Mammals
+## 55  1977   0.5596089 0.3971323 0.7481654 Mammals
+## 56  1978   0.5256448 0.3388611 0.7357288 Mammals
+## 57  1979   0.5971378 0.3792110 0.8602571 Mammals
+## 58  1980   0.6836605 0.4242749 0.9984567 Mammals
+## 59  1981   0.7207277 0.4475479 1.0593232 Mammals
+## 60  1982   0.7297648 0.4417741 1.0993474 Mammals
+## 61  1983   0.6921780 0.4173110 1.0144532 Mammals
+## 62  1984   0.6536326 0.4018457 0.9979703 Mammals
+## 63  1985   0.6250620 0.3800000 0.9817897 Mammals
+## 64  1986   0.6469144 0.3925778 1.0092304 Mammals
+## 65  1987   0.7100873 0.4142736 1.0916634 Mammals
+## 66  1988   0.7186970 0.4199367 1.1237502 Mammals
+## 67  1989   0.7936947 0.4481835 1.2290419 Mammals
+## 68  1990   0.8471548 0.4905225 1.3443533 Mammals
+## 69  1991   0.8934175 0.5286397 1.3906112 Mammals
+## 70  1992   0.7947763 0.4643619 1.1843446 Mammals
+## 71  1993   0.7806785 0.4521587 1.1661280 Mammals
+## 72  1994   0.7694146 0.4386054 1.1871839 Mammals
+## 73  1995   0.8014162 0.4619093 1.2421399 Mammals
+## 74  1996   0.7971957 0.4594595 1.3103259 Mammals
+## 75  1997   0.7780101 0.4460531 1.3466216 Mammals
+## 76  1998   0.7648011 0.4399772 1.3320820 Mammals
+## 77  1999   0.7273176 0.4163394 1.2368096 Mammals
+## 78  2000   0.7705594 0.4442099 1.3862367 Mammals
+## 79  2001   0.6580829 0.3908803 1.2240195 Mammals
+## 80  2002   0.5673112 0.3455405 1.0870568 Mammals
+## 81  2003   0.5806714 0.3310768 1.1178220 Mammals
+## 82  2004   0.5427784 0.3497679 1.0654298 Mammals
+## 83  2005   0.5689047 0.3103161 1.2211501 Mammals
+## 84  2006   0.6127749 0.3293822 1.3400184 Mammals
+## 85  2007   0.6816100 0.3835635 1.5118498 Mammals
+## 86  2008   0.6916787 0.3834618 1.6494418 Mammals
+## 87  2009   0.6877495 0.3873402 1.6001113 Mammals
+## 88  2010   0.6415834 0.3427585 1.5240180 Mammals
+## 89  2011   0.5689602 0.2817051 1.2487769 Mammals
+## 90  2012   0.3749892 0.1415960 0.9935941 Mammals
+## 91  2013   0.4343330 0.1640043 1.1508352 Mammals
+```
+
+![](README_files/figure-html/nearctic_mams_birds-6.png)
+
 ## Creating an index using example data (multiple groups and weightings)
 
-This more complex example calculates an index for the terrestrial system, using the input file **terrestrial_class_realms_infile.txt**. This has the following format:
+This more complex example calculates an index for the terrestrial system, using the input file ***terrestrial_class_realms_infile.txt***, which has the following format:
 
 ```
 "FileName"	"Group"	"Weighting"
@@ -180,32 +1633,33 @@ This more complex example calculates an index for the terrestrial system, using 
 "class_realms/terrestrial_lpi_rc_p1970_Nearctic_Herps.txt"	5	0.270102339181287
 ```
 
-Which refers to 15 different population files, divided into 5 groups (biogeographic realms) using the  "Group" column with different taxonomic gruops within these realms. So group 1 is for the 'Afrotropical' realm and has three population files (Aves, Mammalia and Herps). Weightings are given for these taxonomic groups which specify how much weight each taxonomic group has within the realm index (here using weights relfecting the proportion of species in that taxonomic group in that realm). 
+This input file refers to 15 different population files, divided into 5 groups (in this case, biogeographic realms) using the "Group" column with different taxonomic groups within these. So group 1 is for the 'Afrotropical' realm and has three population files (Aves, Mammalia and Herps). Weightings are given for these taxonomic groups which specify how much weight each taxonomic group has within its realm index (the weights used here reflect the proportion of species in that taxonomic group in that realm). 
+
 
 
 ```r
 # Whole terrestrial...
 
 # Create a terrestrial index, without using any specified weightings ('use_weightings=0' - so treating taxonomic groups equally at one level, and biogeographic realms equally at the next)
-terr_lpi_a <- LPIMain("terrestrial_class_realms_infile.txt", use_weightings=0)
+terr_lpi_a <- LPIMain("terrestrial_class_nearctic_infile.txt", PLOT_MAX=2015, use_weightings=0)
 
-# Run same again, and now weight by class, but equal across realms (see infile for weights)
-terr_lpi_b <- LPIMain("terrestrial_class_realms_infile.txt", use_weightings=1)
+# Run same again and now weight by class, but weight equally across realms (see infile for weights)
+terr_lpi_b <- LPIMain("terrestrial_class_nearctic_infile.txt", PLOT_MAX=2015, force_recalculation=0, use_weightings=1)
 
 # Putting the two LPIs together in a list
 lpis_comp <- list(terr_lpi_a, terr_lpi_b)
 
 # And plotting them together 
-ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012))
 ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012), names=c("Unweighted", "Weighted"), facet=TRUE)
 ```
 
-We can also compare the impact of removing particular group from the indices - for example, removing groups with low representaton (figure X in the paper).
+## See Also - Creating infiles
+
+Some functions are also provided for creating infiles from tabular data: [Creating Infiles](creating_infiles.md)
+
 
 ```
-
 ```
 
-### See Also
 
-Some functions are also provided for creating infiles from tabular data: [Creating Infiles](creating_infiles.html)
+

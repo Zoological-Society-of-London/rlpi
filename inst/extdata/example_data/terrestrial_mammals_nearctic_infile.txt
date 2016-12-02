@@ -1,3 +1,0 @@
-"FileName"	"Group"	"Weighting"
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt"	1	0.175804093567251
-

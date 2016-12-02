@@ -1,4 +1,4 @@
 "FileName"	"Group"	"Weighting"
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Aves.txt"	1	0.264985380116959
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt"	1	0.175804093567251
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Herps.txt"	1	0.270102339181287
+"terrestrial_Nearctic_Aves_pops.txt"	1	0.376366476
+"terrestrial_Nearctic_nm_pops.txt"	1	0.249869859
+"terrestrial_Nearctic_Herps_pops.txt"	1	0.373763665

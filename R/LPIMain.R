@@ -58,7 +58,7 @@
 #' @param PLOT_MAX The final year of the index to plot. Default=2012,
 #' @param force_recalculation Whether the population annual differences should be recalucated (they are cached for a given file). Default=0
 #' @param use_weightings Whether to use the first level of weightings ('Weightings') in the infile. Default=0
-#' @param use_weightings_B Whether to use the first level of weightings ('WeightingsB') in the infile. Default=0
+#' @param use_weightings_B Whether to use the second level of weightings ('WeightingsB') in the infile. Default=0
 #' @param title The title. Default=""
 #' @param CI_FLAG Flag to indicate whether or not to calculate confidence intervals (bootstrapping the index). Default=1
 #' @param LEV_FLAG Flag to indicate wether or not to calculate species level leverage plots. Default=0
@@ -116,7 +116,7 @@
 #'
 LPIMain <- function(infile="Infile.txt",
                     REF_YEAR = 1970,
-                    PLOT_MAX = 2012,
+                    PLOT_MAX = 2015,
                     force_recalculation=1,
                     use_weightings=0,
                     use_weightings_B=0,
