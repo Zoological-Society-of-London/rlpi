@@ -1,6 +1,9 @@
 # rlpi package
 Robin Freeman, IoZ, Zoological Society of London  
 `r format(Sys.Date())`  
+
+
+
 ##Using the rlpi package 
 
 ### Overview
@@ -22,24 +25,61 @@ NB: At present the code combines population time-series to the species level, ge
 an average index for each species, then combines these into higher groups. If you don't wish
 to combine to the species level (to generate an index where populations are weighted equally rather then species), then the 'speciesname' column will need to be unique for each population (which can be achieved, for example, by concatenating the speciesname and popid columns)
 
-### Using the package 
+### Installing the package and examples
 
-First, install the devtools package to enable installing from github
+First, install the devtools package to enable installing from github:
 
 
 ```r
 install.packages("devtools")
-library(devtools)
+```
 
+Then install the **rlpi** package from our github:
+
+
+```r
+library(devtools)
+```
+
+```
+## Warning: package 'devtools' was built under R version 3.2.5
+```
+
+```r
 # Install from main ZSL repository online
 install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20")
 ```
+
+```
+## Downloading GitHub repo Zoological-Society-of-London/rlpi@master
+## from URL https://api.github.com/repos/Zoological-Society-of-London/rlpi/zipball/master
+```
+
+```
+## Installing rlpi
+```
+
+```
+## '/Library/Frameworks/R.framework/Resources/bin/R' --no-site-file  \
+##   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
+##   '/private/var/folders/w6/_grgw1n52vqgn5l480q1s_m5hs9z1z/T/RtmpKl29d3/devtools1414551501d0/Zoological-Society-of-London-rlpi-2f0ea62c8617def0a43a0f33f250f681915d1851'  \
+##   --library='/Library/Frameworks/R.framework/Versions/3.2/Resources/library'  \
+##   --install-tests
+```
+
+```
+## 
+```
+
+Then the library can be loaded as normal
 
 
 ```r
 # Load library
 library(rlpi)
 ```
+
+And some example data can be extracted from the package:
 
 
 ```r
@@ -49,6 +89,8 @@ file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=
 # Extract data, this will create a directory of terrestrial LPI data to construct a terrestrial index from.
 unzip("example_data.zip")
 ```
+
+## Example data
 
 Within the example data are a number of 'infiles', these files (take a look at them!) contain links to other files arranged into groups and including weightings. 
 
@@ -72,6 +114,8 @@ Sorex_cinereus	4587	1952	3
 Napaeozapus_insignis	4588	1952	18
 ...
 ```
+
+## Creating an index using example data
 
 Using these files to contruct a Neartic index can be done as follows:
 
@@ -106,6 +150,8 @@ ggplot_multi_lpi(lpis, xlims=c(1970, 2012), ylims=c(0, 3))
 # Can also plot these next to each other, and use some more meaningful titles
 ggplot_multi_lpi(lpis, names=c("Birds", "Mammals"), xlims=c(1970, 2012), ylims=c(0, 3), facet=TRUE)
 ```
+
+## Creating an index using example data (multiple groups and weightings)
 
 This more complex example calculates an index for the terrestrial system, using the input file **terrestrial_class_realms_infile.txt**. This has the following format:
 
@@ -148,7 +194,7 @@ ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012))
 ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012), names=c("Unweighted", "Weighted"), facet=TRUE)
 ```
 
-The code also provides a means to create infiles from tabular population data. For example, the Living Planet Database can be constructed so that each row represents a population, with columns for each abundance year. NB: The **create_infile** method expects particular columns that define where the abundance data resides, it uses the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. This reflects the format used in the Living Planet Database, and in the example data provided here **XXXX**.
+The code also provides a means to create infiles from tabular population data. For example, the Living Planet Database can be constructed so that each row represents a population, with columns for each abundance year. NB: The **create_infile** method expects particular columns that define where the abundance data resides, it uses the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. This reflects the format used in the Living Planet Database, and in the example data provided here **http://www.livingplanetindex.org/projects?main_page_project=LivingPlanetReport&home_flag=1**.
 
 
 
@@ -303,15 +349,15 @@ example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BO
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 2.829000, User: 0.099000, Elapsed: 2.991000
+## [Calculating LPI...] System: 3.455000, User: 0.102000, Elapsed: 3.791000
 ## Group 1 is NA in year 43
 ## Group 1 is NA in year 44
 ## Group 1 is NA in year 45
 ## Group 1 is NA in year 46
 ## Number of valid index years: 42 (of possible 46)
-## [Calculating CIs...] System: 2.870000, User: 0.099000, Elapsed: 3.033000
+## [Calculating CIs...] System: 3.525000, User: 0.102000, Elapsed: 3.864000
 ## ....................................................................................................
-## [CIs calculated] System: 5.521000, User: 0.211000, Elapsed: 5.874000
+## [CIs calculated] System: 6.870000, User: 0.163000, Elapsed: 7.469000
 ```
 
 ![](README_files/figure-html/making_infiles-1.png)
@@ -320,7 +366,7 @@ example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BO
 ## Saving final output to file:  example_data_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_infile.pdf 
-## [END] System: 5.569000, User: 0.215000, Elapsed: 5.931000
+## [END] System: 6.930000, User: 0.167000, Elapsed: 7.536000
 ```
 
 ```r
@@ -435,12 +481,12 @@ s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_strig_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 1.666000, User: 0.015000, Elapsed: 1.698000
+## [Calculating LPI...] System: 2.341000, User: 0.050000, Elapsed: 2.578000
 ## Group 1 is NA in year 46
 ## Number of valid index years: 45 (of possible 46)
-## [Calculating CIs...] System: 1.696000, User: 0.015000, Elapsed: 1.729000
+## [Calculating CIs...] System: 2.374000, User: 0.050000, Elapsed: 2.611000
 ## ....................................................................................................
-## [CIs calculated] System: 4.257000, User: 0.066000, Elapsed: 4.396000
+## [CIs calculated] System: 4.861000, User: 0.075000, Elapsed: 5.180000
 ```
 
 ![](README_files/figure-html/making_infiles-4.png)
@@ -449,7 +495,7 @@ s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 ## Saving final output to file:  example_data_strig_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_strig_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_strig_infile.pdf 
-## [END] System: 4.329000, User: 0.073000, Elapsed: 4.479000
+## [END] System: 4.915000, User: 0.079000, Elapsed: 5.241000
 ```
 
 ```r
@@ -534,12 +580,12 @@ p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_strig_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 1.888000, User: 0.051000, Elapsed: 1.995000
+## [Calculating LPI...] System: 1.780000, User: 0.026000, Elapsed: 1.847000
 ## Group 1 is NA in year 46
 ## Number of valid index years: 45 (of possible 46)
-## [Calculating CIs...] System: 1.946000, User: 0.052000, Elapsed: 2.055000
+## [Calculating CIs...] System: 1.813000, User: 0.027000, Elapsed: 1.880000
 ## ....................................................................................................
-## [CIs calculated] System: 4.110000, User: 0.071000, Elapsed: 4.254000
+## [CIs calculated] System: 4.284000, User: 0.050000, Elapsed: 4.422000
 ```
 
 ![](README_files/figure-html/making_infiles-6.png)
@@ -548,7 +594,7 @@ p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 ## Saving final output to file:  example_data_strig_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_strig_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_strig_infile.pdf 
-## [END] System: 4.161000, User: 0.076000, Elapsed: 4.311000
+## [END] System: 4.347000, User: 0.054000, Elapsed: 4.492000
 ```
 
 ```r
@@ -590,14 +636,6 @@ ggplot_lambdas(pop_lambda_values, baseline=1, ylims=c(0.8, 1.2), xlims=c(1970, 2
 
 ![](README_files/figure-html/lambda_plots-1.png)
 
-```
-## Warning: Removed 2 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 2 rows containing missing values (geom_point).
-```
-
-![](README_files/figure-html/lambda_plots-2.png)
-
 Similarly for species level lambdas (species level annual rates of change) using the <NAME>_lambda.txt file creating during the index calculations.
 
 
@@ -623,11 +661,3 @@ ggplot_lambdas(sp_lambda_values, baseline=1, ylims=c(0.8, 1.2), xlims=c(1970, 20
 ```
 
 ![](README_files/figure-html/species_lambda_plots-1.png)
-
-```
-## Warning: Removed 2 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 2 rows containing missing values (geom_point).
-```
-
-![](README_files/figure-html/species_lambda_plots-2.png)

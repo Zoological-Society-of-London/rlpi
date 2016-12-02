@@ -5,7 +5,14 @@ date: "`r format(Sys.Date())`"
 output:  
       html_document:  
         keep_md: true  
+        toc: true
+        theme: united
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
 ##Using the rlpi package 
 
 ### Overview
@@ -27,22 +34,30 @@ NB: At present the code combines population time-series to the species level, ge
 an average index for each species, then combines these into higher groups. If you don't wish
 to combine to the species level (to generate an index where populations are weighted equally rather then species), then the 'speciesname' column will need to be unique for each population (which can be achieved, for example, by concatenating the speciesname and popid columns)
 
-### Using the package 
+### Installing the package and examples
 
-First, install the devtools package to enable installing from github
+First, install the devtools package to enable installing from github:
 
 ```{r rlpi_install, eval=FALSE}
 install.packages("devtools")
-library(devtools)
+```
 
+Then install the **rlpi** package from our github:
+
+```{r install_rlpi, eval=T}
+library(devtools)
 # Install from main ZSL repository online
 install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20")
 ```
+
+Then the library can be loaded as normal
 
 ```{r load_rlpi, eval=T}
 # Load library
 library(rlpi)
 ```
+
+And some example data can be extracted from the package:
 
 ```{r rlpi_data, eval=FALSE}
 # Get example data from package
@@ -53,16 +68,18 @@ unzip("example_data.zip")
 
 ```
 
+## Example data
+
 Within the example data are a number of 'infiles', these files (take a look at them!) contain links to other files arranged into groups and including weightings. 
 
-For example **terrestrial_class_nearctic_infile.txt** which constructs and index for a single group contains:
+For example **terrestrial_class_nearctic_infile.txt** which constructs an index for a single group contains:
 
 ```
 "FileName"	"Group"	"Weighting"
 "class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt"	1	0.175804093567251
 ```
 
-This references a single 'population' data file (the raw data) in the **class_realms** folder  which in this case contains population counts for Neartic mammals (again, have a a look), in this format:
+For now, ignore the 'group' and 'weighting' columns as this is a single group. This references a single 'population' data file (the raw data) in the **class_realms** folder which in this case contains population counts for Neartic mammals (again, have a a look), in the following format:
 
 first six lines of **class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt**:
 
@@ -76,39 +93,48 @@ Napaeozapus_insignis	4588	1952	18
 ...
 ```
 
-Using these files to contruct a Neartic index can be done as follows:
+## Creating an index using example data
 
-```{r nearctic_lpi, eval=FALSE}
+Using these files to contruct a Neartic mammal index can be done as follows:
+
+```{r nearctic_lpi, eval=TRUE}
 # Make a Neactic LPI 
 # Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
 Nearc_lpi <- LPIMain("terrestrial_class_nearctic_infile.txt", use_weightings = 1)
 
 # That should have produced a simple plot, but we can use ggplot_lpi to produce a nicer one
 ggplot_lpi(Nearc_lpi, ylims=c(0, 2))
+```
 
+Similarly, infiles are provided for Nearctic mammals and birds:
+
+```{r nearctic_mams_birds eval=TRUE}
 # Make a Neactic Mammals LPI 
 # Default gives 100 boostraps (this will take a few minutes to run (on a 2014 Macbook))
-Nearc_mams_lpi <- LPIMain("terrestrial_mammals_nearctic_infile.txt")
+Nearc_mams_lpi <- LPIMain("terrestrial_Nearctic_Mammalia_infile.txt")
 
 # Nicer plot
 ggplot_lpi(Nearc_mams_lpi, ylims=c(0, 2))
 
 # Make a Neactic Mammals LPI 
 # Default gives 100 boostraps (this will take a few minutes to run (on a 2014 Macbook))
-Nearc_birds_lpi <- LPIMain("terrestrial_birds_nearctic_infile.txt")
+Nearc_birds_lpi <- LPIMain("terrestrial_Nearctic_Aves_infile.txt")
 
 # Nicer plot
 ggplot_lpi(Nearc_birds_lpi, ylims=c(0, 2))
 
-# Putting the two LPIs together in a list
+# We can also combine the two LPIs together in a list
 lpis <- list(Nearc_birds_lpi, Nearc_mams_lpi)
-# And plotting them together should show identical means but with different CIs
+
+# And plot them together 
 ggplot_multi_lpi(lpis, xlims=c(1970, 2012), ylims=c(0, 3))
 
 # Can also plot these next to each other, and use some more meaningful titles
 ggplot_multi_lpi(lpis, names=c("Birds", "Mammals"), xlims=c(1970, 2012), ylims=c(0, 3), facet=TRUE)
 
 ```
+
+## Creating an index using example data (multiple groups and weightings)
 
 This more complex example calculates an index for the terrestrial system, using the input file **terrestrial_class_realms_infile.txt**. This has the following format:
 
@@ -131,16 +157,16 @@ This more complex example calculates an index for the terrestrial system, using 
 "class_realms/terrestrial_lpi_rc_p1970_Nearctic_Herps.txt"	5	0.270102339181287
 ```
 
-Which refers to 15 different population files, divided into 5 groups (biogeographic realms) with taxonomic gruops within these realms. So group 1 is for the 'Afrotropical' realm and has three population files (Aves, Mammalia and Herps). Weightings are given for these taxonomic groups which specific how much weight each taxonomic group has within the realm index. 
+Which refers to 15 different population files, divided into 5 groups (biogeographic realms) using the  "Group" column with different taxonomic gruops within these realms. So group 1 is for the 'Afrotropical' realm and has three population files (Aves, Mammalia and Herps). Weightings are given for these taxonomic groups which specify how much weight each taxonomic group has within the realm index (here using weights relfecting the proportion of species in that taxonomic group in that realm). 
 
 ```{r terrestrial_lpi, eval=FALSE}
 # Whole terrestrial...
 
-# Create a terrestrial index, without using any specified weightings (so treating taxonomic groups equally at one level, and biogeographic realms equally at the next)
+# Create a terrestrial index, without using any specified weightings ('use_weightings=0' - so treating taxonomic groups equally at one level, and biogeographic realms equally at the next)
 terr_lpi_a <- LPIMain("terrestrial_class_realms_infile.txt", use_weightings=0)
 
-# Run same again, but as we've already processed all the populaitons, we can used cached lambdas (force_recalculation == 0), and now weight by class, but equal across realms (see infile for weights)
-terr_lpi_b <- LPIMain("terrestrial_class_realms_infile.txt", force_recalculation=0, use_weightings=1)
+# Run same again, and now weight by class, but equal across realms (see infile for weights)
+terr_lpi_b <- LPIMain("terrestrial_class_realms_infile.txt", use_weightings=1)
 
 # Putting the two LPIs together in a list
 lpis_comp <- list(terr_lpi_a, terr_lpi_b)
@@ -150,74 +176,9 @@ ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012))
 ggplot_multi_lpi(lpis_comp, xlims=c(1970, 2012), names=c("Unweighted", "Weighted"), facet=TRUE)
 ```
 
-The code also provides a means to create infiles from tabular population data. For example, the Living Planet Database can be constructed so that each row represents a population, with columns for each abundance year. NB: The **create_infile** method expects particular columns that define where the abundance data resides, it uses the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. This reflects the format used in the Living Planet Database, and in the example data provided here **XXXX**.
+## We can also compare the impact of removing particular group from the indices - for example, removing groups with low representaton (figure X in the paper).
 
 
-```{r making_infiles, eval=T}
-# Constructing infiles from a populations table...
+### See Also
 
-# First read the population table (this is the Living Planet Database excluding confidential records)
-lpi_data <- read.csv("inst/extdata/example_data/LPI_LPR2016data_public.csv", na.strings = "NULL")
-
-# Create an inifle from all the data. All the population data in the 'lpi_data' table will be converted and stored in a file called 'example_data_pops.txt' and a file called 'example_data_infile.txt' will be created that references the first file (the infile name will also be stored in the returned variable 'example_infile_name')
-
-# Here we select the first 100 populations by creating an index vector that's FALSE for all rows, then setting the first 100 rows to TRUE
-index_vector = rep(FALSE, nrow(lpi_data))
-index_vector[1:100] = TRUE
-
-example_infile_name <- create_infile(lpi_data, index_vector=index_vector, name="example_data")
-# An index can be created using this infile, for the period 1970 to 2014 with 100 bootstraps.
-example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
-
-# Plot the resulting index
-ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0, 2))
-# Plot the resulting index with logged y-axis (note the use of a +ive ymin)
-ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0.3, 2), trans="log")
-
-# Here we limit the data to 'Strigiformes' simply by creating a boolean  (true/false) vector which is true for populations (rows) where the Order is "Strigiformes"
-Strigiformes = lpi_data$Order == "Strigiformes" 
-
-# Psssing this vector into the create_infile function will select just those populations and create an infile for them
-s_infile_name <- create_infile(lpi_data, index_vector=Strigiformes, name="example_data_strig")
-# Again, create and index
-s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
-# And plot
-ggplot_lpi(s_lpi, title = "s_lpi", xlims=c(1970, 2012))
-
-# Similarly, this will create an index just for those populations of the Order 'Passeriformes'
-Passeriformes = lpi_data$Order == "Passeriformes" 
-p_infile_name <- create_infile(lpi_data, index_vector=Passeriformes, name="example_data_pass")
-p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
-ggplot_lpi(p_lpi, title = "p_lpi", xlims=c(1970, 2012))
-```
-
-It is also possible to plot annual lambdas which can be useful for exploring the interannual variability in the population data. Here we use one of the files that is created during the index calculation process above (usually called <NAME>_PopLambda.txt). This file contains the population level lambdas (the rate of change for each year, for each population).
-
-```{r lambda_plots, eval=T}
-
-# Read in population level lambdas (_PopLambda.txt)
-#** NOTE that na.strings is "-1" here to convert '-1's to NA values
-pop_lambda_data <- read.table("example_data_pops_PopLambda.txt", header = TRUE, sep=",", na.strings = "-1")
-
-# Remove first column
-pop_lambda_values <- pop_lambda_data[, 2:ncol(pop_lambda_data)]
-
-# Plot lambdas
-ggplot_lambdas(pop_lambda_values, baseline=1, ylims=c(0.8, 1.2), xlims=c(1970, 2014.5))
-```
-
-Similarly for species level lambdas (species level annual rates of change) using the <NAME>_lambda.txt file creating during the index calculations.
-
-```{r species_lambda_plots, eval=T}
-#
-# Species level lambdas (_lambda.txt) 
-#** NOTE that na.strings is "-1" here to convert '-1's to NA values
-sp_lambda_data <- read.table("example_data_pops_lambda.txt", header = TRUE, sep=",", na.strings = "NA")
-
-# Remove first column
-sp_lambda_values <- sp_lambda_data[, 2:ncol(sp_lambda_data)]
-
-# Plot
-ggplot_lambdas(sp_lambda_values, baseline=1, ylims=c(0.8, 1.2), xlims=c(1970, 2014.5))
-
-```
+Some functions are also provided for creating infiles from tabular data, and for plotting annual lambdas (rates of change): [Creating Infiles](creating_infiles.md) and [Plotting Annual Lambdas](plotting_lambdas.md)
