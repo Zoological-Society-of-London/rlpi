@@ -46,7 +46,8 @@ CalcLPI <- function(Species,
                     OFFSET_NONE, # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
                     OFFSET_DIFF, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
                     LINEAR_MODEL_SHORT_FLAG, # if=TRUE models short time-series with linear model
-                    CAP_LAMBDAS = FALSE
+                    CAP_LAMBDAS = FALSE,
+                    show_progress = FALSE
 ) {
   noRecs = max(dim(Popvalue))
   sNames = unique(Species)
@@ -68,8 +69,9 @@ CalcLPI <- function(Species,
   # Calculate index value for each species
   SpeciesLambda = matrix(0, noSpecies, FinalYear - InitialYear + 1)
 
-  prog <- txtProgressBar(min=0, max=noSpecies, char="*", style=3)
-
+  if (show_progress){
+    prog <- txtProgressBar(min=0, max=noSpecies, char="*", style=3)
+  }
 # Here a file is created that includes the list of populations processed by chain
   MethodFlagLoop = 0
   for (I in 1:noSpecies) {
@@ -124,7 +126,7 @@ CalcLPI <- function(Species,
               if (max(PopN) >= 1) {
                 # Add 1
                 PopN = PopN + 1
-                
+
               } else {
                 # Otherwise add 1% of the mean
                 IndexNonZero = which(PopN != 0)
@@ -286,7 +288,7 @@ CalcLPI <- function(Species,
             }
           }
         }
-        # IF we get to here and the Flag is still 0, then no GAM has been made - either 
+        # IF we get to here and the Flag is still 0, then no GAM has been made - either
         # the population is to short (<6) or the gam has failed the quality check
         if (Flag == 0) {
 
@@ -320,7 +322,7 @@ CalcLPI <- function(Species,
               MethodFlagLoop = MethodFlagLoop + 1
               MethodFlag[MethodFlagLoop] = PopID[J]
               PopNInt = matrix(-1, 1, length(YearPopInt))
-  
+
               for (K in 1:length(YearPopInt)) {
                 k = which(YearPop == YearPopInt[K])
                 if (length(k) > 0) {
@@ -426,9 +428,9 @@ CalcLPI <- function(Species,
           if (length(IndexTemp) > 0) {
             # Then set species lambda to be their average...
             if (CAP_LAMBDAS) {
-              SpeciesLambda[I, K] = mean(c(PopLambdaTemp1[IndexTemp], rep(LAMBDA_MAX, length(IndexTempBad_max)), rep(LAMBDA_MIN, length(IndexTempBad_min)))) 
+              SpeciesLambda[I, K] = mean(c(PopLambdaTemp1[IndexTemp], rep(LAMBDA_MAX, length(IndexTempBad_max)), rep(LAMBDA_MIN, length(IndexTempBad_min))))
             } else {
-              SpeciesLambda[I, K] = mean(PopLambdaTemp1[IndexTemp]) 
+              SpeciesLambda[I, K] = mean(PopLambdaTemp1[IndexTemp])
             }
           } else {
             # Otherwise, if we have lambdas less than our max, but not more then min, set sp. av. to be NA
@@ -457,16 +459,16 @@ CalcLPI <- function(Species,
     sIDArray[sNamesCounter] = ID[I, 1]
 
     # cat('Results saved\n')
-    setTxtProgressBar(prog, I)
+    if (show_progress) setTxtProgressBar(prog, I)
   }
-  close(prog)
+  if (show_progress) close(prog)
   cat("\n")
 
   PopNotProcessed1 = PopNotProcessed[1, 1:PopNotProcessedCounter]
   write.table(PopNotProcessed1, file = "lpi_temp/PopNotProcessed.txt")  # insert your desired file name here
   MethodFlag1 = MethodFlag[1, 1:MethodFlagLoop]
   if (LINEAR_MODEL_SHORT_FLAG == 1) {
-    write.table(MethodFlag1, file = "lpi_temp/PopProcessed_LM.txt")  # insert your desired file name here                  
+    write.table(MethodFlag1, file = "lpi_temp/PopProcessed_LM.txt")  # insert your desired file name here
   } else {
     write.table(MethodFlag1, file = "lpi_temp/PopProcessed_Chain.txt")  # insert your desired file name here
   }

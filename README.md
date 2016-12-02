@@ -1,5 +1,5 @@
 # rlpi package
-Robin Freeman, IoZ, Zoological Society of London  
+Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London  
 `r format(Sys.Date())`  
 
 
@@ -40,38 +40,9 @@ library(devtools)
 install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20", dependencies=TRUE)
 ```
 
-```
-## Downloading GitHub repo Zoological-Society-of-London/rlpi@master
-## from URL https://api.github.com/repos/Zoological-Society-of-London/rlpi/zipball/master
-```
-
-```
-## Installing rlpi
-```
-
-```
-## '/Library/Frameworks/R.framework/Resources/bin/R' --no-site-file  \
-##   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
-##   '/private/var/folders/w6/_grgw1n52vqgn5l480q1s_m5hs9z1z/T/RtmpdAtoKR/devtools4073223342f5/Zoological-Society-of-London-rlpi-8fee3aba2456018f4d6882ef28b95b7a9af6a510'  \
-##   --library='/Library/Frameworks/R.framework/Versions/3.2/Resources/library'  \
-##   --install-tests
-```
-
-```
-## 
-```
-
-```
-## Reloading installed rlpi
-```
-
 Then the library can be loaded as normal
 
 
-```r
-# Load library
-library(rlpi)
-```
 
 And some example data can be extracted from the package:
 
@@ -780,15 +751,15 @@ Nearc_lpi <- LPIMain("terrestrial_class_nearctic_infile.txt", use_weightings = 1
 
 ```
 ## Saving DTemp Array with filesnames to file:  terrestrial_class_nearctic_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 41.867000, User: 0.746000, Elapsed: 47.607000
+## [Calculating LPI...] System: 43.060000, User: 0.998000, Elapsed: 49.821000
 ## Group 1 is NA in year 47
 ## Number of valid index years: 46 (of possible 47)
-## [Calculating CIs...] System: 42.077000, User: 0.749000, Elapsed: 47.891000
+## [Calculating CIs...] System: 43.224000, User: 1.003000, Elapsed: 50.041000
 ## ....................................................................................................
-## [CIs calculated] System: 52.577000, User: 0.929000, Elapsed: 59.292000
+## [CIs calculated] System: 54.292000, User: 1.274000, Elapsed: 62.445000
 ```
 
-![](README_files/figure-html/nearctic_lpi-1.png)
+![](README_files/figure-html/nearctic_lpi-1.png)<!-- -->
 
 ```
 ## Saving final output to file:  terrestrial_class_nearctic_infile_Results.txt 
@@ -796,7 +767,7 @@ Nearc_lpi <- LPIMain("terrestrial_class_nearctic_infile.txt", use_weightings = 1
 ## Saving Min/Max file to:  terrestrial_Nearctic_Mammalia_pops_Minmax.txt 
 ## Saving Min/Max file to:  terrestrial_Nearctic_Herps_pops_Minmax.txt 
 ## Saving Plot to PDF:  terrestrial_class_nearctic_infile.pdf 
-## [END] System: 53.146000, User: 0.953000, Elapsed: 60.043000
+## [END] System: 54.770000, User: 1.290000, Elapsed: 63.017000
 ```
 
 ```r
@@ -804,7 +775,7 @@ Nearc_lpi <- LPIMain("terrestrial_class_nearctic_infile.txt", use_weightings = 1
 ggplot_lpi(Nearc_lpi, ylims=c(0, 2))
 ```
 
-![](README_files/figure-html/nearctic_lpi-2.png)
+![](README_files/figure-html/nearctic_lpi-2.png)<!-- -->
 
 Similarly, infiles are provided for Nearctic mammals and birds:
 
@@ -1020,25 +991,28 @@ Nearc_mams_lpi <- LPIMain("example_data_nm_infile.txt")
 ```
 
 ```
-## Warning: Removed 1 rows containing missing values (geom_path).
+## Warning: Removed 4 rows containing missing values (geom_path).
 ```
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_nm_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 8.752000, User: 0.193000, Elapsed: 10.976000
-## Number of valid index years: 44 (of possible 44)
-## [Calculating CIs...] System: 8.800000, User: 0.194000, Elapsed: 11.047000
+## [Calculating LPI...] System: 9.323000, User: 0.287000, Elapsed: 12.256000
+## Group 1 is NA in year 45
+## Group 1 is NA in year 46
+## Group 1 is NA in year 47
+## Number of valid index years: 44 (of possible 47)
+## [Calculating CIs...] System: 9.380000, User: 0.288000, Elapsed: 12.343000
 ## ....................................................................................................
-## [CIs calculated] System: 12.276000, User: 0.371000, Elapsed: 16.142000
+## [CIs calculated] System: 13.046000, User: 0.481000, Elapsed: 17.374000
 ```
 
-![](README_files/figure-html/nearctic_mams_birds-1.png)
+![](README_files/figure-html/nearctic_mams_birds-1.png)<!-- -->
 
 ```
 ## Saving final output to file:  example_data_nm_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_nm_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_nm_infile.pdf 
-## [END] System: 12.480000, User: 0.378000, Elapsed: 16.443000
+## [END] System: 13.244000, User: 0.493000, Elapsed: 17.677000
 ```
 
 ```r
@@ -1046,7 +1020,7 @@ Nearc_mams_lpi <- LPIMain("example_data_nm_infile.txt")
 ggplot_lpi(Nearc_mams_lpi, ylims=c(0, 2))
 ```
 
-![](README_files/figure-html/nearctic_mams_birds-2.png)
+![](README_files/figure-html/nearctic_mams_birds-2.png)<!-- -->
 
 ```r
 # Make a Neactic Mammals LPI 
@@ -1378,22 +1352,22 @@ Nearc_birds_lpi <- LPIMain("terrestrial_Nearctic_Aves_infile.txt", PLOT_MAX=2015
 
 ```
 ## Saving DTemp Array with filesnames to file:  terrestrial_Nearctic_Aves_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 37.506000, User: 0.886000, Elapsed: 48.742000
+## [Calculating LPI...] System: 35.769000, User: 0.994000, Elapsed: 45.477000
 ## Group 1 is NA in year 46
 ## Group 1 is NA in year 47
 ## Number of valid index years: 45 (of possible 47)
-## [Calculating CIs...] System: 37.560000, User: 0.888000, Elapsed: 48.813000
+## [Calculating CIs...] System: 35.852000, User: 0.997000, Elapsed: 45.702000
 ## ....................................................................................................
-## [CIs calculated] System: 42.173000, User: 0.984000, Elapsed: 54.034000
+## [CIs calculated] System: 40.895000, User: 1.169000, Elapsed: 52.869000
 ```
 
-![](README_files/figure-html/nearctic_mams_birds-3.png)
+![](README_files/figure-html/nearctic_mams_birds-3.png)<!-- -->
 
 ```
 ## Saving final output to file:  terrestrial_Nearctic_Aves_infile_Results.txt 
 ## Saving Min/Max file to:  terrestrial_Nearctic_Aves_pops_Minmax.txt 
 ## Saving Plot to PDF:  terrestrial_Nearctic_Aves_infile.pdf 
-## [END] System: 42.586000, User: 1.004000, Elapsed: 54.618000
+## [END] System: 41.212000, User: 1.185000, Elapsed: 53.217000
 ```
 
 ```r
@@ -1401,7 +1375,7 @@ Nearc_birds_lpi <- LPIMain("terrestrial_Nearctic_Aves_infile.txt", PLOT_MAX=2015
 ggplot_lpi(Nearc_birds_lpi, ylims=c(0, 2))
 ```
 
-![](README_files/figure-html/nearctic_mams_birds-4.png)
+![](README_files/figure-html/nearctic_mams_birds-4.png)<!-- -->
 
 ```r
 # We can also combine the two LPIs together in a list
@@ -1412,101 +1386,104 @@ ggplot_multi_lpi(lpis, xlims=c(1970, 2012), ylims=c(0, 3))
 ```
 
 ```
-##    years         lpi       lwr       upr group
-## 1   1970   1.0000000 1.0000000 1.0000000     A
-## 2   1971   0.9896952 0.9864593 0.9923734     A
-## 3   1972   0.9774621 0.9717509 0.9818538     A
-## 4   1973   0.9652212 0.9582700 0.9700042     A
-## 5   1974   0.9576677 0.9492073 0.9651959     A
-## 6   1975   0.9510788 0.9422061 0.9591524     A
-## 7   1976   0.9434867 0.9330713 0.9518802     A
-## 8   1977   0.9362711 0.9233815 0.9453213     A
-## 9   1978   0.9293341 0.9173143 0.9388341     A
-## 10  1979   0.9247223 0.9124983 0.9359622     A
-## 11  1980   0.9207614 0.9081543 0.9321167     A
-## 12  1981   0.9163404 0.9038990 0.9294512     A
-## 13  1982   0.9095072 0.8956416 0.9220873     A
-## 14  1983   0.9047326 0.8905207 0.9175003     A
-## 15  1984   0.9101938 0.8954484 0.9287540     A
-## 16  1985   0.9167052 0.8987839 0.9376561     A
-## 17  1986   0.9246601 0.9045289 0.9477227     A
-## 18  1987   0.9162963 0.8928303 0.9403523     A
-## 19  1988   0.9238982 0.8942094 0.9535547     A
-## 20  1989   0.9213017 0.8934632 0.9533361     A
-## 21  1990   0.9214140 0.8930898 0.9507502     A
-## 22  1991   0.9261317 0.8970141 0.9580792     A
-## 23  1992   0.9268065 0.8984476 0.9637147     A
-## 24  1993   0.9330644 0.9023641 0.9762735     A
-## 25  1994   0.9282623 0.8984221 0.9765962     A
-## 26  1995   0.9251124 0.8939080 0.9714770     A
-## 27  1996   0.9200919 0.8868712 0.9656026     A
-## 28  1997   0.9245637 0.8909606 0.9739048     A
-## 29  1998   0.9315371 0.8985482 0.9819999     A
-## 30  1999   0.9330844 0.9006605 0.9831981     A
-## 31  2000   0.9251001 0.8879858 0.9795442     A
-## 32  2001   0.9162160 0.8804943 0.9732307     A
-## 33  2002   0.9104011 0.8726870 0.9606332     A
-## 34  2003   0.9107675 0.8719010 0.9576863     A
-## 35  2004   0.9191720 0.8772571 0.9638248     A
-## 36  2005   0.9462204 0.8962679 0.9940500     A
-## 37  2006   0.9618153 0.9108031 1.0159073     A
-## 38  2007   0.9743441 0.9245755 1.0312669     A
-## 39  2008   0.9808412 0.9301351 1.0366492     A
-## 40  2009   0.9851467 0.9319646 1.0395225     A
-## 41  2010   0.9885350 0.9353610 1.0416781     A
-## 42  2011   0.9921599 0.9411908 1.0437934     A
-## 43  2012   1.0048165 0.9410227 1.0752091     A
-## 44  2013   0.9993526 0.9228580 1.0769725     A
-## 45  2014   0.9906295 0.8886089 1.0802608     A
-## 46  2015 -99.0000000        NA        NA     A
-## 47  2016 -99.0000000        NA        NA     A
-## 48  1970   1.0000000 1.0000000 1.0000000     B
-## 49  1971   0.9713669 0.9142620 1.0476529     B
-## 50  1972   0.8933568 0.7595992 1.0563988     B
-## 51  1973   0.7780563 0.6277961 0.9908975     B
-## 52  1974   0.6318875 0.4539555 0.8322746     B
-## 53  1975   0.5565817 0.3903993 0.7534143     B
-## 54  1976   0.5314568 0.3677900 0.7128156     B
-## 55  1977   0.5596089 0.3971323 0.7481654     B
-## 56  1978   0.5256448 0.3388611 0.7357288     B
-## 57  1979   0.5971378 0.3792110 0.8602571     B
-## 58  1980   0.6836605 0.4242749 0.9984567     B
-## 59  1981   0.7207277 0.4475479 1.0593232     B
-## 60  1982   0.7297648 0.4417741 1.0993474     B
-## 61  1983   0.6921780 0.4173110 1.0144532     B
-## 62  1984   0.6536326 0.4018457 0.9979703     B
-## 63  1985   0.6250620 0.3800000 0.9817897     B
-## 64  1986   0.6469144 0.3925778 1.0092304     B
-## 65  1987   0.7100873 0.4142736 1.0916634     B
-## 66  1988   0.7186970 0.4199367 1.1237502     B
-## 67  1989   0.7936947 0.4481835 1.2290419     B
-## 68  1990   0.8471548 0.4905225 1.3443533     B
-## 69  1991   0.8934175 0.5286397 1.3906112     B
-## 70  1992   0.7947763 0.4643619 1.1843446     B
-## 71  1993   0.7806785 0.4521587 1.1661280     B
-## 72  1994   0.7694146 0.4386054 1.1871839     B
-## 73  1995   0.8014162 0.4619093 1.2421399     B
-## 74  1996   0.7971957 0.4594595 1.3103259     B
-## 75  1997   0.7780101 0.4460531 1.3466216     B
-## 76  1998   0.7648011 0.4399772 1.3320820     B
-## 77  1999   0.7273176 0.4163394 1.2368096     B
-## 78  2000   0.7705594 0.4442099 1.3862367     B
-## 79  2001   0.6580829 0.3908803 1.2240195     B
-## 80  2002   0.5673112 0.3455405 1.0870568     B
-## 81  2003   0.5806714 0.3310768 1.1178220     B
-## 82  2004   0.5427784 0.3497679 1.0654298     B
-## 83  2005   0.5689047 0.3103161 1.2211501     B
-## 84  2006   0.6127749 0.3293822 1.3400184     B
-## 85  2007   0.6816100 0.3835635 1.5118498     B
-## 86  2008   0.6916787 0.3834618 1.6494418     B
-## 87  2009   0.6877495 0.3873402 1.6001113     B
-## 88  2010   0.6415834 0.3427585 1.5240180     B
-## 89  2011   0.5689602 0.2817051 1.2487769     B
-## 90  2012   0.3749892 0.1415960 0.9935941     B
-## 91  2013   0.4343330 0.1640043 1.1508352     B
+##    years         lpi        lwr       upr group
+## 1   1970   1.0000000 1.00000000 1.0000000     A
+## 2   1971   0.9896952 0.98674473 0.9924994     A
+## 3   1972   0.9774621 0.97163268 0.9817766     A
+## 4   1973   0.9652212 0.95745194 0.9720634     A
+## 5   1974   0.9576677 0.95051708 0.9658928     A
+## 6   1975   0.9510788 0.94263573 0.9609818     A
+## 7   1976   0.9434867 0.93538025 0.9536023     A
+## 8   1977   0.9362711 0.92809014 0.9454853     A
+## 9   1978   0.9293341 0.91928240 0.9396620     A
+## 10  1979   0.9247223 0.91351402 0.9359269     A
+## 11  1980   0.9207614 0.90866300 0.9334575     A
+## 12  1981   0.9163404 0.90460930 0.9293915     A
+## 13  1982   0.9095072 0.89745322 0.9243884     A
+## 14  1983   0.9047326 0.89192430 0.9212877     A
+## 15  1984   0.9101938 0.89429539 0.9283996     A
+## 16  1985   0.9167052 0.89704621 0.9371010     A
+## 17  1986   0.9246601 0.90383480 0.9486299     A
+## 18  1987   0.9162963 0.88976017 0.9451819     A
+## 19  1988   0.9238982 0.89755883 0.9600940     A
+## 20  1989   0.9213017 0.89499464 0.9564925     A
+## 21  1990   0.9214140 0.89463487 0.9570561     A
+## 22  1991   0.9261317 0.89769591 0.9603287     A
+## 23  1992   0.9268065 0.89687841 0.9614243     A
+## 24  1993   0.9330644 0.90013787 0.9712449     A
+## 25  1994   0.9282623 0.89529919 0.9647474     A
+## 26  1995   0.9251124 0.88890276 0.9603917     A
+## 27  1996   0.9200919 0.88321178 0.9539841     A
+## 28  1997   0.9245637 0.88267336 0.9662576     A
+## 29  1998   0.9315371 0.88588921 0.9745960     A
+## 30  1999   0.9330844 0.88686187 0.9761825     A
+## 31  2000   0.9251001 0.87918807 0.9714389     A
+## 32  2001   0.9162160 0.87192555 0.9636869     A
+## 33  2002   0.9104011 0.86268010 0.9549738     A
+## 34  2003   0.9107675 0.86058402 0.9558962     A
+## 35  2004   0.9191720 0.86830497 0.9662704     A
+## 36  2005   0.9462204 0.89530685 0.9966748     A
+## 37  2006   0.9618153 0.91187975 1.0171155     A
+## 38  2007   0.9743441 0.92460712 1.0318858     A
+## 39  2008   0.9808412 0.92952069 1.0395079     A
+## 40  2009   0.9851467 0.93263222 1.0437690     A
+## 41  2010   0.9885350 0.93418410 1.0482680     A
+## 42  2011   0.9921599 0.93713495 1.0522048     A
+## 43  2012   1.0048165 0.94578641 1.0891255     A
+## 44  2013   0.9993526 0.93167438 1.0829102     A
+## 45  2014   0.9906295 0.90553709 1.0816923     A
+## 46  2015 -99.0000000         NA        NA     A
+## 47  2016 -99.0000000         NA        NA     A
+## 48  1970   1.0000000 1.00000000 1.0000000     B
+## 49  1971   0.9713669 0.91136618 1.0672264     B
+## 50  1972   0.8933568 0.75758643 1.0405278     B
+## 51  1973   0.7780563 0.62566857 0.9374897     B
+## 52  1974   0.6318875 0.47767164 0.8248124     B
+## 53  1975   0.5565817 0.39290721 0.7979831     B
+## 54  1976   0.5314568 0.38617809 0.7555136     B
+## 55  1977   0.5596089 0.39545757 0.8290757     B
+## 56  1978   0.5256448 0.34315520 0.8119109     B
+## 57  1979   0.5971378 0.40172076 0.9180115     B
+## 58  1980   0.6836605 0.46528732 1.0276668     B
+## 59  1981   0.7207277 0.47264646 1.0609957     B
+## 60  1982   0.7297648 0.47373345 1.0946317     B
+## 61  1983   0.6921780 0.43757878 1.0348500     B
+## 62  1984   0.6536326 0.40877735 0.9606486     B
+## 63  1985   0.6250620 0.38748612 0.9417435     B
+## 64  1986   0.6469144 0.39301628 0.9704118     B
+## 65  1987   0.7100873 0.42503012 1.0778957     B
+## 66  1988   0.7186970 0.42450455 1.0778985     B
+## 67  1989   0.7936947 0.45880369 1.1781799     B
+## 68  1990   0.8471548 0.48515588 1.3487524     B
+## 69  1991   0.8934175 0.51444685 1.3743863     B
+## 70  1992   0.7947763 0.44156937 1.2389508     B
+## 71  1993   0.7806785 0.43440087 1.2123046     B
+## 72  1994   0.7694146 0.43308878 1.1691920     B
+## 73  1995   0.8014162 0.44798709 1.2677990     B
+## 74  1996   0.7971957 0.45393452 1.2412400     B
+## 75  1997   0.7780101 0.42099769 1.2163160     B
+## 76  1998   0.7648011 0.42421418 1.2020102     B
+## 77  1999   0.7273176 0.40430951 1.1519727     B
+## 78  2000   0.7705594 0.42595653 1.2087928     B
+## 79  2001   0.6580829 0.36911245 1.0397900     B
+## 80  2002   0.5673112 0.32145713 0.9342178     B
+## 81  2003   0.5806714 0.32957541 0.9313278     B
+## 82  2004   0.5427784 0.30608299 0.9002388     B
+## 83  2005   0.5689047 0.30029841 1.0026691     B
+## 84  2006   0.6127749 0.29614218 1.1372075     B
+## 85  2007   0.6816100 0.33864781 1.3086340     B
+## 86  2008   0.6916787 0.31433163 1.3905699     B
+## 87  2009   0.6877495 0.31058689 1.4259373     B
+## 88  2010   0.6415834 0.30192789 1.2839875     B
+## 89  2011   0.5689602 0.23735682 1.1540524     B
+## 90  2012   0.3749892 0.09641172 0.9970250     B
+## 91  2013   0.4343330 0.11166935 1.1548091     B
+## 92  2014 -99.0000000         NA        NA     B
+## 93  2015 -99.0000000         NA        NA     B
+## 94  2016 -99.0000000         NA        NA     B
 ```
 
-![](README_files/figure-html/nearctic_mams_birds-5.png)
+![](README_files/figure-html/nearctic_mams_birds-5.png)<!-- -->
 
 ```r
 # We can also plot these next to each other, and use some more meaningful titles
@@ -1514,123 +1491,126 @@ ggplot_multi_lpi(lpis, names=c("Birds", "Mammals"), xlims=c(1970, 2012), ylims=c
 ```
 
 ```
-##    years         lpi       lwr       upr   group
-## 1   1970   1.0000000 1.0000000 1.0000000   Birds
-## 2   1971   0.9896952 0.9864593 0.9923734   Birds
-## 3   1972   0.9774621 0.9717509 0.9818538   Birds
-## 4   1973   0.9652212 0.9582700 0.9700042   Birds
-## 5   1974   0.9576677 0.9492073 0.9651959   Birds
-## 6   1975   0.9510788 0.9422061 0.9591524   Birds
-## 7   1976   0.9434867 0.9330713 0.9518802   Birds
-## 8   1977   0.9362711 0.9233815 0.9453213   Birds
-## 9   1978   0.9293341 0.9173143 0.9388341   Birds
-## 10  1979   0.9247223 0.9124983 0.9359622   Birds
-## 11  1980   0.9207614 0.9081543 0.9321167   Birds
-## 12  1981   0.9163404 0.9038990 0.9294512   Birds
-## 13  1982   0.9095072 0.8956416 0.9220873   Birds
-## 14  1983   0.9047326 0.8905207 0.9175003   Birds
-## 15  1984   0.9101938 0.8954484 0.9287540   Birds
-## 16  1985   0.9167052 0.8987839 0.9376561   Birds
-## 17  1986   0.9246601 0.9045289 0.9477227   Birds
-## 18  1987   0.9162963 0.8928303 0.9403523   Birds
-## 19  1988   0.9238982 0.8942094 0.9535547   Birds
-## 20  1989   0.9213017 0.8934632 0.9533361   Birds
-## 21  1990   0.9214140 0.8930898 0.9507502   Birds
-## 22  1991   0.9261317 0.8970141 0.9580792   Birds
-## 23  1992   0.9268065 0.8984476 0.9637147   Birds
-## 24  1993   0.9330644 0.9023641 0.9762735   Birds
-## 25  1994   0.9282623 0.8984221 0.9765962   Birds
-## 26  1995   0.9251124 0.8939080 0.9714770   Birds
-## 27  1996   0.9200919 0.8868712 0.9656026   Birds
-## 28  1997   0.9245637 0.8909606 0.9739048   Birds
-## 29  1998   0.9315371 0.8985482 0.9819999   Birds
-## 30  1999   0.9330844 0.9006605 0.9831981   Birds
-## 31  2000   0.9251001 0.8879858 0.9795442   Birds
-## 32  2001   0.9162160 0.8804943 0.9732307   Birds
-## 33  2002   0.9104011 0.8726870 0.9606332   Birds
-## 34  2003   0.9107675 0.8719010 0.9576863   Birds
-## 35  2004   0.9191720 0.8772571 0.9638248   Birds
-## 36  2005   0.9462204 0.8962679 0.9940500   Birds
-## 37  2006   0.9618153 0.9108031 1.0159073   Birds
-## 38  2007   0.9743441 0.9245755 1.0312669   Birds
-## 39  2008   0.9808412 0.9301351 1.0366492   Birds
-## 40  2009   0.9851467 0.9319646 1.0395225   Birds
-## 41  2010   0.9885350 0.9353610 1.0416781   Birds
-## 42  2011   0.9921599 0.9411908 1.0437934   Birds
-## 43  2012   1.0048165 0.9410227 1.0752091   Birds
-## 44  2013   0.9993526 0.9228580 1.0769725   Birds
-## 45  2014   0.9906295 0.8886089 1.0802608   Birds
-## 46  2015 -99.0000000        NA        NA   Birds
-## 47  2016 -99.0000000        NA        NA   Birds
-## 48  1970   1.0000000 1.0000000 1.0000000 Mammals
-## 49  1971   0.9713669 0.9142620 1.0476529 Mammals
-## 50  1972   0.8933568 0.7595992 1.0563988 Mammals
-## 51  1973   0.7780563 0.6277961 0.9908975 Mammals
-## 52  1974   0.6318875 0.4539555 0.8322746 Mammals
-## 53  1975   0.5565817 0.3903993 0.7534143 Mammals
-## 54  1976   0.5314568 0.3677900 0.7128156 Mammals
-## 55  1977   0.5596089 0.3971323 0.7481654 Mammals
-## 56  1978   0.5256448 0.3388611 0.7357288 Mammals
-## 57  1979   0.5971378 0.3792110 0.8602571 Mammals
-## 58  1980   0.6836605 0.4242749 0.9984567 Mammals
-## 59  1981   0.7207277 0.4475479 1.0593232 Mammals
-## 60  1982   0.7297648 0.4417741 1.0993474 Mammals
-## 61  1983   0.6921780 0.4173110 1.0144532 Mammals
-## 62  1984   0.6536326 0.4018457 0.9979703 Mammals
-## 63  1985   0.6250620 0.3800000 0.9817897 Mammals
-## 64  1986   0.6469144 0.3925778 1.0092304 Mammals
-## 65  1987   0.7100873 0.4142736 1.0916634 Mammals
-## 66  1988   0.7186970 0.4199367 1.1237502 Mammals
-## 67  1989   0.7936947 0.4481835 1.2290419 Mammals
-## 68  1990   0.8471548 0.4905225 1.3443533 Mammals
-## 69  1991   0.8934175 0.5286397 1.3906112 Mammals
-## 70  1992   0.7947763 0.4643619 1.1843446 Mammals
-## 71  1993   0.7806785 0.4521587 1.1661280 Mammals
-## 72  1994   0.7694146 0.4386054 1.1871839 Mammals
-## 73  1995   0.8014162 0.4619093 1.2421399 Mammals
-## 74  1996   0.7971957 0.4594595 1.3103259 Mammals
-## 75  1997   0.7780101 0.4460531 1.3466216 Mammals
-## 76  1998   0.7648011 0.4399772 1.3320820 Mammals
-## 77  1999   0.7273176 0.4163394 1.2368096 Mammals
-## 78  2000   0.7705594 0.4442099 1.3862367 Mammals
-## 79  2001   0.6580829 0.3908803 1.2240195 Mammals
-## 80  2002   0.5673112 0.3455405 1.0870568 Mammals
-## 81  2003   0.5806714 0.3310768 1.1178220 Mammals
-## 82  2004   0.5427784 0.3497679 1.0654298 Mammals
-## 83  2005   0.5689047 0.3103161 1.2211501 Mammals
-## 84  2006   0.6127749 0.3293822 1.3400184 Mammals
-## 85  2007   0.6816100 0.3835635 1.5118498 Mammals
-## 86  2008   0.6916787 0.3834618 1.6494418 Mammals
-## 87  2009   0.6877495 0.3873402 1.6001113 Mammals
-## 88  2010   0.6415834 0.3427585 1.5240180 Mammals
-## 89  2011   0.5689602 0.2817051 1.2487769 Mammals
-## 90  2012   0.3749892 0.1415960 0.9935941 Mammals
-## 91  2013   0.4343330 0.1640043 1.1508352 Mammals
+##    years         lpi        lwr       upr   group
+## 1   1970   1.0000000 1.00000000 1.0000000   Birds
+## 2   1971   0.9896952 0.98674473 0.9924994   Birds
+## 3   1972   0.9774621 0.97163268 0.9817766   Birds
+## 4   1973   0.9652212 0.95745194 0.9720634   Birds
+## 5   1974   0.9576677 0.95051708 0.9658928   Birds
+## 6   1975   0.9510788 0.94263573 0.9609818   Birds
+## 7   1976   0.9434867 0.93538025 0.9536023   Birds
+## 8   1977   0.9362711 0.92809014 0.9454853   Birds
+## 9   1978   0.9293341 0.91928240 0.9396620   Birds
+## 10  1979   0.9247223 0.91351402 0.9359269   Birds
+## 11  1980   0.9207614 0.90866300 0.9334575   Birds
+## 12  1981   0.9163404 0.90460930 0.9293915   Birds
+## 13  1982   0.9095072 0.89745322 0.9243884   Birds
+## 14  1983   0.9047326 0.89192430 0.9212877   Birds
+## 15  1984   0.9101938 0.89429539 0.9283996   Birds
+## 16  1985   0.9167052 0.89704621 0.9371010   Birds
+## 17  1986   0.9246601 0.90383480 0.9486299   Birds
+## 18  1987   0.9162963 0.88976017 0.9451819   Birds
+## 19  1988   0.9238982 0.89755883 0.9600940   Birds
+## 20  1989   0.9213017 0.89499464 0.9564925   Birds
+## 21  1990   0.9214140 0.89463487 0.9570561   Birds
+## 22  1991   0.9261317 0.89769591 0.9603287   Birds
+## 23  1992   0.9268065 0.89687841 0.9614243   Birds
+## 24  1993   0.9330644 0.90013787 0.9712449   Birds
+## 25  1994   0.9282623 0.89529919 0.9647474   Birds
+## 26  1995   0.9251124 0.88890276 0.9603917   Birds
+## 27  1996   0.9200919 0.88321178 0.9539841   Birds
+## 28  1997   0.9245637 0.88267336 0.9662576   Birds
+## 29  1998   0.9315371 0.88588921 0.9745960   Birds
+## 30  1999   0.9330844 0.88686187 0.9761825   Birds
+## 31  2000   0.9251001 0.87918807 0.9714389   Birds
+## 32  2001   0.9162160 0.87192555 0.9636869   Birds
+## 33  2002   0.9104011 0.86268010 0.9549738   Birds
+## 34  2003   0.9107675 0.86058402 0.9558962   Birds
+## 35  2004   0.9191720 0.86830497 0.9662704   Birds
+## 36  2005   0.9462204 0.89530685 0.9966748   Birds
+## 37  2006   0.9618153 0.91187975 1.0171155   Birds
+## 38  2007   0.9743441 0.92460712 1.0318858   Birds
+## 39  2008   0.9808412 0.92952069 1.0395079   Birds
+## 40  2009   0.9851467 0.93263222 1.0437690   Birds
+## 41  2010   0.9885350 0.93418410 1.0482680   Birds
+## 42  2011   0.9921599 0.93713495 1.0522048   Birds
+## 43  2012   1.0048165 0.94578641 1.0891255   Birds
+## 44  2013   0.9993526 0.93167438 1.0829102   Birds
+## 45  2014   0.9906295 0.90553709 1.0816923   Birds
+## 46  2015 -99.0000000         NA        NA   Birds
+## 47  2016 -99.0000000         NA        NA   Birds
+## 48  1970   1.0000000 1.00000000 1.0000000 Mammals
+## 49  1971   0.9713669 0.91136618 1.0672264 Mammals
+## 50  1972   0.8933568 0.75758643 1.0405278 Mammals
+## 51  1973   0.7780563 0.62566857 0.9374897 Mammals
+## 52  1974   0.6318875 0.47767164 0.8248124 Mammals
+## 53  1975   0.5565817 0.39290721 0.7979831 Mammals
+## 54  1976   0.5314568 0.38617809 0.7555136 Mammals
+## 55  1977   0.5596089 0.39545757 0.8290757 Mammals
+## 56  1978   0.5256448 0.34315520 0.8119109 Mammals
+## 57  1979   0.5971378 0.40172076 0.9180115 Mammals
+## 58  1980   0.6836605 0.46528732 1.0276668 Mammals
+## 59  1981   0.7207277 0.47264646 1.0609957 Mammals
+## 60  1982   0.7297648 0.47373345 1.0946317 Mammals
+## 61  1983   0.6921780 0.43757878 1.0348500 Mammals
+## 62  1984   0.6536326 0.40877735 0.9606486 Mammals
+## 63  1985   0.6250620 0.38748612 0.9417435 Mammals
+## 64  1986   0.6469144 0.39301628 0.9704118 Mammals
+## 65  1987   0.7100873 0.42503012 1.0778957 Mammals
+## 66  1988   0.7186970 0.42450455 1.0778985 Mammals
+## 67  1989   0.7936947 0.45880369 1.1781799 Mammals
+## 68  1990   0.8471548 0.48515588 1.3487524 Mammals
+## 69  1991   0.8934175 0.51444685 1.3743863 Mammals
+## 70  1992   0.7947763 0.44156937 1.2389508 Mammals
+## 71  1993   0.7806785 0.43440087 1.2123046 Mammals
+## 72  1994   0.7694146 0.43308878 1.1691920 Mammals
+## 73  1995   0.8014162 0.44798709 1.2677990 Mammals
+## 74  1996   0.7971957 0.45393452 1.2412400 Mammals
+## 75  1997   0.7780101 0.42099769 1.2163160 Mammals
+## 76  1998   0.7648011 0.42421418 1.2020102 Mammals
+## 77  1999   0.7273176 0.40430951 1.1519727 Mammals
+## 78  2000   0.7705594 0.42595653 1.2087928 Mammals
+## 79  2001   0.6580829 0.36911245 1.0397900 Mammals
+## 80  2002   0.5673112 0.32145713 0.9342178 Mammals
+## 81  2003   0.5806714 0.32957541 0.9313278 Mammals
+## 82  2004   0.5427784 0.30608299 0.9002388 Mammals
+## 83  2005   0.5689047 0.30029841 1.0026691 Mammals
+## 84  2006   0.6127749 0.29614218 1.1372075 Mammals
+## 85  2007   0.6816100 0.33864781 1.3086340 Mammals
+## 86  2008   0.6916787 0.31433163 1.3905699 Mammals
+## 87  2009   0.6877495 0.31058689 1.4259373 Mammals
+## 88  2010   0.6415834 0.30192789 1.2839875 Mammals
+## 89  2011   0.5689602 0.23735682 1.1540524 Mammals
+## 90  2012   0.3749892 0.09641172 0.9970250 Mammals
+## 91  2013   0.4343330 0.11166935 1.1548091 Mammals
+## 92  2014 -99.0000000         NA        NA Mammals
+## 93  2015 -99.0000000         NA        NA Mammals
+## 94  2016 -99.0000000         NA        NA Mammals
 ```
 
-![](README_files/figure-html/nearctic_mams_birds-6.png)
+![](README_files/figure-html/nearctic_mams_birds-6.png)<!-- -->
 
 ## Creating an index using example data (multiple groups and weightings)
 
 This more complex example calculates an index for the terrestrial system, using the input file ***terrestrial_class_realms_infile.txt***, which has the following format:
 
 ```
-"FileName"	"Group"	"Weighting"
-"class_realms/terrestrial_lpi_rc_p1970_Afrotropical_Aves.txt"	1	0.260031738834731
-"class_realms/terrestrial_lpi_rc_p1970_Afrotropical_Mammalia.txt"	1	0.132963046928134
-"class_realms/terrestrial_lpi_rc_p1970_Afrotropical_Herps.txt"	1	0.281115393334845
-"class_realms/terrestrial_lpi_rc_p1970_IndoPacific_Aves.txt"	2	0.308085541450115
-"class_realms/terrestrial_lpi_rc_p1970_IndoPacific_Mammalia.txt"	2	0.133594615319076
-"class_realms/terrestrial_lpi_rc_p1970_IndoPacific_Herps.txt"	2	0.340291386214535
-"class_realms/terrestrial_lpi_rc_p1970_Palearctic_Aves.txt"	3	0.295608108108108
-"class_realms/terrestrial_lpi_rc_p1970_Palearctic_Mammalia.txt"	3	0.170045045045045
-"class_realms/terrestrial_lpi_rc_p1970_Palearctic_Herps.txt"	3	0.218843843843844
-"class_realms/terrestrial_lpi_rc_p1970_Neotropical_Aves.txt"	4	0.260026737967914
-"class_realms/terrestrial_lpi_rc_p1970_Neotropical_Mammalia.txt"	4	0.0856951871657754
-"class_realms/terrestrial_lpi_rc_p1970_Neotropical_Herps.txt"	4	0.326136363636364
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Aves.txt"	5	0.264985380116959
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Mammalia.txt"	5	0.175804093567251
-"class_realms/terrestrial_lpi_rc_p1970_Nearctic_Herps.txt"	5	0.270102339181287
+FileName	Group	Weighting	WeightingB
+T_Afrotropical_aves_pops.txt	1	0.387205957	0.189737662
+T_Afrotropical_mammalia_pops.txt	1	0.197833813	0.189737662
+T_Afrotropical_herps_pops.txt	1	0.41496023	0.189737662
+T_IndoPacific_aves_pops.txt	2	0.396527091	0.292168385
+T_IndoPacific_mammalia_pops.txt	2	0.172106825	0.292168385
+T_IndoPacific_herps_pops.txt	2	0.431366084	0.292168385
+T_Palearctic_aves_pops.txt	3	0.433535576	0.116430659
+T_Palearctic_mammalia_pops.txt	3	0.249862107	0.116430659
+T_Palearctic_herps_pops.txt	3	0.316602317	0.116430659
+T_Neotropical_aves_pops.txt	4	0.387661234	0.321131554
+T_Neotropical_mammalia_pops.txt	4	0.127987201	0.321131554
+T_Neotropical_herps_pops.txt	4	0.484351565	0.321131554
+T_Nearctic_aves_pops.txt	5	0.376366476	0.061683203
+T_Nearctic_mammalia_pops.txt	5	0.249869859	0.061683203
+T_Nearctic_herps_pops.txt	5	0.373763665	0.061683203
 ```
 
 This input file refers to 15 different population files, divided into 5 groups (in this case, biogeographic realms) using the "Group" column with different taxonomic groups within these. So group 1 is for the 'Afrotropical' realm and has three population files (Aves, Mammalia and Herps). Weightings are given for these taxonomic groups which specify how much weight each taxonomic group has within its realm index (the weights used here reflect the proportion of species in that taxonomic group in that realm). 
@@ -1641,10 +1621,10 @@ This input file refers to 15 different population files, divided into 5 groups (
 # Whole terrestrial...
 
 # Create a terrestrial index, without using any specified weightings ('use_weightings=0' - so treating taxonomic groups equally at one level, and biogeographic realms equally at the next)
-terr_lpi_a <- LPIMain("terrestrial_class_nearctic_infile.txt", PLOT_MAX=2015, use_weightings=0)
+terr_lpi_a <- LPIMain("terrestrial_infile.txt", PLOT_MAX=2015, use_weightings=0)
 
 # Run same again and now weight by class, but weight equally across realms (see infile for weights)
-terr_lpi_b <- LPIMain("terrestrial_class_nearctic_infile.txt", PLOT_MAX=2015, force_recalculation=0, use_weightings=1)
+terr_lpi_b <- LPIMain("terrestrial_infile.txt", PLOT_MAX=2015, force_recalculation=0, use_weightings=1)
 
 # Putting the two LPIs together in a list
 lpis_comp <- list(terr_lpi_a, terr_lpi_b)
