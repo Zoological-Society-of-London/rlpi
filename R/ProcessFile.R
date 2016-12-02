@@ -32,7 +32,8 @@ ProcessFile <-function(DatasetName,
                        OFFSET_ALL,
                        OFFSET_NONE,
                        OFFSET_DIFF,
-                       LINEAR_MODEL_SHORT_FLAG) {
+                       LINEAR_MODEL_SHORT_FLAG,
+                       SHOW_PROGRESS) {
 
   md5val <- tools::md5sum(DatasetName)
   # Read data file
@@ -85,7 +86,8 @@ ProcessFile <-function(DatasetName,
                           OFFSET_ALL,
                           OFFSET_NONE,
                           OFFSET_DIFF,
-                          LINEAR_MODEL_SHORT_FLAG)
+                          LINEAR_MODEL_SHORT_FLAG,
+                          show_progress=SHOW_PROGRESS)
 
   # Save Species Lambda matrix into a file
 

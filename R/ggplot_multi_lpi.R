@@ -35,7 +35,7 @@ ggplot_multi_lpi <- function(lpis, names=NULL,
     dfs = rbind(dfs, df)
   }
 
-  print(dfs)
+  #print(dfs)
   g = ggplot2::ggplot(dfs, ggplot2::aes(x=years, y=lpi, group=group))+
     ggplot2::geom_hline(yintercept=1) +
     ggplot2::geom_line(ggplot2::aes(color=group), size=1) +

@@ -142,7 +142,8 @@ LPIMain <- function(infile="Infile.txt",
                     OFFSET_NONE = FALSE, # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
                     OFFSET_DIFF = FALSE, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
                     LINEAR_MODEL_SHORT_FLAG = FALSE, # if=TRUE models short time-series with linear model
-                    VERBOSE = TRUE) {
+                    VERBOSE = TRUE,
+                    show_progress=TRUE) {
 
     # Start timing
     ptm <- proc.time()
@@ -241,7 +242,8 @@ LPIMain <- function(infile="Infile.txt",
                     OFFSET_ALL,
                     OFFSET_NONE,
                     OFFSET_DIFF,
-                    LINEAR_MODEL_SHORT_FLAG)
+                    LINEAR_MODEL_SHORT_FLAG,
+                    show_progress)
         #cat("done processing file: ", toString(FileNames[FileNo]))
       }
       #sink()
