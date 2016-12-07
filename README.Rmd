@@ -98,7 +98,7 @@ Using these files to contruct a Neartic index can be done as follows:
 ```{r nearctic_lpi, eval=TRUE, message=FALSE}
 # Make a Neactic LPI 
 # Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
-Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_weightings = 1)
+Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_weightings = 1, VERBOSE=FALSE, show_progress=FALSE)
 
 # Remove NAs (trailing years with no data)
 Nearc_lpi <- Nearc_lpi[complete.cases(Nearc_lpi), ]
@@ -111,7 +111,7 @@ Similarly, infiles are provided for Nearctic mammals and birds:
 ```{r nearctic_mams_birds, eval=TRUE, message=FALSE}
 # Make a Neactic Mammals LPI 
 # Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
-Nearc_mams_lpi <- LPIMain("example_data/terrestrial_Nearctic_Mammalia_infile.txt")
+Nearc_mams_lpi <- LPIMain("example_data/terrestrial_Nearctic_Mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
 
 # Remove NAs (trailing years with no data)
 Nearc_mams_lpi <- Nearc_mams_lpi[complete.cases(Nearc_mams_lpi), ]
@@ -120,7 +120,7 @@ ggplot_lpi(Nearc_mams_lpi, ylims=c(0, 2))
 
 # Make a Neactic Mammals LPI 
 # Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
-Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt")
+Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
 
 # Remove NAs (trailing years with no data)
 Nearc_birds_lpi <- Nearc_birds_lpi[complete.cases(Nearc_birds_lpi), ]
@@ -164,17 +164,17 @@ example_data/T_Nearctic_herps_pops.txt	5	0.373763665	0.061683203
 This input file refers to 15 different population files, divided into 5 groups (in this case, biogeographic realms) using the "Group" column with different taxonomic groups within these. So group 1 is for the 'Afrotropical' realm and has three population files (Aves, Mammalia and Herps). Weightings are given for these taxonomic groups which specify how much weight each taxonomic group has within its realm index (the weights used here reflect the proportion of species in that taxonomic group in that realm). 
 
 
-```{r terrestrial_lpi, eval=FALSE, message=FALSE}
+```{r terrestrial_lpi, eval=TRUE, message=FALSE}
 # Whole terrestrial...
 
 # Create a terrestrial index, without using any specified weightings ('use_weightings=0' - so treating taxonomic groups equally at one level, and biogeographic realms equally at the next)
-terr_lpi_a <- LPIMain("example_data/terrestrial_infile.txt", PLOT_MAX=2015, use_weightings=0)
+terr_lpi_a <- LPIMain("example_data/terrestrial_infile.txt", PLOT_MAX=2015, use_weightings=0, VERBOSE=FALSE, show_progress=FALSE)
 
 # Remove NAs (trailing years with no data)
 terr_lpi_a <- terr_lpi_a[complete.cases(terr_lpi_a), ]
 
 # Run same again and now weight by class, but weight equally across realms (see infile for weights)
-terr_lpi_b <- LPIMain("example_data/terrestrial_infile.txt", PLOT_MAX=2015, force_recalculation=0, use_weightings=1)
+terr_lpi_b <- LPIMain("example_data/terrestrial_infile.txt", PLOT_MAX=2015, force_recalculation=0, use_weightings=1, VERBOSE=FALSE, show_progress=FALSE)
 
 # Remove NAs (trailing years with no data)
 terr_lpi_b <- terr_lpi_b[complete.cases(terr_lpi_b), ]
