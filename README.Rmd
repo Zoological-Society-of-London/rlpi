@@ -1,13 +1,11 @@
 ---
 title: "rlpi package"
 author: "Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London"
-date: "`r format(Sys.Date())`"
 output:  
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
-    keep_md: true  
-    toc: true
+    html_document: 
+      keep_md: true  
+      toc: true
+      theme: united
 ---
 
 ```{r setup, include=FALSE}
@@ -18,12 +16,15 @@ knitr::opts_chunk$set(cache=TRUE)
 
 ### Overview
 
-The **rlpi** package calculates indices using the Living Planet Index methodology, as presented in McRae et al. (in review) *The diversity weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity index*.
+The **rlpi** package calculates indices using the Living Planet Index methodology, as presented in McRae et al. (in review) *The diversity-weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity indexindicator*.
 
-In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, before being combined to an index for the biogeograhic realm
 
-The **rlpi** package works with source data in comma separated (csv) format where each row is composed 
-of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropic bird populations, one for Afrotropical mammal populations, etc), and an 'infile' tells the package where these groups/files are and how to combine them. 
+> Note: We provide a Comma Separated Value version of the Living Planet Database [here](http://dx.doi.org/10.5061/dryad.r338g), but this excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
+
+In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, and *fish* before being combined to an index for the biogeograhic realm.
+
+
+The **rlpi** package works with source data in comma separated (csv) format where each row is composed  of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropic bird populations, one for Afrotropical mammal populations, etc), and an 'infile' tells the package where these groups/files are and how to combine them. 
 
 When constructing an index for just a single group, you need a single data file and a single
 infile which points to that data file (see first example below). For multiple groups, the infile would refer to all relevant data files and can specify weightings to allow for taxonomic, geographic or other weighting.
@@ -42,7 +43,7 @@ install.packages("devtools")
 
 Then install the **rlpi** package from our github:
 
-```{r install_rlpi, eval=T, message=F}
+```{r install_rlpi, eval=TRUE, message=FALSE}
 library(devtools)
 # Install from main ZSL repository online
 install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20", dependencies=TRUE)
@@ -50,14 +51,14 @@ install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0b
 
 Then the library can be loaded as normal
 
-```{r load_rlpi, eval=T}
+```{r load_rlpi, eval=TRUE}
 # Load library
 library(rlpi)
 ```
 
 And some example data can be extracted from the package:
 
-```{r rlpi_data, eval=FALSE}
+```{r rlpi_data, eval=TRUE}
 # Get example data from package
 # Copy zipped data to local directory 
 file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=getwd())
@@ -93,10 +94,11 @@ Napaeozapus_insignis	4588	1952	18
 
 ## Creating an index using example data
 
-Using these files to contruct a Neartic index can be done as follows:
+Using these files to construct a Nearctic index can be done as follows:
 
 ```{r nearctic_lpi, eval=TRUE, message=FALSE}
 # Make a Neactic LPI 
+
 # Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
 Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_weightings = 1, VERBOSE=FALSE, show_progress=FALSE)
 
@@ -111,7 +113,7 @@ Similarly, infiles are provided for Nearctic mammals and birds:
 ```{r nearctic_mams_birds, eval=TRUE, message=FALSE}
 # Make a Neactic Mammals LPI 
 # Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
-Nearc_mams_lpi <- LPIMain("example_data/terrestrial_Nearctic_Mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
+Nearc_mams_lpi <- LPIMain("example_data/T_Nearctic_mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
 
 # Remove NAs (trailing years with no data)
 Nearc_mams_lpi <- Nearc_mams_lpi[complete.cases(Nearc_mams_lpi), ]

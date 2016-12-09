@@ -1,6 +1,5 @@
 # rlpi package
 Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London  
-`r format(Sys.Date())`  
 
 
 
@@ -8,12 +7,15 @@ Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London
 
 ### Overview
 
-The **rlpi** package calculates indices using the Living Planet Index methodology, as presented in McRae et al. (in review) *The diversity weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity index*.
+The **rlpi** package calculates indices using the Living Planet Index methodology, as presented in McRae et al. (in review) *The diversity-weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity indexindicator*.
 
-In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, before being combined to an index for the biogeograhic realm
 
-The **rlpi** package works with source data in comma separated (csv) format where each row is composed 
-of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropic bird populations, one for Afrotropical mammal populations, etc), and an 'infile' tells the package where these groups/files are and how to combine them. 
+> Note: We provide a Comma Separated Value version of the Living Planet Database [here](http://dx.doi.org/10.5061/dryad.r338g), but this excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
+
+In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, and *fish* before being combined to an index for the biogeograhic realm.
+
+
+The **rlpi** package works with source data in comma separated (csv) format where each row is composed  of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropic bird populations, one for Afrotropical mammal populations, etc), and an 'infile' tells the package where these groups/files are and how to combine them. 
 
 When constructing an index for just a single group, you need a single data file and a single
 infile which points to that data file (see first example below). For multiple groups, the infile would refer to all relevant data files and can specify weightings to allow for taxonomic, geographic or other weighting.
@@ -55,6 +57,13 @@ And some example data can be extracted from the package:
 # Get example data from package
 # Copy zipped data to local directory 
 file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=getwd())
+```
+
+```
+## [1] TRUE
+```
+
+```r
 # Extract data, this will create a directory of terrestrial LPI data to construct a terrestrial index from.
 unzip("example_data.zip")
 ```
@@ -86,18 +95,14 @@ Napaeozapus_insignis	4588	1952	18
 
 ## Creating an index using example data
 
-Using these files to contruct a Neartic index can be done as follows:
+Using these files to construct a Nearctic index can be done as follows:
 
 
 ```r
 # Make a Neactic LPI 
+
 # Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
 Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_weightings = 1, VERBOSE=FALSE, show_progress=FALSE)
-```
-
-```
-## Warning in read.table(infile, header = TRUE): incomplete final line found
-## by readTableHeader on 'example_data/terrestrial_class_nearctic_infile.txt'
 ```
 
 ```
@@ -108,36 +113,36 @@ Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_w
 ## 	[1] 0.3763665 0.2498699 0.3737637
 ## 
 ## Number of groups:  1 
-## processing file: example_data/T_Nearctic_Aves_pops.txt
+## processing file: example_data/T_Nearctic_aves_pops.txt
 ## Calculating LPI for Species
 ## Number of species: 377 (in 541 populations)
 ## 
 ## Saving species lambda to file: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_splambda.csv
-## Saving species lambda to file: example_data/T_Nearctic_Aves_pops_lambda.csv
+## Saving species lambda to file: example_data/T_Nearctic_aves_pops_lambda.csv
 ## Calculating DTemp
 ## Saving DTemp to file:  lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_dtemp.csv 
-## Saving DTemp to file:  example_data/T_Nearctic_Aves_pops_dtemp.csv 
-## processing file: example_data/T_Nearctic_Mammalia_pops.txt
+## Saving DTemp to file:  example_data/T_Nearctic_aves_pops_dtemp.csv 
+## processing file: example_data/T_Nearctic_mammalia_pops.txt
 ## Calculating LPI for Species
 ## Number of species: 92 (in 384 populations)
 ## 
 ## Saving species lambda to file: lpi_temp/7282fa95486d2024ef7a6282067e0100_splambda.csv
-## Saving species lambda to file: example_data/T_Nearctic_Mammalia_pops_lambda.csv
+## Saving species lambda to file: example_data/T_Nearctic_mammalia_pops_lambda.csv
 ## Calculating DTemp
 ## Saving DTemp to file:  lpi_temp/7282fa95486d2024ef7a6282067e0100_dtemp.csv 
-## Saving DTemp to file:  example_data/T_Nearctic_Mammalia_pops_dtemp.csv 
-## processing file: example_data/T_Nearctic_Herps_pops.txt
+## Saving DTemp to file:  example_data/T_Nearctic_mammalia_pops_dtemp.csv 
+## processing file: example_data/T_Nearctic_herps_pops.txt
 ## Calculating LPI for Species
 ## Number of species: 58 (in 102 populations)
 ## 
 ## Saving species lambda to file: lpi_temp/ffa9d8ac9ddc787613f91b2f3f82a834_splambda.csv
-## Saving species lambda to file: example_data/T_Nearctic_Herps_pops_lambda.csv
+## Saving species lambda to file: example_data/T_Nearctic_herps_pops_lambda.csv
 ## Calculating DTemp
 ## Saving DTemp to file:  lpi_temp/ffa9d8ac9ddc787613f91b2f3f82a834_dtemp.csv 
-## Saving DTemp to file:  example_data/T_Nearctic_Herps_pops_dtemp.csv 
-## example_data/T_Nearctic_Aves_pops.txt, Number of species: 377
-## example_data/T_Nearctic_Mammalia_pops.txt, Number of species: 92
-## example_data/T_Nearctic_Herps_pops.txt, Number of species: 58
+## Saving DTemp to file:  example_data/T_Nearctic_herps_pops_dtemp.csv 
+## example_data/T_Nearctic_aves_pops.txt, Number of species: 377
+## example_data/T_Nearctic_mammalia_pops.txt, Number of species: 92
+## example_data/T_Nearctic_herps_pops.txt, Number of species: 58
 ## Saving DTemp Array to file:  example_data/terrestrial_class_nearctic_infile_dtemp_array.txt
 ```
 
@@ -147,31 +152,23 @@ Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_w
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data/terrestrial_class_nearctic_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 39.489000, User: 0.669000, Elapsed: 41.916000
+## [Calculating LPI...] System: 44.849000, User: 1.030000, Elapsed: 57.530000
 ## Group 1 is NA in year 47
 ## Number of valid index years: 46 (of possible 47)
-## [Calculating CIs...] System: 39.619000, User: 0.672000, Elapsed: 42.054000
+## [Calculating CIs...] System: 45.002000, User: 1.033000, Elapsed: 57.721000
 ## ....................................................................................................
-## [CIs calculated] System: 49.108000, User: 0.818000, Elapsed: 51.947000
-```
-
-```
-## Saving final output to file:  example_data/terrestrial_class_nearctic_infile_Results.txt
-```
-
-```
-## Warning in read.table(infile, header = TRUE): incomplete final line found
-## by readTableHeader on 'example_data/terrestrial_class_nearctic_infile.txt'
+## [CIs calculated] System: 56.667000, User: 1.292000, Elapsed: 71.600000
 ```
 
 ![](README_files/figure-html/nearctic_lpi-1.png)<!-- -->
 
 ```
-## Saving Min/Max file to:  example_data/T_Nearctic_Aves_pops_Minmax.txt 
-## Saving Min/Max file to:  example_data/T_Nearctic_Mammalia_pops_Minmax.txt 
-## Saving Min/Max file to:  example_data/T_Nearctic_Herps_pops_Minmax.txt 
+## Saving final output to file:  example_data/terrestrial_class_nearctic_infile_Results.txt 
+## Saving Min/Max file to:  example_data/T_Nearctic_aves_pops_Minmax.txt 
+## Saving Min/Max file to:  example_data/T_Nearctic_mammalia_pops_Minmax.txt 
+## Saving Min/Max file to:  example_data/T_Nearctic_herps_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data/terrestrial_class_nearctic_infile.pdf 
-## [END] System: 49.606000, User: 0.844000, Elapsed: 52.637000
+## [END] System: 57.286000, User: 1.332000, Elapsed: 72.757000
 ```
 
 ```r
@@ -189,22 +186,22 @@ Similarly, infiles are provided for Nearctic mammals and birds:
 ```r
 # Make a Neactic Mammals LPI 
 # Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
-Nearc_mams_lpi <- LPIMain("example_data/terrestrial_Nearctic_Mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
+Nearc_mams_lpi <- LPIMain("example_data/T_Nearctic_mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
 ```
 
 ```
 ## Number of groups:  1 
-## processing file: example_data/T_Nearctic_Mammalia_pops.txt
+## processing file: example_data/T_Nearctic_mammalia_pops.txt
 ## Calculating LPI for Species
 ## Number of species: 92 (in 384 populations)
 ## 
 ## Saving species lambda to file: lpi_temp/7282fa95486d2024ef7a6282067e0100_splambda.csv
-## Saving species lambda to file: example_data/T_Nearctic_Mammalia_pops_lambda.csv
+## Saving species lambda to file: example_data/T_Nearctic_mammalia_pops_lambda.csv
 ## Calculating DTemp
 ## Saving DTemp to file:  lpi_temp/7282fa95486d2024ef7a6282067e0100_dtemp.csv 
-## Saving DTemp to file:  example_data/T_Nearctic_Mammalia_pops_dtemp.csv 
-## example_data/T_Nearctic_Mammalia_pops.txt, Number of species: 92
-## Saving DTemp Array to file:  example_data/terrestrial_Nearctic_Mammalia_infile_dtemp_array.txt
+## Saving DTemp to file:  example_data/T_Nearctic_mammalia_pops_dtemp.csv 
+## example_data/T_Nearctic_mammalia_pops.txt, Number of species: 92
+## Saving DTemp Array to file:  example_data/T_Nearctic_mammalia_infile_dtemp_array.txt
 ```
 
 ```
@@ -212,24 +209,24 @@ Nearc_mams_lpi <- LPIMain("example_data/terrestrial_Nearctic_Mammalia_infile.txt
 ```
 
 ```
-## Saving DTemp Array with filesnames to file:  example_data/terrestrial_Nearctic_Mammalia_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 7.870000, User: 0.163000, Elapsed: 9.494000
+## Saving DTemp Array with filesnames to file:  example_data/T_Nearctic_mammalia_infile_dtemp_array_named.csv 
+## [Calculating LPI...] System: 8.691000, User: 0.218000, Elapsed: 11.360000
 ## Group 1 is NA in year 45
 ## Group 1 is NA in year 46
 ## Group 1 is NA in year 47
 ## Number of valid index years: 44 (of possible 47)
-## [Calculating CIs...] System: 7.914000, User: 0.164000, Elapsed: 9.540000
+## [Calculating CIs...] System: 8.762000, User: 0.220000, Elapsed: 11.551000
 ## ....................................................................................................
-## [CIs calculated] System: 10.798000, User: 0.275000, Elapsed: 12.727000
+## [CIs calculated] System: 12.650000, User: 0.432000, Elapsed: 16.832000
 ```
 
 ![](README_files/figure-html/nearctic_mams_birds-1.png)<!-- -->
 
 ```
-## Saving final output to file:  example_data/terrestrial_Nearctic_Mammalia_infile_Results.txt 
-## Saving Min/Max file to:  example_data/T_Nearctic_Mammalia_pops_Minmax.txt 
-## Saving Plot to PDF:  example_data/terrestrial_Nearctic_Mammalia_infile.pdf 
-## [END] System: 10.932000, User: 0.280000, Elapsed: 12.871000
+## Saving final output to file:  example_data/T_Nearctic_mammalia_infile_Results.txt 
+## Saving Min/Max file to:  example_data/T_Nearctic_mammalia_pops_Minmax.txt 
+## Saving Plot to PDF:  example_data/T_Nearctic_mammalia_infile.pdf 
+## [END] System: 12.819000, User: 0.438000, Elapsed: 17.023000
 ```
 
 ```r
@@ -249,16 +246,16 @@ Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt", 
 
 ```
 ## Number of groups:  1 
-## processing file: example_data/T_Nearctic_Aves_pops.txt
+## processing file: example_data/terrestrial_Nearctic_Aves_pops.txt
 ## Calculating LPI for Species
 ## Number of species: 377 (in 541 populations)
 ## 
 ## Saving species lambda to file: lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_splambda.csv
-## Saving species lambda to file: example_data/T_Nearctic_Aves_pops_lambda.csv
+## Saving species lambda to file: example_data/terrestrial_Nearctic_Aves_pops_lambda.csv
 ## Calculating DTemp
 ## Saving DTemp to file:  lpi_temp/d99a9bebbe6d94380af43e35d4ef17a3_dtemp.csv 
-## Saving DTemp to file:  example_data/T_Nearctic_Aves_pops_dtemp.csv 
-## example_data/T_Nearctic_Aves_pops.txt, Number of species: 377
+## Saving DTemp to file:  example_data/terrestrial_Nearctic_Aves_pops_dtemp.csv 
+## example_data/terrestrial_Nearctic_Aves_pops.txt, Number of species: 377
 ## Saving DTemp Array to file:  example_data/terrestrial_Nearctic_Aves_infile_dtemp_array.txt
 ```
 
@@ -268,22 +265,22 @@ Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt", 
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data/terrestrial_Nearctic_Aves_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 33.316000, User: 0.356000, Elapsed: 36.833000
+## [Calculating LPI...] System: 37.138000, User: 0.892000, Elapsed: 47.411000
 ## Group 1 is NA in year 46
 ## Group 1 is NA in year 47
 ## Number of valid index years: 45 (of possible 47)
-## [Calculating CIs...] System: 33.388000, User: 0.357000, Elapsed: 36.916000
+## [Calculating CIs...] System: 37.218000, User: 0.893000, Elapsed: 47.535000
 ## ....................................................................................................
-## [CIs calculated] System: 37.329000, User: 0.443000, Elapsed: 41.091000
+## [CIs calculated] System: 42.676000, User: 1.027000, Elapsed: 54.203000
 ```
 
 ![](README_files/figure-html/nearctic_mams_birds-3.png)<!-- -->
 
 ```
 ## Saving final output to file:  example_data/terrestrial_Nearctic_Aves_infile_Results.txt 
-## Saving Min/Max file to:  example_data/T_Nearctic_Aves_pops_Minmax.txt 
+## Saving Min/Max file to:  example_data/terrestrial_Nearctic_Aves_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data/terrestrial_Nearctic_Aves_infile.pdf 
-## [END] System: 37.608000, User: 0.451000, Elapsed: 41.390000
+## [END] System: 43.037000, User: 1.037000, Elapsed: 54.686000
 ```
 
 ```r

@@ -1,7 +1,6 @@
 ---
 title: "creating_infiles, rlpi package"
-author: "Robin Freeman, IoZ, Zoological Society of London"
-date: "`r format(Sys.Date())`"
+author: "Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London"
 output:  
       html_document:  
         keep_md: true  
@@ -13,16 +12,26 @@ output:
 require(rlpi)
 ```
 
-The code also provides a means to create infiles from tabular population data. For example, the Living Planet Database can be constructed so that each row represents a population, with columns for each abundance year. NB: The **create_infile** method expects particular columns that define where the abundance data resides, it uses the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. This reflects the format used in the Living Planet Database, and in the example data provided here **http://www.livingplanetindex.org/projects?main_page_project=LivingPlanetReport&home_flag=1**.
+The code also provides a means to create infiles from tabular population data such as provided  in the comma separated output of Living Planet Database **[here]( http://dx.doi.org/10.5061/dryad.r338g)**. NB: The **create_infile** method currently expects particular columns that define where the abundance data resides, using the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. 
 
+> Note: This [Comma Separated Value version of the Living Planet Database ](http://dx.doi.org/10.5061/dryad.r338g) excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
 
-```{r making_infiles, eval=T}
+```{r rlpi_data, eval=FALSE}
+# Get example data from package
+# Copy zipped data to local directory 
+file.copy(from=system.file("extdata", "example_data.zip", package = "rlpi"), to=getwd())
+# Extract data, this will create a directory of terrestrial LPI data to construct a terrestrial index from.
+unzip("example_data.zip")
+
+```
+
+```{r making_infiles, eval=TRUE, message=FALSE}
 # Constructing infiles from a populations table...
 
 # First read the population table (this is the Living Planet Database excluding confidential records)
-lpi_data <- read.csv("inst/extdata/example_data/LPI_LPR2016data_public.csv", na.strings = "NULL")
+lpi_data <- read.csv("example_data/LPI_LPR2016data_public.csv", na.strings = "NULL")
 
-# Create an inifle from all the data. All the population data in the 'lpi_data' table will be converted and stored in a file called 'example_data_pops.txt' and a file called 'example_data_infile.txt' will be created that references the first file (the infile name will also be stored in the returned variable 'example_infile_name')
+# Create an infile from all the data. All the population data in the 'lpi_data' table will be converted and stored in a file called 'example_data_pops.txt' and a file called 'example_data_infile.txt' will be created that references the first file (the infile name will also be stored in the returned variable 'example_infile_name')
 
 # Here we select the first 100 populations by creating an index vector that's FALSE for all rows, then setting the first 100 rows to TRUE
 index_vector = rep(FALSE, nrow(lpi_data))
@@ -30,7 +39,10 @@ index_vector[1:100] = TRUE
 
 example_infile_name <- create_infile(lpi_data, index_vector=index_vector, name="example_data")
 # An index can be created using this infile, for the period 1970 to 2014 with 100 bootstraps.
-example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100, VERBOSE=FALSE, show_progress=FALSE)
+
+# Remove NAs (trailing years with no data)
+example_lpi <- example_lpi[complete.cases(example_lpi), ]
 
 # Plot the resulting index
 ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0, 2))
@@ -40,17 +52,23 @@ ggplot_lpi(example_lpi, title = "example_lpi", xlims=c(1970, 2012), ylim=c(0.3, 
 # Here we limit the data to 'Strigiformes' simply by creating a boolean  (true/false) vector which is true for populations (rows) where the Order is "Strigiformes"
 Strigiformes = lpi_data$Order == "Strigiformes" 
 
-# Psssing this vector into the create_infile function will select just those populations and create an infile for them
+# Passing this vector into the create_infile function will select just those populations and create an infile for them
 s_infile_name <- create_infile(lpi_data, index_vector=Strigiformes, name="example_data_strig")
 # Again, create and index
-s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100, VERBOSE=FALSE, show_progress=FALSE)
 # And plot
+
+# Remove NAs (trailing years with no data)
+s_lpi <- s_lpi[complete.cases(s_lpi), ]
 ggplot_lpi(s_lpi, title = "s_lpi", xlims=c(1970, 2012))
 
 # Similarly, this will create an index just for those populations of the Order 'Passeriformes'
 Passeriformes = lpi_data$Order == "Passeriformes" 
 p_infile_name <- create_infile(lpi_data, index_vector=Passeriformes, name="example_data_pass")
-p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100, VERBOSE=FALSE, show_progress=FALSE)
+
+# Remove NAs (trailing years with no data)
+p_lpi <- p_lpi[complete.cases(p_lpi), ]
 ggplot_lpi(p_lpi, title = "p_lpi", xlims=c(1970, 2012))
 
 # Nearctic mammals
@@ -60,7 +78,10 @@ nm_infile_name <- create_infile(lpi_data, index_vector=Nearctic_mammals, name="t
 # How many pops...
 sum(Nearctic_mammals, na.rm = T)
 
-nm_lpi <- LPIMain(nm_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+nm_lpi <- LPIMain(nm_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100, VERBOSE=FALSE, show_progress=FALSE)
+
+# Remove NAs (trailing years with no data)
+nm_lpi <- nm_lpi[complete.cases(nm_lpi), ]
 ggplot_lpi(nm_lpi, title = "nm_lpi", xlims=c(1970, 2012))
 
 
@@ -71,7 +92,10 @@ nb_infile_name <- create_infile(lpi_data, index_vector=Nearctic_birds, name="ter
 # How many pops...
 sum(Nearctic_birds, na.rm = T)
 
-nb_lpi <- LPIMain(nb_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+nb_lpi <- LPIMain(nb_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100, VERBOSE=FALSE, show_progress=FALSE)
+
+# Remove NAs (trailing years with no data)
+nb_lpi <- nb_lpi[complete.cases(nb_lpi), ]
 ggplot_lpi(nb_lpi, title = "nb_lpi", xlims=c(1970, 2012))
 
 
@@ -82,12 +106,17 @@ nh_infile_name <- create_infile(lpi_data, index_vector=Nearctic_herps, name="ter
 # How many pops...
 sum(Nearctic_herps, na.rm = T)
 
-nh_lpi <- LPIMain(nh_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100)
+nh_lpi <- LPIMain(nh_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZE = 100, VERBOSE=FALSE, show_progress=FALSE)
+
+# Remove NAs (trailing years with no data)
+nh_lpi <- nh_lpi[complete.cases(nh_lpi), ]
 ggplot_lpi(nh_lpi, title = "nh_lpi", xlims=c(1970, 2012))
 
 ```
 
-```{r making_infiles, eval=T}
+Constructing infiles
+
+```{r making_infiles_for_terr, echo=FALSE, eval=FALSE}
 selected_pops = lpi_data$Class == "Aves" & lpi_data$T_realm == "Afrotropical"
 sum(selected_pops, na.rm = T)
 infile_name <- create_infile(lpi_data, index_vector=selected_pops, name="T_Afrotropical_aves")
@@ -130,8 +159,6 @@ selected_pops = lpi_data$Class == "Mammalia" & lpi_data$T_realm == "Nearctic"
 sum(selected_pops, na.rm = T)
 infile_name <- create_infile(lpi_data, index_vector=selected_pops, name="T_Nearctic_mammalia")
 
-
-
 selected_pops = (lpi_data$Class == "Reptilia" | lpi_data$Class == "Amphibia") & lpi_data$T_realm == "Afrotropical"
 sum(selected_pops, na.rm = T)
 infile_name <- create_infile(lpi_data, index_vector=selected_pops, name="T_Afrotropical_herps")
@@ -151,26 +178,4 @@ infile_name <- create_infile(lpi_data, index_vector=selected_pops, name="T_Neotr
 selected_pops = (lpi_data$Class == "Reptilia" | lpi_data$Class == "Amphibia") & lpi_data$T_realm == "Nearctic"
 sum(selected_pops, na.rm = T)
 infile_name <- create_infile(lpi_data, index_vector=selected_pops, name="T_Nearctic_herps")
-
-
-T_Afrotropical_aves_pops.txt	1	0.387205957	0.189737662
-T_Afrotropical_mammalia_pops.txt	1	0.197833813	0.189737662
-T_Afrotropical_herps_pops.txt	1	0.41496023	0.189737662
-
-T_IndoPacific_aves_pops.txt	2	0.396527091	0.292168385
-T_IndoPacific_mammalia_pops.txt	2	0.172106825	0.292168385
-T_IndoPacific_herps_pops.txt	2	0.431366084	0.292168385
-
-T_Palearctic_aves_pops.txt	3	0.433535576	0.116430659
-T_Palearctic_mammalia_pops.txt	3	0.249862107	0.116430659
-T_Palearctic_herps_pops.txt	3	0.316602317	0.116430659
-
-T_Neotropical_aves_pops.txt	4	0.387661234	0.321131554
-T_Neotropical_mammalia_pops.txt	4	0.127987201	0.321131554
-T_Neotropical_herps_pops.txt	4	0.484351565	0.321131554
-
-T_Nearctic_aves_pops.txt	5	0.376366476	0.061683203
-T_Nearctic_mammalia_pops.txt	5	0.249869859	0.061683203
-T_Nearctic_herps_pops.txt	5	0.373763665	0.061683203
-
 ```
