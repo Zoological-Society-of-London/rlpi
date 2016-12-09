@@ -1,4 +1,4 @@
-# rlpi package
+# rlpi package (beta)
 Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London  
 
 
@@ -7,7 +7,7 @@ Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London
 
 ### Overview
 
-The **rlpi** package calculates indices using the Living Planet Index methodology, as presented in McRae et al. (in review) *The diversity-weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity indexindicator*.
+The **rlpi** package (currently in beta/active development) calculates indices using the Living Planet Index methodology, as presented in McRae et al. (in review) *The diversity-weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity indexindicator*.
 
 
 > Note: We provide a Comma Separated Value version of the Living Planet Database [here](https://dx.doi.org/10.6084/m9.figshare.4300022.v1), but this excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
