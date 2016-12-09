@@ -2,13 +2,12 @@
 Louise McRae, Stefanie Deinet, Robin Freeman, IoZ, Zoological Society of London  
 
 
-```
-## Loading required package: rlpi
-```
 
-The code also provides a means to create infiles from tabular population data such as provided  in the comma separated output of Living Planet Database **[here]( http://www.livingplanetindex.org/projects?main_page_project=LivingPlanetReport&home_flag=1)**. NB: The **create_infile** method currently expects particular columns that define where the abundance data resides, using the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. 
 
-> Note: This [Comma Separated Value version of the Living Planet Database ](http://www.livingplanetindex.org/projects?main_page_project=LivingPlanetReport&home_flag=1) excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
+
+The code also provides a means to create infiles from tabular population data such as provided  in the comma separated output of Living Planet Database **[here](https://dx.doi.org/10.6084/m9.figshare.4300022.v1)**. NB: The **create_infile** method currently expects particular columns that define where the abundance data resides, using the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. 
+
+> Note: This [Comma Separated Value version of the Living Planet Database ](https://dx.doi.org/10.6084/m9.figshare.4300022.v1) excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
 
 
 ```r
@@ -58,15 +57,15 @@ example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BO
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 3.191000, User: 0.110000, Elapsed: 3.646000
+## [Calculating LPI...] System: 3.114000, User: 0.118000, Elapsed: 3.500000
 ## Group 1 is NA in year 43
 ## Group 1 is NA in year 44
 ## Group 1 is NA in year 45
 ## Group 1 is NA in year 46
 ## Number of valid index years: 42 (of possible 46)
-## [Calculating CIs...] System: 3.226000, User: 0.111000, Elapsed: 3.684000
+## [Calculating CIs...] System: 3.150000, User: 0.118000, Elapsed: 3.536000
 ## ....................................................................................................
-## [CIs calculated] System: 6.263000, User: 0.218000, Elapsed: 7.187000
+## [CIs calculated] System: 5.987000, User: 0.273000, Elapsed: 6.711000
 ```
 
 ![](creating_infiles_files/figure-html/making_infiles-1.png)<!-- -->
@@ -75,7 +74,7 @@ example_lpi <- LPIMain(example_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BO
 ## Saving final output to file:  example_data_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_infile.pdf 
-## [END] System: 6.328000, User: 0.226000, Elapsed: 7.270000
+## [END] System: 6.045000, User: 0.278000, Elapsed: 6.781000
 ```
 
 ```r
@@ -126,12 +125,12 @@ s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_strig_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 1.870000, User: 0.035000, Elapsed: 2.148000
+## [Calculating LPI...] System: 1.940000, User: 0.025000, Elapsed: 2.044000
 ## Group 1 is NA in year 46
 ## Number of valid index years: 45 (of possible 46)
-## [Calculating CIs...] System: 1.910000, User: 0.035000, Elapsed: 2.189000
+## [Calculating CIs...] System: 1.977000, User: 0.025000, Elapsed: 2.083000
 ## ....................................................................................................
-## [CIs calculated] System: 4.867000, User: 0.085000, Elapsed: 5.355000
+## [CIs calculated] System: 4.765000, User: 0.053000, Elapsed: 4.983000
 ```
 
 ![](creating_infiles_files/figure-html/making_infiles-4.png)<!-- -->
@@ -140,7 +139,7 @@ s_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 ## Saving final output to file:  example_data_strig_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_strig_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_strig_infile.pdf 
-## [END] System: 4.933000, User: 0.091000, Elapsed: 5.432000
+## [END] System: 4.838000, User: 0.059000, Elapsed: 5.068000
 ```
 
 ```r
@@ -181,12 +180,12 @@ p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 
 ```
 ## Saving DTemp Array with filesnames to file:  example_data_strig_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 1.880000, User: 0.039000, Elapsed: 2.028000
+## [Calculating LPI...] System: 2.115000, User: 0.068000, Elapsed: 2.288000
 ## Group 1 is NA in year 46
 ## Number of valid index years: 45 (of possible 46)
-## [Calculating CIs...] System: 1.941000, User: 0.048000, Elapsed: 2.115000
+## [Calculating CIs...] System: 2.154000, User: 0.069000, Elapsed: 2.330000
 ## ....................................................................................................
-## [CIs calculated] System: 4.833000, User: 0.106000, Elapsed: 5.384000
+## [CIs calculated] System: 4.648000, User: 0.113000, Elapsed: 4.972000
 ```
 
 ![](creating_infiles_files/figure-html/making_infiles-6.png)<!-- -->
@@ -195,7 +194,7 @@ p_lpi <- LPIMain(s_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_SIZ
 ## Saving final output to file:  example_data_strig_infile_Results.txt 
 ## Saving Min/Max file to:  example_data_strig_pops_Minmax.txt 
 ## Saving Plot to PDF:  example_data_strig_infile.pdf 
-## [END] System: 4.892000, User: 0.112000, Elapsed: 5.455000
+## [END] System: 4.713000, User: 0.118000, Elapsed: 5.047000
 ```
 
 ```r
@@ -244,13 +243,13 @@ nm_lpi <- LPIMain(nm_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_S
 
 ```
 ## Saving DTemp Array with filesnames to file:  terrestrial_Nearctic_Mammalia_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 6.785000, User: 0.142000, Elapsed: 7.316000
+## [Calculating LPI...] System: 6.795000, User: 0.081000, Elapsed: 7.119000
 ## Group 1 is NA in year 45
 ## Group 1 is NA in year 46
 ## Number of valid index years: 44 (of possible 46)
-## [Calculating CIs...] System: 6.831000, User: 0.143000, Elapsed: 7.365000
+## [Calculating CIs...] System: 6.833000, User: 0.081000, Elapsed: 7.157000
 ## ....................................................................................................
-## [CIs calculated] System: 9.777000, User: 0.269000, Elapsed: 10.590000
+## [CIs calculated] System: 9.983000, User: 0.263000, Elapsed: 10.657000
 ```
 
 ![](creating_infiles_files/figure-html/making_infiles-8.png)<!-- -->
@@ -259,7 +258,7 @@ nm_lpi <- LPIMain(nm_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_S
 ## Saving final output to file:  terrestrial_Nearctic_Mammalia_infile_Results.txt 
 ## Saving Min/Max file to:  terrestrial_Nearctic_Mammalia_pops_Minmax.txt 
 ## Saving Plot to PDF:  terrestrial_Nearctic_Mammalia_infile.pdf 
-## [END] System: 9.958000, User: 0.277000, Elapsed: 10.798000
+## [END] System: 10.164000, User: 0.273000, Elapsed: 10.857000
 ```
 
 ```r
@@ -308,12 +307,12 @@ nb_lpi <- LPIMain(nb_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_S
 
 ```
 ## Saving DTemp Array with filesnames to file:  terrestrial_Nearctic_Aves_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 29.094000, User: 0.480000, Elapsed: 30.614000
+## [Calculating LPI...] System: 30.623000, User: 0.790000, Elapsed: 32.579000
 ## Group 1 is NA in year 46
 ## Number of valid index years: 45 (of possible 46)
-## [Calculating CIs...] System: 29.128000, User: 0.480000, Elapsed: 30.649000
+## [Calculating CIs...] System: 30.655000, User: 0.790000, Elapsed: 32.611000
 ## ....................................................................................................
-## [CIs calculated] System: 32.813000, User: 0.547000, Elapsed: 34.559000
+## [CIs calculated] System: 33.994000, User: 0.882000, Elapsed: 36.106000
 ```
 
 ![](creating_infiles_files/figure-html/making_infiles-10.png)<!-- -->
@@ -322,7 +321,7 @@ nb_lpi <- LPIMain(nb_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_S
 ## Saving final output to file:  terrestrial_Nearctic_Aves_infile_Results.txt 
 ## Saving Min/Max file to:  terrestrial_Nearctic_Aves_pops_Minmax.txt 
 ## Saving Plot to PDF:  terrestrial_Nearctic_Aves_infile.pdf 
-## [END] System: 33.081000, User: 0.555000, Elapsed: 34.845000
+## [END] System: 34.252000, User: 0.889000, Elapsed: 36.376000
 ```
 
 ```r
@@ -371,11 +370,11 @@ nh_lpi <- LPIMain(nh_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_S
 
 ```
 ## Saving DTemp Array with filesnames to file:  terrestrial_Nearctic_Herps_infile_dtemp_array_named.csv 
-## [Calculating LPI...] System: 1.653000, User: 0.050000, Elapsed: 1.809000
+## [Calculating LPI...] System: 1.485000, User: 0.019000, Elapsed: 1.532000
 ## Number of valid index years: 46 (of possible 46)
-## [Calculating CIs...] System: 1.697000, User: 0.050000, Elapsed: 1.854000
+## [Calculating CIs...] System: 1.532000, User: 0.019000, Elapsed: 1.580000
 ## ....................................................................................................
-## [CIs calculated] System: 4.586000, User: 0.164000, Elapsed: 5.122000
+## [CIs calculated] System: 4.218000, User: 0.089000, Elapsed: 4.405000
 ```
 
 ![](creating_infiles_files/figure-html/making_infiles-12.png)<!-- -->
@@ -384,7 +383,7 @@ nh_lpi <- LPIMain(nh_infile_name, REF_YEAR = 1970, PLOT_MAX = 2014, BOOT_STRAP_S
 ## Saving final output to file:  terrestrial_Nearctic_Herps_infile_Results.txt 
 ## Saving Min/Max file to:  terrestrial_Nearctic_Herps_pops_Minmax.txt 
 ## Saving Plot to PDF:  terrestrial_Nearctic_Herps_infile.pdf 
-## [END] System: 4.649000, User: 0.168000, Elapsed: 5.191000
+## [END] System: 4.285000, User: 0.093000, Elapsed: 4.478000
 ```
 
 ```r

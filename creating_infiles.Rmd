@@ -8,13 +8,17 @@ output:
         theme: united
 ---
 
-```{r, echo=FALSE}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+```{r, echo=FALSE, message=FALSE}
 require(rlpi)
 ```
 
-The code also provides a means to create infiles from tabular population data such as provided  in the comma separated output of Living Planet Database **[here]( http://dx.doi.org/10.5061/dryad.r338g)**. NB: The **create_infile** method currently expects particular columns that define where the abundance data resides, using the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. 
+The code also provides a means to create infiles from tabular population data such as provided  in the comma separated output of Living Planet Database **[here](https://dx.doi.org/10.6084/m9.figshare.4300022.v1)**. NB: The **create_infile** method currently expects particular columns that define where the abundance data resides, using the **convert_to_rows** function that assumes abundance data is in columns between the *X1950* column and a column called *Managed*. 
 
-> Note: This [Comma Separated Value version of the Living Planet Database ](http://dx.doi.org/10.5061/dryad.r338g) excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
+> Note: This [Comma Separated Value version of the Living Planet Database ](https://dx.doi.org/10.6084/m9.figshare.4300022.v1) excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
 
 ```{r rlpi_data, eval=FALSE}
 # Get example data from package
