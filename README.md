@@ -39,7 +39,11 @@ Then install the **rlpi** package from our github:
 ```r
 library(devtools)
 # Install from main ZSL repository online
-install_github("Zoological-Society-of-London/rlpi", auth_token = "3e95e9d1c26c0bd8f9fed628b224dbe811064c20", dependencies=TRUE)
+install_github("Zoological-Society-of-London/rlpi", dependencies=TRUE)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.2.5
 ```
 
 Then the library can be loaded as normal
