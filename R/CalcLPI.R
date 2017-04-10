@@ -306,17 +306,17 @@ CalcLPI <- function(Species,
               MethodFlagLoop = MethodFlagLoop + 1
               MethodFlag[MethodFlagLoop] = PopID[J]
               model <- lm(PopNLog ~ YearPop)
-              r2 <- summary(model)$r.squared
-              LM_R2_THRESH = 0.0
-              if (r2 > LM_R2_THRESH) {
+              # r2 <- summary(model)$r.squared
+              # LM_R2_THRESH = 0.0
+              # if (r2 > LM_R2_THRESH) {
                 PopNInt <- predict(model, data.frame(YearPop = YearPopInt))
                 PopNInt = exp(PopNInt)
-              } else {
-                PopNotProcessedCounter = PopNotProcessedCounter + 1
-                PopNotProcessed[PopNotProcessedCounter] = PopID[J]
-                cat("R squared less than", LM_R2_THRESH, "\n")
-                next
-              }
+              # } else {
+                # PopNotProcessedCounter = PopNotProcessedCounter + 1
+                # PopNotProcessed[PopNotProcessedCounter] = PopID[J]
+                # cat("R squared less than", LM_R2_THRESH, "\n")
+                #next
+              #}
             } else {
               # Apply the default approach (Chain)
               MethodFlagLoop = MethodFlagLoop + 1
