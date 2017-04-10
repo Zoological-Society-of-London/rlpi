@@ -112,8 +112,14 @@ CalcLPI <- function(Species,
           cat(sprintf("Offsetting all time-series by 1 to avoid log(0)\n"))
           PopN <- PopN + 1
         } else if (OFFSET_NONE){
-          # do nothing
-          PopN <- PopN
+          # Adds small value to zero values within a time series, To non-zero values it does nothing.
+          IndexZero = which(PopN == 0)
+          if (length(IndexZero) > 0) {
+            OffsetVal = 1e-17
+            PopN = PopN + OffsetVal
+          } else {  
+            PopN <- PopN
+          }
         } else if (OFFSET_DIFF){
           # Offset different pops differentially
           IndexZero = which(PopN == 0)
