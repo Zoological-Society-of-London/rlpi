@@ -13,7 +13,7 @@
 #' @return Returns a bootstrapped LPI
 #' @export
 #'
-bootstrap_lpi <- function(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB) {
+bootstrap_lpi <- function(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB, CAP_LAMBDAS) {
 
   NoFiles = length(unique(fileindex))
   NoGroups = length(unique(Group[[1]]))
