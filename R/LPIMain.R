@@ -144,7 +144,7 @@ LPIMain <- function(infile="Infile.txt",
                     LINEAR_MODEL_SHORT_FLAG = FALSE, # if=TRUE models short time-series with linear model
                     CAP_LAMBDAS = TRUE,
                     VERBOSE = TRUE,
-                    show_progress=TRUE) {
+                    SHOW_PROGRESS=TRUE) {
 
     # Start timing
     ptm <- proc.time()
@@ -244,7 +244,7 @@ LPIMain <- function(infile="Infile.txt",
                     OFFSET_NONE,
                     OFFSET_DIFF,
                     LINEAR_MODEL_SHORT_FLAG,
-                    show_progress)
+                    SHOW_PROGRESS)
         #cat("done processing file: ", toString(FileNames[FileNo]))
       }
       #sink()
