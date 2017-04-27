@@ -142,6 +142,7 @@ LPIMain <- function(infile="Infile.txt",
                     OFFSET_NONE = FALSE, # Does nothing (leaves 0 unaffected **used for testing will break if there are 0 values in the source data **)
                     OFFSET_DIFF = FALSE, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
                     LINEAR_MODEL_SHORT_FLAG = FALSE, # if=TRUE models short time-series with linear model
+                    CAP_LAMBDAS = TRUE,
                     VERBOSE = TRUE,
                     show_progress=TRUE) {
 
@@ -385,7 +386,7 @@ LPIMain <- function(infile="Infile.txt",
         BootI <- foreach::foreach (Loop = 1:BOOT_STRAP_SIZE) %op% {
           #sink("progress_log_boot.txt", append=TRUE)
           #bootstrap_lpi(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings)
-          bootstrap_lpi(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB)
+          bootstrap_lpi(SpeciesLambdaArray, fileindex, DSize, Group, Weightings, use_weightings, use_weightings_B, WeightingsB, CAP_LAMBDAS)
           #sink()
         }
         cat("\n")
