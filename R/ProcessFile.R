@@ -33,6 +33,7 @@ ProcessFile <-function(DatasetName,
                        OFFSET_NONE,
                        OFFSET_DIFF,
                        LINEAR_MODEL_SHORT_FLAG,
+                       CAP_LAMBDAS,
                        SHOW_PROGRESS) {
 
   md5val <- tools::md5sum(DatasetName)
