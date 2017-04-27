@@ -58,7 +58,11 @@ bootstrap_lpi <- function(SpeciesLambdaArray, fileindex, DSize, Group, Weighting
         # Extract lamdas using that sample
         BootVal = SpeciesLambdaVal[BootSam]
         # If we've got some meaningful data
-        Index = which(BootVal != -1)
+        if (!CAP_LAMBDAS) {
+          Index = which(BootVal != -1)
+        } else {
+          Index = which(!is.na(BootVal))
+        }
         if (length(Index) > 0) {
 
           # Store sum of mean lamdas in D (summing over species within group)
