@@ -127,7 +127,11 @@ ProcessFile <-function(DatasetName,
     YearData = SpeciesLambda[, I]
 
     # Find populations that have data
-    Index = which(YearData != -1)
+     if (!CAP_LAMBDAS) {
+      Index = which(YearData != -1)
+    } else {
+      Index = which(!is.na(YearData))
+    }
 
     # If there are some populations
     if (length(Index) > 0) {
