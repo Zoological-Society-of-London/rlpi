@@ -88,6 +88,7 @@ ProcessFile <-function(DatasetName,
                           OFFSET_NONE,
                           OFFSET_DIFF,
                           LINEAR_MODEL_SHORT_FLAG,
+                          CAP_LAMBDAS,
                           show_progress=SHOW_PROGRESS)
 
   # Save Species Lambda matrix into a file
