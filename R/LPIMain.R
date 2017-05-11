@@ -116,8 +116,14 @@ LPIMain <- function(infile="Infile.txt",
     doParallel::registerDoParallel()
 
     # RF: Create a working directory to put files in
-    dir.create(basedir, showWarnings = FALSE)
+    success = dir.create(basedir, showWarnings = FALSE)
+    if (success) {
+      print(sprintf("** Created folder: %s", basedir))
+    }
     dir.create(file.path(basedir, 'lpi_temp'), showWarnings = FALSE)
+    if (success) {
+      print(sprintf("** Created folder: %s", file.path(basedir, 'lpi_temp')))
+    }
 
     # RF: Get list of input files
     FileTable = read.table(infile, header = TRUE)
