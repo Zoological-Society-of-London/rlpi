@@ -115,6 +115,7 @@
 #'
 #'
 LPIMain <- function(infile="Infile.txt",
+                    basedir=".",
                     REF_YEAR = 1970,
                     PLOT_MAX = 2015,
                     force_recalculation=1,
@@ -153,7 +154,7 @@ LPIMain <- function(infile="Infile.txt",
     doParallel::registerDoParallel()
 
     # RF: Create a working directory to put files in
-    dir.create('lpi_temp', showWarnings = FALSE)
+    dir.create(file.path(basedir, 'lpi_temp'), showWarnings = FALSE)
 
     # RF: Get list of input files
     FileTable = read.table(infile, header = TRUE)
@@ -223,27 +224,28 @@ LPIMain <- function(infile="Infile.txt",
       md5val <- tools::md5sum(toString(FileNames[FileNo]))
       if (
             (force_recalculation == 1) ||
-            (!file.exists(paste("lpi_temp/", md5val, "_dtemp.csv", sep = ""))) ||
-            (!file.exists(paste("lpi_temp/", md5val, "_splambda.csv", sep = "")))
+            (!file.exists(file.path(basedir, "lpi_temp", paste0(md5val, "_dtemp.csv")))) ||
+            (!file.exists(file.path(basedir, "lpi_temp", paste0(md5val, "_splambda.csv"))))
         ) {
         #DSizes[FileNo] = ProcessFile(toString(FileNames[FileNo]), FileNo)
         cat(sprintf("processing file: %s\n", toString(FileNames[FileNo])))
-        ProcessFile(toString(FileNames[FileNo]),
-                    REF_YEAR,
-                    MODEL_SELECTION_FLAG,
-                    GAM_GLOBAL_FLAG,
-                    DATA_LENGTH_MIN,
-                    AVG_TIME_BETWEEN_PTS_MAX,
-                    GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
-                    AUTO_DIAGNOSTIC_FLAG,
-                    LAMBDA_MIN,
-                    LAMBDA_MAX,
-                    ZERO_REPLACE_FLAG,
-                    OFFSET_ALL,
-                    OFFSET_NONE,
-                    OFFSET_DIFF,
-                    LINEAR_MODEL_SHORT_FLAG,
-                    show_progress)
+        ProcessFile(DatasetName=toString(FileNames[FileNo]),
+                    ref_year=REF_YEAR,
+                    MODEL_SELECTION_FLAG=MODEL_SELECTION_FLAG,
+                    GAM_GLOBAL_FLAG=GAM_GLOBAL_FLAG,
+                    DATA_LENGTH_MIN=DATA_LENGTH_MIN,
+                    AVG_TIME_BETWEEN_PTS_MAX=AVG_TIME_BETWEEN_PTS_MAX,
+                    GLOBAL_GAM_FLAG_SHORT_DATA_FLAG=GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
+                    AUTO_DIAGNOSTIC_FLAG=AUTO_DIAGNOSTIC_FLAG,
+                    LAMBDA_MIN=LAMBDA_MIN,
+                    LAMBDA_MAX=LAMBDA_MAX,
+                    ZERO_REPLACE_FLAG=ZERO_REPLACE_FLAG,
+                    OFFSET_ALL=OFFSET_ALL,
+                    OFFSET_NONE=OFFSET_NONE,
+                    OFFSET_DIFF=OFFSET_DIFF,
+                    LINEAR_MODEL_SHORT_FLAG=LINEAR_MODEL_SHORT_FLAG,
+                    SHOW_PROGRESS=show_progress,
+                    basedir=basedir)
         #cat("done processing file: ", toString(FileNames[FileNo]))
       }
       #sink()
@@ -278,11 +280,11 @@ LPIMain <- function(infile="Infile.txt",
       md5val <- tools::md5sum(toString(as.character(FileNames[FileNo])))
       # Read SpeciesLambda and DTemp from saved files
 
-      FileName = paste("lpi_temp/", md5val, "_splambda.csv", sep = "")
+      FileName = file.path(basedir, "lpi_temp", paste0(md5val, "_splambda.csv"))
       SpeciesLambda = read.table(FileName, header = FALSE, sep = ",")
       debug_print(VERBOSE, sprintf("Loading previously analysed species lambda file for '%s' from MD5 hash: %s\n", as.character(FileNames[FileNo]), FileName))
 
-      species_names = read.table("lpi_temp/SpeciesName.txt")
+      species_names = read.table(file.path(basedir, "lpi_temp/SpeciesName.txt"))
 
       cat(sprintf("%s, Number of species: %s\n", as.character(FileNames[FileNo]), dim(SpeciesLambda)[1]))
 
@@ -295,7 +297,7 @@ LPIMain <- function(infile="Infile.txt",
       fileindex = c(fileindex, rep(FileNo, dim(SpeciesLambda)[1]))
       #cat(length(fileindex), "\n")
       # DTemps are the mean annual differences in population for each group/file
-      FileName = paste("lpi_temp/", md5val, "_dtemp.csv", sep = "")
+      FileName = file.path(basedir, "lpi_temp", paste0(md5val, "_dtemp.csv"))
       debug_print(VERBOSE, sprintf("Loading previously analysed dtemp file from MD5 hash: %s\n", FileName))
       #DTemp = read.table(FileName, header = F, sep = ",", col.names = FALSE)
       DTemp = read.table(FileName, header = T, sep = ",")
@@ -507,7 +509,7 @@ LPIMain <- function(infile="Infile.txt",
 
             for (FileNo in 1:NoFiles) {
 
-                # Read SpeciesLambda from saved file FileName = paste('lpi_temp/SpeciesLambda',FileNo,sep='')
+                # Read SpeciesLambda from saved file FileName = file.path(basedir, paste0('lpi_temp/SpeciesLambda',FileNo))
                 # SpeciesLambda = read.table(FileName, header = FALSE, sep=',')
 
                 #cat('[Loop File] ', FileNo, ' Calculating Switching Points\n')

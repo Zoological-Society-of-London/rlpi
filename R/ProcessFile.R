@@ -33,7 +33,8 @@ ProcessFile <-function(DatasetName,
                        OFFSET_NONE,
                        OFFSET_DIFF,
                        LINEAR_MODEL_SHORT_FLAG,
-                       SHOW_PROGRESS) {
+                       SHOW_PROGRESS,
+                       basedir) {
 
   md5val <- tools::md5sum(DatasetName)
   # Read data file
@@ -63,31 +64,32 @@ ProcessFile <-function(DatasetName,
 
   cat("Calculating LPI for Species\n")
 
-  pop_lambda_filename <- gsub(".txt", "_PopLambda.txt", DatasetName)
+  pop_lambda_filename <- file.path(basedir, gsub(".txt", "_PopLambda.txt", DatasetName))
   Pop_Headers<-t(c("population_id", as.vector(InitialYear:FinalYear)))
   write.table(Pop_Headers,file=pop_lambda_filename, sep=",", eol="\n", quote=FALSE, col.names=FALSE, row.names = FALSE)
 
-  SpeciesLambda = CalcLPI(SpeciesSSet,
-                          IDSSet,
-                          YearSSet,
-                          PopvalueSSet,
-                          InitialYear,
-                          FinalYear,
-                          DatasetName,
-                          MODEL_SELECTION_FLAG,
-                          GAM_GLOBAL_FLAG,
-                          DATA_LENGTH_MIN,
-                          AVG_TIME_BETWEEN_PTS_MAX,
-                          GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
-                          AUTO_DIAGNOSTIC_FLAG,
-                          LAMBDA_MIN,
-                          LAMBDA_MAX,
-                          ZERO_REPLACE_FLAG,
-                          OFFSET_ALL,
-                          OFFSET_NONE,
-                          OFFSET_DIFF,
-                          LINEAR_MODEL_SHORT_FLAG,
-                          show_progress=SHOW_PROGRESS)
+  SpeciesLambda = CalcLPI(Species=SpeciesSSet,
+                          ID=IDSSet,
+                          Year=YearSSet,
+                          Popvalue=PopvalueSSet,
+                          InitialYear=InitialYear,
+                          FinalYear=FinalYear,
+                          DatasetName=DatasetName,
+                          MODEL_SELECTION_FLAG=MODEL_SELECTION_FLAG,
+                          GAM_GLOBAL_FLAG=GAM_GLOBAL_FLAG,
+                          DATA_LENGTH_MIN=DATA_LENGTH_MIN,
+                          AVG_TIME_BETWEEN_PTS_MAX=AVG_TIME_BETWEEN_PTS_MAX,
+                          GLOBAL_GAM_FLAG_SHORT_DATA_FLAG=GLOBAL_GAM_FLAG_SHORT_DATA_FLAG,
+                          AUTO_DIAGNOSTIC_FLAG=AUTO_DIAGNOSTIC_FLAG,
+                          LAMBDA_MIN=LAMBDA_MIN,
+                          LAMBDA_MAX=LAMBDA_MAX,
+                          ZERO_REPLACE_FLAG=ZERO_REPLACE_FLAG,
+                          OFFSET_ALL=OFFSET_ALL,
+                          OFFSET_NONE=OFFSET_NONE,
+                          OFFSET_DIFF=OFFSET_DIFF,
+                          LINEAR_MODEL_SHORT_FLAG=LINEAR_MODEL_SHORT_FLAG,
+                          show_progress=SHOW_PROGRESS,
+                          basedir=basedir)
 
   # Save Species Lambda matrix into a file
 
@@ -98,7 +100,7 @@ ProcessFile <-function(DatasetName,
   #cat(dim(SpeciesLambda), "\n")
   #cat(dim(unique(SpeciesSSet)), "\n")
 
-  DataFileName = paste("lpi_temp/", md5val, "_splambda.csv", sep = "")
+  DataFileName = file.path(basedir, "lpi_temp", paste0(md5val, "_splambda.csv"))
   cat(sprintf("Saving species lambda to file: %s\n", DataFileName))
   write.table(SpeciesLambda, DataFileName, sep = ",", col.names = FALSE, row.names = FALSE)
 
@@ -106,7 +108,7 @@ ProcessFile <-function(DatasetName,
   # *****
   sp.count <- as.data.frame(table(SpeciesSSet))
 
-  DataFileName = gsub(".txt", "_lambda.csv", DatasetName)
+  DataFileName = file.path(basedir, gsub(".txt", "_lambda.csv", DatasetName))
   rownames(SpeciesLambda) <- t(unique(SpeciesSSet))
   colnames(SpeciesLambda) <- InitialYear:FinalYear
   sorted_lambdas <- SpeciesLambda[order(rownames(SpeciesLambda)), ]
@@ -143,7 +145,7 @@ ProcessFile <-function(DatasetName,
   # FileNo removed - could use name?! *** #DataFileName = paste("lpi_temp/DTemp", FileNo, sep = "")
   #write.table(DTemp, DataFileName, sep = ",", col.names = FALSE, row.names = FALSE)
 
-  DataFileName = paste("lpi_temp/", md5val, "_dtemp.csv", sep = "")
+  DataFileName = file.path(basedir, "lpi_temp", paste0(md5val, "_dtemp.csv"))
 
   cat("Saving DTemp to file: ", DataFileName, "\n")
   #write.table(DTemp, DataFileName, sep = ",", col.names = FALSE, row.names = FALSE)
@@ -152,7 +154,7 @@ ProcessFile <-function(DatasetName,
 
   write.table(DTemp, DataFileName, sep = ",", row.names = FALSE)
 
-  DataFileName = gsub(".txt", "_dtemp.csv", DatasetName)
+  DataFileName = file.path(basedir, gsub(".txt", "_dtemp.csv", DatasetName))
   cat("Saving DTemp to file: ", DataFileName, "\n")
   #write.table(DTemp, DataFileName, sep = ",", col.names = FALSE, row.names = FALSE)
   write.table(DTemp, DataFileName, sep = ",", row.names = FALSE)

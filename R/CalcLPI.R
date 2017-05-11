@@ -47,7 +47,8 @@ CalcLPI <- function(Species,
                     OFFSET_DIFF, # Offset time-series with 0 values adding 1% of mean if max value in time-series<1 and 1 if max>=1
                     LINEAR_MODEL_SHORT_FLAG, # if=TRUE models short time-series with linear model
                     CAP_LAMBDAS = FALSE,
-                    show_progress = FALSE
+                    show_progress = FALSE,
+                    basedir="."
 ) {
   noRecs = max(dim(Popvalue))
   sNames = unique(Species)
@@ -400,7 +401,7 @@ CalcLPI <- function(Species,
     # Save the population lamdas to a file:
 
     PopData<-cbind(as.vector(PopID), PopLambda)
-    pop_lambda_filename <- gsub(".txt", "_PopLambda.txt", DatasetName)
+    pop_lambda_filename <- file.path(basedir, gsub(".txt", "_PopLambda.txt", DatasetName))
     #Pop_Headers<-t(c("population_id", as.vector(InitialYear:FinalYear)))
     #write.table(Pop_Headers,file=pop_lambda_filename, sep=",", eol="\n", quote=FALSE, col.names=FALSE, row.names = FALSE)
     write.table(PopData,sep=",", eol="\n", file=pop_lambda_filename, quote=FALSE, col.names=FALSE, row.names = FALSE, append=TRUE)
@@ -465,17 +466,17 @@ CalcLPI <- function(Species,
   cat("\n")
 
   PopNotProcessed1 = PopNotProcessed[1, 1:PopNotProcessedCounter]
-  write.table(PopNotProcessed1, file = "lpi_temp/PopNotProcessed.txt")  # insert your desired file name here
+  write.table(PopNotProcessed1, file = file.path(basedir, "lpi_temp", "PopNotProcessed.txt"))  # insert your desired file name here
   MethodFlag1 = MethodFlag[1, 1:MethodFlagLoop]
   if (LINEAR_MODEL_SHORT_FLAG == 1) {
-    write.table(MethodFlag1, file = "lpi_temp/PopProcessed_LM.txt")  # insert your desired file name here
+    write.table(MethodFlag1, file=file.path(basedir, "lpi_temp", "PopProcessed_LM.txt"))  # insert your desired file name here
   } else {
-    write.table(MethodFlag1, file = "lpi_temp/PopProcessed_Chain.txt")  # insert your desired file name here
+    write.table(MethodFlag1, file=file.path(basedir, "lpi_temp", "PopProcessed_Chain.txt"))  # insert your desired file name here
   }
   PopProcessedGAM1 = PopProcessedGAM[1, 1:PopProcessedGAMCounter]
-  write.table(PopProcessedGAM1, file = "lpi_temp/PopProcessedGAM.txt")  # insert your desired file name here
+  write.table(PopProcessedGAM1, file = file.path(basedir, "lpi_temp", "PopProcessedGAM.txt")) # insert your desired file name here
   sNamesArray1 = sNamesArray[1:sNamesCounter, 1]
-  write.table(sNamesArray1, file = "lpi_temp/SpeciesName.txt", quote = FALSE)
+  write.table(sNamesArray1, file = file.path(basedir, "lpi_temp", "SpeciesName.txt"), quote = FALSE)
 
   Headers<-t(c("Species", as.vector(InitialYear:FinalYear)))
 
@@ -484,7 +485,7 @@ CalcLPI <- function(Species,
   # IDs (sIDArray) is per-population and sNamesArray is per species... currently exporting species lambdas
   #SpeciesData<-cbind(sIDArray, as.vector(sNamesT), SpeciesLambda)
   SpeciesData<-cbind(as.vector(sNamesArray), SpeciesLambda)
-  lambda_filename <- gsub(".txt", "_Lambda.txt", DatasetName)
+  lambda_filename <- file.path(basedir, gsub(".txt", "_Lambda.txt", DatasetName))
   write.table(Headers,file=lambda_filename, sep=",", eol="\n", quote=FALSE, col.names=FALSE, row.names = FALSE)
   write.table(SpeciesData,sep=",", eol="\n", file=lambda_filename, quote=FALSE, col.names=FALSE, row.names = FALSE, append=TRUE)
 
