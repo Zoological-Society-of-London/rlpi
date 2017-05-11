@@ -54,6 +54,7 @@
 #' ggplot_lpi_multi(list(lpi_global, lpi_tropical), names=c("global", "tropical"))
 #'
 #' @param infile Input file specifying the population files that should be included in the index
+#' @param basedir Base directory in which files (inc. temporary directories) will be stored
 #' @param REF_YEAR Reference year for index (when the index == 1). Default=1970
 #' @param PLOT_MAX The final year of the index to plot. Default=2012,
 #' @param force_recalculation Whether the population annual differences should be recalucated (they are cached for a given file). Default=0
