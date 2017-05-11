@@ -298,7 +298,7 @@ LPIMain <- function(infile="Infile.txt",
 
       width=20
       height=8
-      pdf(gsub(".txt", "_dtemp_array_plot.pdf", infile), width = width, height = height)
+      pdf(file.path(basedir, gsub(".txt", "_dtemp_array_plot.pdf", infile)), width = width, height = height)
       df.m <- reshape2::melt(dtemp_df, id.vars = "filename")
       df.m$value[df.m$value == -99] = NA
       p_line <- ggplot2::ggplot(df.m, ggplot2::aes(variable, value, group=filename, col=filename)) +
@@ -635,7 +635,7 @@ LPIMain <- function(infile="Infile.txt",
     # save plot
 
     if (save_plots) {
-      output_file <- gsub(".txt", ".pdf", infile)
+      output_file <- file.path(basedir, gsub(".txt", ".pdf", infile))
       cat("Saving Plot to PDF: ", output_file, "\n")
       dev.copy(pdf, output_file)
       dev.off()
