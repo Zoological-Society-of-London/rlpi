@@ -208,7 +208,7 @@ LPIMain <- function(infile="Infile.txt",
                     OFFSET_DIFF=OFFSET_DIFF,
                     LINEAR_MODEL_SHORT_FLAG=LINEAR_MODEL_SHORT_FLAG,
                     CAP_LAMBDAS=CAP_LAMBDAS,
-                    SHOW_PROGRESS=show_progress,
+                    SHOW_PROGRESS=SHOW_PROGRESS,
                     basedir=basedir)
         #cat("done processing file: ", toString(FileNames[FileNo]))
       }
