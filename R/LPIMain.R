@@ -116,6 +116,7 @@ LPIMain <- function(infile="Infile.txt",
     doParallel::registerDoParallel()
 
     # RF: Create a working directory to put files in
+    dir.create(basedir, showWarnings = FALSE)
     dir.create(file.path(basedir, 'lpi_temp'), showWarnings = FALSE)
 
     # RF: Get list of input files
