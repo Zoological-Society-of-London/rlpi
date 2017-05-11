@@ -113,8 +113,14 @@ CalcLPI <- function(Species,
           cat(sprintf("Offsetting all time-series by 1 to avoid log(0)\n"))
           PopN <- PopN + 1
         } else if (OFFSET_NONE){
-          # do nothing
-          PopN <- PopN
+          # Adds small value to zero values within a time series, To non-zero values it does nothing.
+          IndexZero = which(PopN == 0)
+          if (length(IndexZero) > 0) {
+            OffsetVal = 1e-17
+            PopN = PopN + OffsetVal
+          } else {  
+            PopN <- PopN
+          }
         } else if (OFFSET_DIFF){
           # Offset different pops differentially
           IndexZero = which(PopN == 0)
@@ -307,17 +313,17 @@ CalcLPI <- function(Species,
               MethodFlagLoop = MethodFlagLoop + 1
               MethodFlag[MethodFlagLoop] = PopID[J]
               model <- lm(PopNLog ~ YearPop)
-              r2 <- summary(model)$r.squared
-              LM_R2_THRESH = 0.0
-              if (r2 > LM_R2_THRESH) {
+              # r2 <- summary(model)$r.squared
+              # LM_R2_THRESH = 0.0
+              # if (r2 > LM_R2_THRESH) {
                 PopNInt <- predict(model, data.frame(YearPop = YearPopInt))
                 PopNInt = exp(PopNInt)
-              } else {
-                PopNotProcessedCounter = PopNotProcessedCounter + 1
-                PopNotProcessed[PopNotProcessedCounter] = PopID[J]
-                cat("R squared less than", LM_R2_THRESH, "\n")
-                next
-              }
+              # } else {
+                # PopNotProcessedCounter = PopNotProcessedCounter + 1
+                # PopNotProcessed[PopNotProcessedCounter] = PopID[J]
+                # cat("R squared less than", LM_R2_THRESH, "\n")
+                #next
+              #}
             } else {
               # Apply the default approach (Chain)
               MethodFlagLoop = MethodFlagLoop + 1

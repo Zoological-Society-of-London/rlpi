@@ -33,6 +33,7 @@ ProcessFile <-function(DatasetName,
                        OFFSET_NONE,
                        OFFSET_DIFF,
                        LINEAR_MODEL_SHORT_FLAG,
+                       CAP_LAMBDAS,
                        SHOW_PROGRESS,
                        basedir) {
 
@@ -88,6 +89,7 @@ ProcessFile <-function(DatasetName,
                           OFFSET_NONE=OFFSET_NONE,
                           OFFSET_DIFF=OFFSET_DIFF,
                           LINEAR_MODEL_SHORT_FLAG=LINEAR_MODEL_SHORT_FLAG,
+                          CAP_LAMBDAS=CAP_LAMBDAS,
                           show_progress=SHOW_PROGRESS,
                           basedir=basedir)
 
@@ -127,7 +129,11 @@ ProcessFile <-function(DatasetName,
     YearData = SpeciesLambda[, I]
 
     # Find populations that have data
-    Index = which(YearData != -1)
+     if (!CAP_LAMBDAS) {
+      Index = which(YearData != -1)
+    } else {
+      Index = which(!is.na(YearData))
+    }
 
     # If there are some populations
     if (length(Index) > 0) {
