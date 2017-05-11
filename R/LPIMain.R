@@ -284,7 +284,7 @@ LPIMain <- function(infile="Infile.txt",
 
 
     #write.table(DTempArray, file="dtemp_array.txt")
-    f_name = file = gsub(".txt", "_dtemp_array.txt", infile)
+    f_name = file = file.path(basedir, gsub(".txt", "_dtemp_array.txt", infile))
     cat("Saving DTemp Array to file: ", f_name, "\n")
     write.table(DTempArray, f_name)
 
@@ -311,7 +311,7 @@ LPIMain <- function(infile="Infile.txt",
       dev.off()
     }
 
-    f_name = file = gsub(".txt", "_dtemp_array_named.csv", infile)
+    f_name = file = file.path(basedir, gsub(".txt", "_dtemp_array_named.csv", infile))
     cat("Saving DTemp Array with filesnames to file: ", f_name, "\n")
     write.csv(dtemp_df, f_name, row.names = FALSE)
 
@@ -452,7 +452,7 @@ LPIMain <- function(infile="Infile.txt",
       #leverage_results_table$total <- rowSums(leverage_results_table)
 
       leverage_results_table$id <- unlist(leverage_species)
-      write.csv(leverage_results_table, file="species_leverage_lpi_results.csv")
+      write.csv(leverage_results_table, file=file.path(basedir, "species_leverage_lpi_results.csv"))
 
       leverage_diff_table <- data.frame(leverage_diff)
       colnames(leverage_diff_table) <- seq(REF_YEAR, REF_YEAR + DSize - 1)
@@ -460,7 +460,7 @@ LPIMain <- function(infile="Infile.txt",
       leverage_diff_table$total <- rowSums(leverage_diff_table)
 
       leverage_diff_table$id <- unlist(leverage_species)
-      write.csv(leverage_diff_table, file="species_leverage_diff_lambdas_results.csv")
+      write.csv(leverage_diff_table, file=file.path(basedir, "species_leverage_diff_lambdas_results.csv"))
     }
 
     if (SWITCH_PT_FLAG == 1) {
@@ -506,7 +506,7 @@ LPIMain <- function(infile="Infile.txt",
 
                 # Save DTemp into file
                 # *** RF: Again? These bootstrapped DTemps therefore overwrite the LPI ones from previously
-                #DataFileName = paste("lpi_temp/DTemp", FileNo, sep = "")
+                #DataFileName = file.path(basedir, "lpi_temp", paste("DTemp", FileNo, sep = ""))
                 #write.table(DTemp, DataFileName, sep = ",", col.names = FALSE, row.names = FALSE)
 
                 # Just save them into a temp array instead!
@@ -590,7 +590,7 @@ LPIMain <- function(infile="Infile.txt",
     }
     rownames(LPIdata) <- seq(REF_YEAR, REF_YEAR + DSize - 1)
 
-    f_name = file = gsub(".txt", "_Results.txt", infile)
+    f_name = file = file.path(basedir, gsub(".txt", "_Results.txt", infile))
     cat("Saving final output to file: ", f_name, "\n")
     write.table(LPIdata, f_name)
 
@@ -621,7 +621,7 @@ LPIMain <- function(infile="Infile.txt",
       minmax <- plyr::ddply(Data, "ID", plyr::summarise, min_year = min(year), max_year = max(year))
       #minmax <- tapply(Data$ID, Data$year, range)
       #my.out <- do.call("rbind", minmax)
-      f_name = file = gsub(".txt", "_Minmax.txt", Dataset)
+      f_name = file = file.path(basedir, gsub(".txt", "_Minmax.txt", Dataset))
       cat("Saving Min/Max file to: ", f_name, "\n")
       write.table(minmax, sep=",", eol="\n", f_name,
                   quote = FALSE, append = FALSE, row.names = F, col.names=T)
