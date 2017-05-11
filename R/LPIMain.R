@@ -2,46 +2,6 @@
 #'
 #' @details
 #'
-#' Version 15 - Sept 2015 - Robin Freeman
-#'  \itemize{
-#' \item Various updates, added associated plotting code (ggplot_lpi.R)
-#'  \item moved some parameters to the function call (# bootstraps)
-#'  \item Moved CalcLPI parameters into the function call and to the LPIMain function allowing them to be controlled from the function call
-#'  \item Created lpi_options.R to store overall options
-#'  \item Reorganised to now run with main options as parameters --- LPIMain(infile, etc.)
-#'  }
-#'
-#' Version 14 - July-October 2013, Robin Freeman
-#' \itemize{
-#' \item Reformatted code to improve readabilitiy
-#' \item Added comments throughout
-#' \item Reorganised some sections into new functions (ProcessFile, Bootstrap_lpi) to improve readability and to enable paralisation
-#' \item Split functions into separate files
-#' }
-#'
-#' Version 13 - update SD fixed lambda file error Version 13 update - SD
-#' deleted ylim from graph and added automatic savePlot function
-#'
-#' Version 13 - Stef has integrated minmax code at the end of
-#' the LPI code
-#'
-#' Version 12 (August 2010 - Stef changed some of the output file names: MethodFlag
-#' -> PopProcessedChain, new_results -> 01_Results, so that file is always at the top
-#' and therefore easy to find. Also changed code to output the Species lambda and
-#' DTemp files as txt (NOTE: currently only works for one input text file). -1 in the
-#' lambda file is now NA. Also, additional output file (Lambda.txt) created,
-#' combining SpeciesName and SpeciesLambda and automatically inserting years
-#' according to REF_YEAR.
-#'
-#' March 2009 - Ben has messed with the flags, so that more are up at the top (e.g.
-#' Bootstrap size).  Functionality of the CI_FLAG improved, introduced a PLOT_MAX value
-#' for the plotting, added commands for the zero replace flag.
-#'
-#' Before March 2009.... Version 9 R Amin Incorporated filtering of Lambda values outside a defined range
-#' Incorporated adding 1) 1 \% mean of non zero values, 2) min value of non zero
-#' values to all the values if there is a zero value in the time series Incorporated
-#' time series of >= 2 are processed
-#'
 #' # Calculate an index using the population file specified in GlobalInFile.txt, calculating confidence intervals using 100 bootstraps
 #' lpi_global <- LPIMain("GlobalInfile.txt", CI_FLAG=1, title="Global LPI", BOOT_STRAP_SIZE=100)
 #' # Plot this global LPI
