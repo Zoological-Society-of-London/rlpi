@@ -43,14 +43,9 @@ bootstrap_lpi <- function(SpeciesLambdaArray, fileindex, DSize, Group, Weighting
         # We shouldn't be sampling missing values....
         SpeciesLambdaVal = na.omit(SpeciesLambda)
 
-        # Get length of lambdas
-        n = length(SpeciesLambdaVal)
-        # Generate index
-        BootIndex = 1:n
         # Create sample with replacement (single bootstrap instance)
-        BootSam <- sample(BootIndex, replace = T)
-        # Extract lamdas using that sample
-        BootVal = SpeciesLambdaVal[BootSam]
+        BootVal <- sample(SpeciesLambdaVal, replace = T)
+
         # If we've got some meaningful data
         if (!CAP_LAMBDAS) {
           Index = which(BootVal != -1)
