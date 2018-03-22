@@ -37,17 +37,11 @@ bootstrap_lpi <- function(SpeciesLambdaArray, fileindex, DSize, Group, Weighting
 
       # Read SpeciesLambda from saved file FileName = paste('lpi_temp/SpeciesLambda',FileNo,sep='')
       # SpeciesLambda = read.table(FileName, header = FALSE, sep=',')
+      SpeciesLambda = SpeciesLambdaArray[fileindex == FileNo, J]
 
-      SpeciesLambda = SpeciesLambdaArray[fileindex == FileNo, ]
-
-      if (J <= dim(SpeciesLambda)[2]) {
-
-        # If there's still some left to get
-        # Get the lamdas for this pop (species?)
-        SpeciesLambdaVal = SpeciesLambda[, J]
-
+      if(!is.null(SpeciesLambda)) {
         # We shouldn't be sampling missing values....
-        SpeciesLambdaVal = SpeciesLambdaVal[!is.na(SpeciesLambdaVal)]
+        SpeciesLambdaVal = na.omit(SpeciesLambda)
 
         # Get length of lambdas
         n = length(SpeciesLambdaVal)
