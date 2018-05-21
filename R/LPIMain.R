@@ -78,7 +78,7 @@
 LPIMain <- function(infile="Infile.txt",
                     basedir=".",
                     REF_YEAR = 1970,
-                    PLOT_MAX = 2015,
+                    PLOT_MAX = 2017,
                     force_recalculation=1,
                     use_weightings=0,
                     use_weightings_B=0,
