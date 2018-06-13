@@ -103,7 +103,7 @@ Using these files to construct a Nearctic index can be done as follows:
 
 
 ```r
-# Make a Neactic LPI 
+# Make a Nearctic LPI 
 
 # Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
 Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_weightings = 1, VERBOSE=FALSE, show_progress=FALSE)
