@@ -7,15 +7,15 @@ Indicators and Assessments Research Unit, Institute of Zoology, Zoological Socie
 
 ### Overview
 
-The **rlpi** package (currently in beta/active development) calculates indices using the Living Planet Index methodology (McRae et al. (in review) *The diversity-weighted Living Planet Index: controlling for taxonomic bias in a global biodiversity indicator*).
+The **rlpi** package (currently in beta/active development) calculates indices using the Living Planet Index methodology (McRae et al. (2017) The Diversity-Weighted Living Planet Index: Controlling for Taxonomic Bias in a Global Biodiversity Indicator. *PLoS ONE* 12(1): e0169156).
 
 
 > Note: We provide a Comma Separated Value version of the Living Planet Database [here](https://dx.doi.org/10.6084/m9.figshare.4300022.v1), but this excludes around 3000 populations which are confidential and cannot therefore be shared. Therefore, results produced with this data set may differ slightly from those presented in the manuscript and elsewhere.
 
-In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, and *fish* before being combined to an index for the biogeograhic realm.
+In summary, indices are calculated using the geometric mean, first combining population trends to the species level, and then across higher taxonomic and geographical groupings. For example, multiple populations within a biogeographic realm will be combined first to generate individual species indices, then combined to taxonomic groups such as *birds*, *mammals*, *reptiles*, *amphibians*, and *fish* before being combined to an index for the biogeographic realm.
 
 
-The **rlpi** package works with source data in comma separated (csv) format where each row is composed  of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropic bird populations, one for Afrotropical mammal populations, etc), and an 'infile' tells the package where these groups/files are and how to combine them. 
+The **rlpi** package works with source data in comma separated (csv) format where each row is composed  of **popid**, **speciesname**, **year**, **popvalue** (see below). These can be stored be in multiple groups (e.g. a file for Afrotropical bird populations, one for Afrotropical mammal populations, etc.), and an 'infile' tells the package where these groups/files are and how to combine them. 
 
 When constructing an index for just a single group, you need a single data file and a single
 infile which points to that data file (see first example below). For multiple groups, the infile would refer to all relevant data files and can specify weightings to allow for taxonomic, geographic or other weighting.
@@ -105,7 +105,7 @@ Using these files to construct a Nearctic index can be done as follows:
 ```r
 # Make a Nearctic LPI 
 
-# Default gives 100 boostraps (this takes a couple of minutes to run on a 2014 Macbook)
+# Default gives 100 bootstraps (this takes a couple of minutes to run on a 2014 MacBook)
 Nearc_lpi <- LPIMain("example_data/terrestrial_class_nearctic_infile.txt", use_weightings = 1, VERBOSE=FALSE, show_progress=FALSE)
 ```
 
@@ -188,8 +188,8 @@ Similarly, infiles are provided for Nearctic mammals and birds:
 
 
 ```r
-# Make a Neactic Mammals LPI 
-# Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
+# Make a Nearctic Mammals LPI 
+# Default gives 100 bootstraps (this will take a few minutes to run on a 2014 MacBook)
 Nearc_mams_lpi <- LPIMain("example_data/T_Nearctic_mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
 ```
 
@@ -243,8 +243,8 @@ ggplot_lpi(Nearc_mams_lpi, ylims=c(0, 2))
 ![](README_files/figure-html/nearctic_mams_birds-2.png)<!-- -->
 
 ```r
-# Make a Neactic Mammals LPI 
-# Default gives 100 boostraps (this will take a few minutes to run on a 2014 Macbook)
+# Make a Nearctic Mammals LPI 
+# Default gives 100 bootstraps (this will take a few minutes to run on a 2014 MacBook)
 Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
 ```
 
