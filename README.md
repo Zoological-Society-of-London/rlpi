@@ -1,6 +1,6 @@
 # rlpi package (beta)
-Indicators and Assessments Research Unit, Institute of Zoology, Zoological Society of London
-> [Contact robin.freeman@ioz.ac.uk or louise.mcrae@ioz.ac.uk]  
+Indicators and Assessments Research Unit, Institute of Zoology, Zoological Society of London<br />
+[Contact robin.freeman@ioz.ac.uk or louise.mcrae@ioz.ac.uk]  
 
 
 
