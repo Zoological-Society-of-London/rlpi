@@ -191,7 +191,7 @@ Similarly, infiles are provided for Nearctic mammals and birds:
 ```r
 # Make a Nearctic Mammals LPI 
 # Default gives 100 bootstraps (this will take a few minutes to run on a 2014 MacBook)
-Nearc_mams_lpi <- LPIMain("example_data/T_Nearctic_mammalia_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
+Nearc_mams_lpi <- LPIMain("example_data/T_Nearctic_mammalia_infile.txt", VERBOSE=FALSE)
 ```
 
 ```
@@ -244,9 +244,9 @@ ggplot_lpi(Nearc_mams_lpi, ylims=c(0, 2))
 ![](README_files/figure-html/nearctic_mams_birds-2.png)<!-- -->
 
 ```r
-# Make a Nearctic Mammals LPI 
+# Make a Nearctic Birds LPI 
 # Default gives 100 bootstraps (this will take a few minutes to run on a 2014 MacBook)
-Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt", VERBOSE=FALSE, show_progress=FALSE)
+Nearc_birds_lpi <- LPIMain("example_data/terrestrial_Nearctic_Aves_infile.txt", VERBOSE=FALSE)
 ```
 
 ```
