@@ -33,7 +33,7 @@
 #' @param GAM_GLOBAL_FLAG  1 = process by GAM method, 0 = process by chain method. Default=1
 #' @param DATA_LENGTH_MIN Minimum data length to include in calculations. Default=2
 #' @param AVG_TIME_BETWEEN_PTS_MAX Maximum time between datapoint to include. Default=100
-#' @param GLOBAL_GAM_FLAG_SHORT_DATA_FLAG # set this to 1 GAM model is also to be generated for the short time series else the log linear model will be used. Default=0
+#' @param GLOBAL_GAM_FLAG_SHORT_DATA_FLAG set this to 1 GAM model is also to be generated for the short time series else the log linear model will be used. Default=0
 #' @param AUTO_DIAGNOSTIC_FLAG 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
 #' @param LAMBDA_MIN Minimum lambda to include in calculations. Default=1
 #' @param LAMBDA_MAX Minimum lambda to include in calculations. Default=-1

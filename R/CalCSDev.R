@@ -19,7 +19,7 @@ CalcSDev <- function(x, h, d, interval) {
   # estimates obtained from 2nd differences, 4th differences, or 6th differences (eqns
   # 9, 10, and 11 in the Ecology paper).  d=6 should give the most accurate results,
   # but again try experimenting with d=4 and d=2.
-  #'interval' is the time elapsed between points of x, which will be treated
+  # 'interval' is the time elapsed between points of x, which will be treated
   # as 1 unit: e.g. if x consists of records taken every 2 years, then 2 years is
   # equal to 1 unit, and interval=2.  Usually interval=1.  The window size h is
   # measured relative to the interval variable, so if the window extends h units then

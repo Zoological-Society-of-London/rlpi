@@ -26,4 +26,4 @@ Imports:
     foreach,
     doParallel,
     RColorBrewer
-
+RoxygenNote: 6.1.1
