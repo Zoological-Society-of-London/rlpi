@@ -13,36 +13,36 @@
 #' # Plot them together
 #' ggplot_lpi_multi(list(lpi_global, lpi_tropical), names=c("global", "tropical"))
 #'
-#' @param infile Input file specifying the population files that should be included in the index
-#' @param basedir Base directory in which files (inc. temporary directories) will be stored
-#' @param REF_YEAR Reference year for index (when the index == 1). Default=1970
-#' @param PLOT_MAX The final year of the index to plot. Default=2012,
-#' @param force_recalculation Whether the population annual differences should be recalucated (they are cached for a given file). Default=0
-#' @param use_weightings Whether to use the first level of weightings ('Weightings') in the infile. Default=0
-#' @param use_weightings_B Whether to use the second level of weightings ('WeightingsB') in the infile. Default=0
-#' @param title The title. Default=""
-#' @param CI_FLAG Flag to indicate whether or not to calculate confidence intervals (bootstrapping the index). Default=1
-#' @param LEV_FLAG Flag to indicate wether or not to calculate species level leverage plots. Default=0
-#' @param SWITCH_PT_FLAG Flag to indicate whether or not to calculate switching points. Default=0
-#' @param BOOT_STRAP_SIZE If calculating CIs, how many bootstraps to use. Default=100
-#' @param save_plots Should plots be saved. Default=1
-#' @param plot_lpi Should plots be plotted. Default=1
-#' @param goParallel Should the code be executing in parallel, Default=FALSE
+#' @param infile - Input file specifying the population files that should be included in the index
+#' @param basedir - Base directory in which files (inc. temporary directories) will be stored
+#' @param REF_YEAR - Reference year for index (when the index == 1). Default=1970
+#' @param PLOT_MAX - The final year of the index to plot. Default=2012,
+#' @param force_recalculation - Whether the population annual differences should be recalucated (they are cached for a given file). Default=0
+#' @param use_weightings - Whether to use the first level of weightings ('Weightings') in the infile. Default=0
+#' @param use_weightings_B - Whether to use the second level of weightings ('WeightingsB') in the infile. Default=0
+#' @param title - The title. Default=""
+#' @param CI_FLAG - Flag to indicate whether or not to calculate confidence intervals (bootstrapping the index). Default=1
+#' @param LEV_FLAG - Flag to indicate wether or not to calculate species level leverage plots. Default=0
+#' @param SWITCH_PT_FLAG - Flag to indicate whether or not to calculate switching points. Default=0
+#' @param BOOT_STRAP_SIZE - If calculating CIs, how many bootstraps to use. Default=100
+#' @param save_plots - Should plots be saved. Default=1
+#' @param plot_lpi - Should plots be plotted. Default=1
+#' @param goParallel - Should the code be executing in parallel, Default=FALSE
 #'
 #' @param MODEL_SELECTION_FLAG Default=0
-#' @param GAM_GLOBAL_FLAG  1 = process by GAM method, 0 = process by chain method. Default=1
-#' @param DATA_LENGTH_MIN Minimum data length to include in calculations. Default=2
-#' @param AVG_TIME_BETWEEN_PTS_MAX Maximum time between datapoint to include. Default=100
-#' @param GLOBAL_GAM_FLAG_SHORT_DATA_FLAG set this to 1 GAM model is also to be generated for the short time series else the log linear model will be used. Default=0
-#' @param AUTO_DIAGNOSTIC_FLAG 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
-#' @param LAMBDA_MIN Minimum lambda to include in calculations. Default=1
-#' @param LAMBDA_MAX Minimum lambda to include in calculations. Default=-1
-#' @param ZERO_REPLACE_FLAG  0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=1
-#' @param OFFSET_ALL 1 = Add offset to all values, to avoid log(0). Default=0
+#' @param GAM_GLOBAL_FLAG - 1 = process by GAM method, 0 = process by chain method. Default=1
+#' @param DATA_LENGTH_MIN - Minimum data length to include in calculations. Default=2
+#' @param AVG_TIME_BETWEEN_PTS_MAX - Maximum time between datapoint to include. Default=100
+#' @param GLOBAL_GAM_FLAG_SHORT_DATA_FLAG - Set this to 1 GAM model is also to be generated for the short time series else the log linear model will be used. Default=0
+#' @param AUTO_DIAGNOSTIC_FLAG - 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
+#' @param LAMBDA_MIN - Minimum lambda to include in calculations. Default=1
+#' @param LAMBDA_MAX - Minimum lambda to include in calculations. Default=-1
+#' @param ZERO_REPLACE_FLAG  - 0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=1
+#' @param OFFSET_ALL - 1 = Add offset to all values, to avoid log(0). Default=0
 #' @param OFFSET_NONE
 #' @param OFFSET_DIFF
 #' @param LINEAR_MODEL_SHORT_FLAG
-#' @param VERBOSE Whether to print verbose information. Default=1
+#' @param VERBOSE - Whether to print verbose information. Default=1
 #' @return lpi - A data frame containing an LPI and CIs if calculated
 #' @examples
 #'
