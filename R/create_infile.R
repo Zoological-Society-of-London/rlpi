@@ -6,7 +6,7 @@
 #' @return Returns a data frame with (Binomial, ID, year, popvalue) columns
 #' @export
 #'
-convert_to_rows <- function(in_data, start_col_name="X1950", end_col_name="X2017") {
+convert_to_rows <- function(in_data, start_col_name="X1950", end_col_name="X2022") {
   #Binomial  ID  year  popvalue
   all_data <- data.frame(Binomial = character(0), ID = numeric(0), year = numeric(0), popvalue=numeric(0))
   # In input data, each population is a row, with a series of population sizes
