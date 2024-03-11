@@ -49,7 +49,7 @@ convert_to_rows <- function(in_data, start_col_name="X1950", end_col_name="X2022
 #' @return Returns the name of the created infile
 #' @export
 #'
-create_infile <- function(pop_data_source, index_vector=TRUE, name="default_infile", start_col_name="X1950", end_col_name="X2017", CUT_OFF_YEAR = 1950) {
+create_infile <- function(pop_data_source, index_vector=TRUE, name="default_infile", start_col_name="X1950", end_col_name="X2022", CUT_OFF_YEAR = 1950) {
   # If no index vector is suppled, it will just use all the pop_data_source data
   pop_data <- pop_data_source[index_vector, ]
   all_data <- convert_to_rows(pop_data, start_col_name, end_col_name)
