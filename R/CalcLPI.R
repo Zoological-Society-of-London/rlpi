@@ -422,20 +422,21 @@ CalcLPI <- function(Species,
         # Only get those lambdas that are not '-1'
         PopLambdaTemp = PopLambda[k, K]
         # Fine which of these are less than our max
-        IndexTemp = which(PopLambdaTemp < LAMBDA_MAX)
+        IndexTemp = which(PopLambdaTemp <= LAMBDA_MAX)
         IndexTempBad_max = which(PopLambdaTemp > LAMBDA_MAX)
         # If we have some...
         if (length(IndexTemp) > 0) {
           # Extract them as PopLambdaTemp1
           PopLambdaTemp1 = PopLambdaTemp[IndexTemp]
           # Get those values that are also more then our min
-          IndexTemp = which(PopLambdaTemp1 > LAMBDA_MIN)
+          IndexTemp = which(PopLambdaTemp1 >= LAMBDA_MIN)
           IndexTempBad_min = which(PopLambdaTemp1 < LAMBDA_MIN)
           # If there are some...
           if (length(IndexTemp) > 0) {
             # Then set species lambda to be their average...
             if (CAP_LAMBDAS) {
-              SpeciesLambda[I, K] = mean(c(PopLambdaTemp1[IndexTemp], rep(LAMBDA_MAX, length(IndexTempBad_max)), rep(LAMBDA_MIN, length(IndexTempBad_min))))
+              #SpeciesLambda[I, K] = mean(c(PopLambdaTemp1[IndexTemp], rep(LAMBDA_MAX, length(IndexTempBad_max)), rep(LAMBDA_MIN, length(IndexTempBad_min))))
+              SpeciesLambda[I, K] = mean(c(rep(LAMBDA_MAX, length(IndexTempBad_max)), rep(LAMBDA_MIN, length(IndexTempBad_min))))
             } else {
               SpeciesLambda[I, K] = mean(PopLambdaTemp1[IndexTemp])
             }
