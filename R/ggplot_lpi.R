@@ -25,7 +25,7 @@ ggplot_lpi <- function(d, col = "darkblue", line_col = "white", title = "",
     xlims <- c(min(df$years), max(df$years))
   }
   g <- ggplot2::ggplot(data = df, ggplot2::aes_string(x = "years", y = "lpi", group = 1))
-
+  
   if (!is.null(d$CI_low)) {
     g <- g + ggplot2::geom_ribbon(data = df, ggplot2::aes_string(ymin = "lwr", ymax = "upr", group = 1), alpha = 0.8, fill = col)
   }
