@@ -510,11 +510,11 @@ CalcLPI <- function(Species,
   # SpeciesData<-cbind(sIDArray, as.vector(sNamesT), SpeciesLambda)
 
   ## RF: Removing this for now...
-  # Headers<-t(c("Species", as.vector(InitialYear:FinalYear)))
-  # SpeciesData<-cbind(as.vector(sNamesArray), SpeciesLambda)
-  # lambda_filename <- file.path(basedir, gsub(".txt", "_Lambda.txt", DatasetName))
-  # write.table(Headers,file=lambda_filename, sep=",", eol="\n", quote=FALSE, col.names=FALSE, row.names = FALSE)
-  # write.table(SpeciesData,sep=",", eol="\n", file=lambda_filename, quote=FALSE, col.names=FALSE, row.names = FALSE, append=TRUE)
+  Headers<-t(c("Species", as.vector(InitialYear:FinalYear)))
+  SpeciesData<-cbind(as.vector(sNamesArray), SpeciesLambda)
+  lambda_filename <- file.path(basedir, gsub(".txt", "_Lambda.txt", DatasetName))
+  write.table(Headers,file=lambda_filename, sep=",", eol="\n", quote=FALSE, col.names=FALSE, row.names = FALSE)
+  write.table(SpeciesData,sep=",", eol="\n", file=lambda_filename, quote=FALSE, col.names=FALSE, row.names = FALSE, append=TRUE)
 
   return(SpeciesLambda)
   # MethodFlag
