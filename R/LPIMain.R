@@ -554,13 +554,14 @@ LPIMain <- function(infile = "Infile.txt",
       }
     }
   }
-  # extract the CIs to a dataframe for plotting
-  CI2 <- data.frame(CIx)
-  lowerCI <- t(CI2$X1)
-  upperCI <- t(CI2$X2)
 
   if (plot_lpi) {
     if (CI_FLAG == 1) {
+      # extract the CIs to a dataframe for plotting
+      CI2 <- data.frame(CIx)
+      lowerCI <- t(CI2$X1)
+      upperCI <- t(CI2$X2)
+
       # Plot the index with confidence intervals
       plot_lpi(Ifinal, REF_YEAR, PLOT_MAX, CI_FLAG, lowerCI, upperCI)
     } else {
