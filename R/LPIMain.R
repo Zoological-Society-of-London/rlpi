@@ -37,7 +37,7 @@
 #' @param AUTO_DIAGNOSTIC_FLAG - 1=Automatically determine whether GAM models are good enough, 0=Manually ask for each. Default=1
 #' @param LAMBDA_MIN - Minimum lambda to include in calculations. Default=1
 #' @param LAMBDA_MAX - Minimum lambda to include in calculations. Default=-1
-#' @param ZERO_REPLACE_FLAG  - 0 = +minimum value; 1 = +1\% of mean value; 2 = +1. Default=1
+#' @param ZERO_REPLACE_FLAG  - This controls how zeros are dealt with. If this parameter is 0, then populations contining zeros will have a minimum value (1e-17) added to all value; If this flag is 1 then those populations will have +1\% of mean added to all values; If this flag is 2 then those pops will have +1 added. Default is 1, add 1% of the mean
 #' @param OFFSET_ALL - 1 = Add offset to all values, to avoid log(0). Default=0
 #' @param OFFSET_NONE
 #' @param OFFSET_DIFF
