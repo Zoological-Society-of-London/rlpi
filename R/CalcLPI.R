@@ -201,7 +201,7 @@ CalcLPI <- function(Species,
 
         # if population has the same value then no need to build GAM model and interpolate
         GAMFlag <- GAM_GLOBAL_FLAG
-        if (mean(PopN) == PopN[1]) {
+        if (var(PopN) == 0) {
           GAMFlag <- 0
         }
 
