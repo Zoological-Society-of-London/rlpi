@@ -78,7 +78,7 @@
 LPIMain <- function(infile = "Infile.txt",
                     basedir = ".",
                     REF_YEAR = 1970,
-                    PLOT_MAX = 2017,
+                    PLOT_MAX = 2022,
                     force_recalculation = 1,
                     use_weightings = 0,
                     use_weightings_B = 0,
@@ -275,7 +275,14 @@ LPIMain <- function(infile = "Infile.txt",
 
     # print(DTemp)
     # DTemp = as.numeric(DTemp)
-    DTempArray[FileNo, 1:dim(DTemp)[2]] <- t(DTemp)
+    tryCatch({
+      DTempArray[FileNo, 1:dim(DTemp)[2]] <- t(DTemp)
+    }, error = function(e) {
+            message(paste("Failed to create population lambda array. Please check PLOT_MAX.\nThis error can occur because your data contains values for years *after* the specified plot_max (default 2022), so increasing plot_max to the last year in your data fixes it."))
+            message("Original error message:")
+            message(conditionMessage(e))
+            NA
+        })
   }
 
   # cat("DTempArray: \n")
