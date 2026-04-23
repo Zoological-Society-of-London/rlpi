@@ -1,7 +1,7 @@
 Package: rlpi
 Type: Package
 Title: Tools for calculating indices using the Living Planet Index method
-Version: 0.0.3
+Version: 0.1.0
 Authors@R: c(
   person("Robin", "Freeman", email = "robin.freeman@ioz.ac.uk", role = c("aut", "cre")),
   person("Louise", "McRae", email = "robin.freeman@ioz.ac.uk", role = c("aut")),
