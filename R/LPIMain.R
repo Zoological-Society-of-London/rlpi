@@ -555,14 +555,15 @@ LPIMain <- function(infile = "Infile.txt",
     }
   }
 
+  if(CI_FLAG) {
+    CI2 <- data.frame(CIx)
+  }
+
   if (plot_lpi) {
     if (CI_FLAG == 1) {
-      # extract the CIs to a dataframe for plotting
-      CI2 <- data.frame(CIx)
+      # Plot the index with confidence intervals
       lowerCI <- t(CI2$X1)
       upperCI <- t(CI2$X2)
-
-      # Plot the index with confidence intervals
       plot_lpi(Ifinal, REF_YEAR, PLOT_MAX, CI_FLAG, lowerCI, upperCI)
     } else {
       # Plot the index
@@ -579,17 +580,15 @@ LPIMain <- function(infile = "Infile.txt",
       title(paste(title, "Calculated Index"))
     }
   }
+
   # write out the file
-  if (SWITCH_PT_FLAG) {
-    LPIdaplta <- cbind(Ifinal, CI2, t(SwitchingPt))
-    colnames(LPIdata) <- c("LPI_final", "CI_low", "CI_high", "SwitchPoint")
-  } else if (CI_FLAG) {
-    LPIdata <- cbind(Ifinal, CI2)
-    colnames(LPIdata) <- c("LPI_final", "CI_low", "CI_high")
-  } else {
-    # RF: Added extra condition for when CI isn't calculated
-    LPIdata <- Ifinal
-    colnames(LPIdata) <- c("LPI_final")
+  LPIdata <- data.frame(LPI_final = Ifinal)
+  if(CI_FLAG) {
+    LPIdata["CI_low"] = CI2$X1
+    LPIdata["CI_high"] = CI2$X2
+  }
+  if(SWITCH_PT_FLAG) {
+    LPIdata["SwitchPoint"] = t(SwitchingPt)
   }
   rownames(LPIdata) <- seq(REF_YEAR, REF_YEAR + DSize - 1)
 
