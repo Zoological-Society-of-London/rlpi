@@ -106,7 +106,8 @@ LPIMain <- function(infile = "Infile.txt",
                     LINEAR_MODEL_SHORT_FLAG = FALSE, # if=TRUE models short time-series with linear model
                     CAP_LAMBDAS = TRUE,
                     VERBOSE = TRUE,
-                    SHOW_PROGRESS = TRUE) {
+                    SHOW_PROGRESS = TRUE,
+                    check_single_point_pops = TRUE) {
   # Start timing
   ptm <- proc.time()
 
@@ -129,13 +130,15 @@ LPIMain <- function(infile = "Infile.txt",
   # RF: Get names from file
   FileNames <- FileTable$FileName
 
-  # Check all input popfiles for single value populations.
-  check_single_point_populations(
-    FileNames = FileNames,
-    infile = infile,
-    basedir = basedir,
-    DATA_LENGTH_MIN = DATA_LENGTH_MIN
-  )
+  if (check_single_point_pops) {
+    # Check all input popfiles for single value populations.
+    check_single_point_populations(
+      FileNames = FileNames,
+      infile = infile,
+      basedir = basedir,
+      DATA_LENGTH_MIN = DATA_LENGTH_MIN
+    )
+  }
 
   # Get groups from file as column vector
   Group <- FileTable[2]

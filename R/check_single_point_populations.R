@@ -83,7 +83,9 @@ check_single_point_populations <- function(FileNames, infile, basedir, DATA_LENG
         "non-missing population values.\n\n",
         "These populations cannot produce valid interannual lambdas and should be removed ",
         "or corrected before running LPIMain().\n\n",
-        "%s"
+        "%s",
+        "\n\nFix the input data or rerun with check_single_point_pops = FALSE ",
+        "(not recommended)."
       ),
       DATA_LENGTH_MIN,
       msg
