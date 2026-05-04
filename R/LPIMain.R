@@ -128,6 +128,15 @@ LPIMain <- function(infile = "Infile.txt",
   FileTable <- read.table(infile, header = TRUE)
   # RF: Get names from file
   FileNames <- FileTable$FileName
+
+  # Check all input popfiles for single value populations.
+  check_single_point_populations(
+    FileNames = FileNames,
+    infile = infile,
+    basedir = basedir,
+    DATA_LENGTH_MIN = DATA_LENGTH_MIN
+  )
+
   # Get groups from file as column vector
   Group <- FileTable[2]
 
